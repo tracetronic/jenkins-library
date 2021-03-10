@@ -1,0 +1,18 @@
+The <code>pipeline2ATX</code> variable can be used to generate a <a href="https://www.tracetronic.de/produkte/test-guide/" target="_blank">TEST-GUIDE</a> compatible JSON report of a pipeline build including logs and stage meta data.<br>
+The report is compressed as a zip file within the build workspace and can be uploaded using the JSON2ATX converter.
+<b>Prerequisite: <a href="https://plugins.jenkins.io/pipeline-utility-steps/">Pipeline Utility Steps Plugin</a></b>
+<p></p>
+<dl>
+    <dt><code>call(boolean, String, int)</code></dt>
+    <dd>Generates a TEST-GUIDE compatible JSON report of a pipeline build including logs and stage meta data.
+        <dl>
+            <dt>log</dt>
+            <dd><code>true</code>: each step log is passed to the test step description<br>
+                <code>false</code>: only the log file will be archived (optional and default)</dd>
+            <dt>jobName</dt>
+            <dd>the name of the pipeline job (optional)</dd>
+            <dt>buildNumber</dt>
+            <dd>the number of the pipeline build (optional)</dd>
+        </dl>
+    </dd>
+</dl>

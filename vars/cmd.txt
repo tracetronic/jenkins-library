@@ -1,0 +1,11 @@
+The <code>cmd</code> variable can be used to execute an arbitrary command.
+<p></p>
+<dl>
+    <dt><code>cmd(cmd)</code></dt>
+    <dd>Executes a passed command on Linux Shell or Windows Batch depending on the node.
+        <dl>
+            <dt>cmd</dt>
+            <dd>the command to be executed</dd>
+        </dl>
+    </dd>
+</dl>

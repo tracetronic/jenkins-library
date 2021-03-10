@@ -1,0 +1,74 @@
+The <code>task</code> variable can be used for process management on Windows (Powershell) and Linux (Bash).
+<p></p>
+<dl>
+    <dt><code>call(Map)</code></dt>
+    <dd>Starts or restarts a new process.
+        <dl>
+            <dt>map</dt>
+            <dd>the parameter map</dd>
+        </dl>
+    </dd>
+    <dt><code>call(String, List, String, boolean, boolean)</code></dt>
+    <dd>Starts or restarts a new process.
+        <dl>
+            <dt>filePath</dt>
+            <dd>the path of an executable file</dd>
+        </dl>
+        <dl>
+            <dt>args</dt>
+            <dd>the arguments to pass to the process</dd>
+        </dl>
+        <dl>
+            <dt>startDir</dt>
+            <dd>the location that the new process should start in</dd>
+        </dl>
+        <dl>
+            <dt>wait</dt>
+            <dd>wait for the specified process to complete</dd>
+        </dl>
+        <dl>
+            <dt>restart</dt>
+            <dd>stop all running process instances and start a new one</dd>
+        </dl>
+    </dd>
+    <dt><code>start(String, List, String, boolean)</code></dt>
+    <dd>Starts a new process.
+        <dl>
+            <dt>filePath</dt>
+            <dd>the path of an executable file</dd>
+        </dl>
+        <dl>
+            <dt>args</dt>
+            <dd>the arguments to pass to the process</dd>
+        </dl>
+        <dl>
+            <dt>startDir</dt>
+            <dd>the location that the new process should start in</dd>
+        </dl>
+        <dl>
+            <dt>wait</dt>
+            <dd>wait for the specified process to complete</dd>
+        </dl>
+    </dd>
+    <dt><code>stop(String)</code></dt>
+    <dd>Terminates running processes by matching name.
+        <dl>
+            <dt>name</dt>
+            <dd>the names of the processes to stop (.exe extension will be stripped)</dd>
+        </dl>
+    </dd>
+    <dt><code>stop(int)</code></dt>
+    <dd>Terminates a running process by id.
+        <dl>
+            <dt>pid</dt>
+            <dd>the process ID</dd>
+        </dl>
+    </dd>
+    <dt><code>isRunning(String)</code></dt>
+    <dd>Checks whether a process is still running.
+        <dl>
+            <dt>name</dt>
+            <dd>the name of the process to check (.exe extension will be stripped)</dd>
+        </dl>
+    </dd>
+</dl>

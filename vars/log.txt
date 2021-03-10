@@ -1,0 +1,48 @@
+The <code>log</code> variable can be used to print logging messages to the console output.<br>
+For additional logging styles see <a href="http://misc.flogisoft.com/bash/tip_colors_and_formatting">Colors and formatting (ANSI/VT100 Control sequences)</a>.<br>
+<b>Prerequisite: <a href="https://plugins.jenkins.io/ansicolor/">ANSI Color Plugin</a></b>
+<p></p>
+<dl>
+    <dt><code>toConsole(String, String, String, String)</code></dt>
+    <dd>Prints a formatted logging message to console output.
+        <dl>
+            <dt>message</dt>
+            <dd>the log message</dd>
+            <dt>color</dt>
+            <dd>the font color (currently supported: <code>{black (default), red, green, yellow, blue, magenta, cyan}</code>)</dd>
+            <dt>style</dt>
+            <dd>the font style (currently supported: <code>{normal (default), bold, underlined, reset (same as normal)}</code>)</dd>
+            <dt>prefix</dt>
+            <dd>the prefix message (defaults to empty string)</dd>
+        </dl>
+    </dd>
+    <dt><code>info(String)</code></dt>
+    <dd>Prints a formatted informative logging message to console output.
+        <dl>
+            <dt>logMessage</dt>
+            <dd>the informative log message</dd>
+        </dl>
+    </dd>
+    <dt><code>debug(String)</code></dt>
+    <dd>Prints a formatted debug logging message to console output.<br>
+        <b>Precondition: environment variable <i>LOG_DEBUG</i> must be <i>true</i></b>
+        <dl>
+            <dt>debugMessage</dt>
+            <dd>the debug log message</dd>
+        </dl>
+    </dd>
+    <dt><code>warn(String)</code></dt>
+    <dd>Prints a formatted warning logging message to console output.
+        <dl>
+            <dt>warnMessage</dt>
+            <dd>the warning log message</dd>
+        </dl>
+    </dd>
+    <dt><code>error(String)</code></dt>
+    <dd>Prints a formatted error logging message to console output.
+        <dl>
+            <dt>errorMessage</dt>
+            <dd>the error log message</dd>
+        </dl>
+    </dd>
+</dl>

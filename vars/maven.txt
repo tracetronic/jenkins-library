@@ -1,0 +1,92 @@
+The <code>maven</code> variable can be used to read specific Maven information and to invoke arbitrary Maven goals.
+<b>Prerequisite: Maven is installed (<code>mvn</code> is on PATH) or is configured in Jenkins (Global Tool Configuration).</b>
+<p></p>
+<dl>
+    <dt><code>getInfo(String, String, String, String)</code></dt>
+    <dd>Reads specific information from a Maven project file (pom.xml).
+        <dl>
+            <dt>infoExpression</dt>
+            <dd>the expression describing which information should be parsed from POM</dd>
+        </dl>
+        <dl>
+            <dt>path</dt>
+            <dd>the absolute or relative file path to POM (defaults to <code>pom.xml</code>)</dd>
+        </dl>
+        <dl>
+            <dt>mavenTool</dt>
+            <dd>the name of the Maven installation configured in Jenkins (optional)</dd>
+        </dl>
+        <dl>
+            <dt>jdkTool</dt>
+            <dd>the name of the JDK installation configured in Jenkins (optional)</dd>
+        </dl>
+    </dd>
+    <dt><code>getProjectName(String, String, String)</code></dt>
+    <dd>Reads the project version from a Maven project file (pom.xml).
+        <dl>
+            <dt>path</dt>
+            <dd>the absolute or relative file path to POM (defaults to <code>pom.xml</code>)</dd>
+        </dl>
+        <dl>
+            <dt>mavenTool</dt>
+            <dd>the name of the Maven installation configured in Jenkins (optional)</dd>
+        </dl>
+        <dl>
+            <dt>jdkTool</dt>
+            <dd>the name of the JDK installation configured in Jenkins (optional)</dd>
+        </dl>
+    </dd>
+    <dt><code>getProjectVersion(String, STring, String)</code></dt>
+    <dd>Reads the project version from a Maven project file (pom.xml).
+        <dl>
+            <dt>path</dt>
+            <dd>the absolute or relative file path to POM (defaults to <code>pom.xml</code>)</dd>
+        </dl>
+        <dl>
+            <dt>mavenTool</dt>
+            <dd>the name of the Maven installation configured in Jenkins (optional)</dd>
+        </dl>
+        <dl>
+            <dt>jdkTool</dt>
+            <dd>the name of the JDK installation configured in Jenkins (optional)</dd>
+        </dl>
+    </dd>
+    <dt><code>execute(String,String,String)</code></dt>
+    <dd>Executes a specific goal in a Maven project.
+        <dl>
+            <dt>goal</dt>
+            <dd>the Maven goal to be executed</dd>
+        </dl>
+        <dl>
+            <dt>path</dt>
+            <dd>the absolute or relative file path to POM (defaults to <code>pom.xml</code>)</dd>
+        </dl>
+        <dl>
+            <dt>args</dt>
+            <dd>the additional Maven arguments</dd>
+        </dl>
+    </dd>
+    <dt><code>executeWithTools(String,String,String,String,String)</code></dt>
+    <dd>Execute a maven command with jenkins tools and returns the output.
+        <dl>
+            <dt>mavenTool</dt>
+            <dd>the name of the Maven installation configured in Jenkins</dd>
+        </dl>
+        <dl>
+            <dt>jdkTool</dt>
+            <dd>the name of the JDK installation configured in Jenkins</dd>
+        </dl>
+        <dl>
+            <dt>goal</dt>
+            <dd>the Maven goal to be executed</dd>
+        </dl>
+        <dl>
+            <dt>path</dt>
+            <dd>the absolute or relative file path to POM (defaults to <code>pom.xml</code>)</dd>
+        </dl>
+        <dl>
+            <dt>args</dt>
+            <dd>the additional Maven arguments</dd>
+        </dl>
+    </dd>
+</dl>
