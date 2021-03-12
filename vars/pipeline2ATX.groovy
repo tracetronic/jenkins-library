@@ -114,7 +114,7 @@ def generateJsonReport(build, attributes, executionTestSteps, logFile) {
     testcase.put("verdict", resultToATXVerdict(getCurrentResult(build)))
     testcase.put("description", build.getParent().getDescription())
     testcase.put("timestamp", build.getStartTimeInMillis())
-    testcase.put("executionTime", (int) (build.getStartTimeInMillis() - build.getTimeInMillis()))
+    testcase.put("executionTime", (int) ((build.getStartTimeInMillis() - build.getTimeInMillis()) / 1000))
     testcase.put("attributes", attributes)
     if (logFile) {
         testcase.put("artifacts", [logFile])
