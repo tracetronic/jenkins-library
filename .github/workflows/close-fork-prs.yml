@@ -1,0 +1,16 @@
+name: Auto-close Pull Requests from Forks
+on:
+  pull_request:
+    types: [opened, reopened]
+  schedule:
+    - cron: '0 0 * * *'
+jobs:
+  close-prs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close Pull Requests
+        uses: peter-evans/close-fork-pulls@v1
+        with:
+          comment: |
+            We do not accept any external pull requests. Auto-closing this pull request.
+            If you have any questions, please contact us at [support@tracetronic.de](mailto:support@tracetronic.de).
