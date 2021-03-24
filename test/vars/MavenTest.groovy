@@ -18,7 +18,7 @@ class MavenTest extends PipelineSpockTestBase {
 
     def 'Get project name'(String path, String mavenTool, String jdkTool, int callCount, int callStackIndex) {
         when: 'Maven is called to parse project name'
-            maven.getProjectName(path, mavenTool, jdkTool)
+            maven.getProjectName("mvn", path, mavenTool, jdkTool)
 
         then: 'expect Maven command with according expression is invoked'
             printCallStack()
@@ -33,7 +33,7 @@ class MavenTest extends PipelineSpockTestBase {
 
     def 'Get project version'(String path, String mavenTool, String jdkTool, int callCount, int callStackIndex) {
         when: 'Maven is called to parse project version'
-            maven.getProjectVersion(path, mavenTool, jdkTool)
+            maven.getProjectVersion("mvn", path, mavenTool, jdkTool)
 
         then: 'expect Maven command with according expression is invoked'
             printCallStack()
@@ -48,7 +48,7 @@ class MavenTest extends PipelineSpockTestBase {
 
     def 'Get specific information'(String path, String mavenTool, String jdkTool, int callCount, int callStackIndex) {
         when: 'Maven is called to parse specific information'
-            maven.getInfo("project.url", path, mavenTool, jdkTool)
+            maven.getInfo("project.url", "mvn", path, mavenTool, jdkTool)
 
         then: 'expect Maven command with according expression is invoked'
             printCallStack()

@@ -9,6 +9,10 @@ The <code>maven</code> variable can be used to read specific Maven information a
             <dd>the expression describing which information should be parsed from POM</dd>
         </dl>
         <dl>
+            <dt>mvnExec</dt>
+            <dd>the absolute or relative file path to the Maven executable (defaults to <code>mvn</code>)</dd>
+        </dl>
+        <dl>
             <dt>path</dt>
             <dd>the absolute or relative file path to POM (defaults to <code>pom.xml</code>)</dd>
         </dl>
@@ -24,8 +28,12 @@ The <code>maven</code> variable can be used to read specific Maven information a
     <dt><code>getProjectName(String, String, String)</code></dt>
     <dd>Reads the project version from a Maven project file (pom.xml).
         <dl>
-            <dt>path</dt>
+            <dt>mvnExec</dt>
             <dd>the absolute or relative file path to POM (defaults to <code>pom.xml</code>)</dd>
+        </dl>
+        <dl>
+            <dt>path</dt>
+            <dd>the absolute or relative file path to the Maven executable (defaults to <code>mvn</code>)</dd>
         </dl>
         <dl>
             <dt>mavenTool</dt>
@@ -38,6 +46,10 @@ The <code>maven</code> variable can be used to read specific Maven information a
     </dd>
     <dt><code>getProjectVersion(String, STring, String)</code></dt>
     <dd>Reads the project version from a Maven project file (pom.xml).
+        <dl>
+            <dt>mvnExec</dt>
+            <dd>the absolute or relative file path to the Maven executable (defaults to <code>mvn</code>)</dd>
+        </dl>
         <dl>
             <dt>path</dt>
             <dd>the absolute or relative file path to POM (defaults to <code>pom.xml</code>)</dd>
@@ -56,6 +68,10 @@ The <code>maven</code> variable can be used to read specific Maven information a
         <dl>
             <dt>goal</dt>
             <dd>the Maven goal to be executed</dd>
+        </dl>
+        <dl>
+            <dt>mvnExec</dt>
+            <dd>the absolute or relative file path to the Maven executable (defaults to <code>mvn</code>)</dd>
         </dl>
         <dl>
             <dt>path</dt>
