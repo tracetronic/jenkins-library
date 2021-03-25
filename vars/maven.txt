@@ -1,5 +1,5 @@
 The <code>maven</code> variable can be used to read specific Maven information and to invoke arbitrary Maven goals.
-<b>Prerequisite: Maven is installed (<code>mvn</code> is on PATH) or is configured in Jenkins (Global Tool Configuration).</b>
+<b>Prerequisite: Maven is installed (<code>mvn</code> is on PATH or configured with mvnExec parameter) or is configured in Jenkins (Global Tool Configuration).</b>
 <p></p>
 <dl>
     <dt><code>getInfo(String, String, String, String)</code></dt>
@@ -9,12 +9,12 @@ The <code>maven</code> variable can be used to read specific Maven information a
             <dd>the expression describing which information should be parsed from POM</dd>
         </dl>
         <dl>
-            <dt>mvnExec</dt>
-            <dd>the absolute or relative file path to the Maven executable (defaults to <code>mvn</code>)</dd>
-        </dl>
-        <dl>
             <dt>path</dt>
             <dd>the absolute or relative file path to POM (defaults to <code>pom.xml</code>)</dd>
+        </dl>
+        <dl>
+            <dt>mvnExec</dt>
+            <dd>the absolute or relative file path to the Maven executable (defaults to <code>mvn</code>)</dd>
         </dl>
         <dl>
             <dt>mavenTool</dt>
@@ -28,12 +28,12 @@ The <code>maven</code> variable can be used to read specific Maven information a
     <dt><code>getProjectName(String, String, String)</code></dt>
     <dd>Reads the project version from a Maven project file (pom.xml).
         <dl>
-            <dt>mvnExec</dt>
-            <dd>the absolute or relative file path to POM (defaults to <code>pom.xml</code>)</dd>
-        </dl>
-        <dl>
             <dt>path</dt>
             <dd>the absolute or relative file path to the Maven executable (defaults to <code>mvn</code>)</dd>
+        </dl>
+        <dl>
+            <dt>mvnExec</dt>
+            <dd>the absolute or relative file path to POM (defaults to <code>pom.xml</code>)</dd>
         </dl>
         <dl>
             <dt>mavenTool</dt>
@@ -47,12 +47,12 @@ The <code>maven</code> variable can be used to read specific Maven information a
     <dt><code>getProjectVersion(String, STring, String)</code></dt>
     <dd>Reads the project version from a Maven project file (pom.xml).
         <dl>
-            <dt>mvnExec</dt>
-            <dd>the absolute or relative file path to the Maven executable (defaults to <code>mvn</code>)</dd>
-        </dl>
-        <dl>
             <dt>path</dt>
             <dd>the absolute or relative file path to POM (defaults to <code>pom.xml</code>)</dd>
+        </dl>
+        <dl>
+            <dt>mvnExec</dt>
+            <dd>the absolute or relative file path to the Maven executable (defaults to <code>mvn</code>)</dd>
         </dl>
         <dl>
             <dt>mavenTool</dt>
@@ -70,12 +70,12 @@ The <code>maven</code> variable can be used to read specific Maven information a
             <dd>the Maven goal to be executed</dd>
         </dl>
         <dl>
-            <dt>mvnExec</dt>
-            <dd>the absolute or relative file path to the Maven executable (defaults to <code>mvn</code>)</dd>
-        </dl>
-        <dl>
             <dt>path</dt>
             <dd>the absolute or relative file path to POM (defaults to <code>pom.xml</code>)</dd>
+        </dl>
+        <dl>
+            <dt>mvnExec</dt>
+            <dd>the absolute or relative file path to the Maven executable (defaults to <code>mvn</code>)</dd>
         </dl>
         <dl>
             <dt>args</dt>

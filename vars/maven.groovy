@@ -11,17 +11,17 @@
  *
  * @param infoExpression
  *      the expression describing which information should be parsed from POM
- * @param mvnExec
- *      the absolute or relative file path to the Maven executable (defaults to mvn)
  * @param path
  *      the absolute or relative file path to POM (defaults to pom.xml)
+ * @param mvnExec
+ *      the absolute or relative file path to the Maven executable (defaults to mvn)
  * @param mavenTool
  *      the name of the Maven installation configured in Jenkins (optional)
  * @param jdkTool
  *      the name of the JDK installation configured in Jenkins (optional)
  * @return the evaluated information
  */
-def getInfo(String infoExpression, String mvnExec = "mvn", String path = "pom.xml", String mavenTool = null, String jdkTool = null) {
+def getInfo(String infoExpression, String path = "pom.xml", String mvnExec = "mvn", String mavenTool = null, String jdkTool = null) {
     if (mavenTool && jdkTool) {
         return executeWithTools(
                 mavenTool, jdkTool, "help:evaluate", path, "-Dexpression=${infoExpression} -q -DforceStdout")
@@ -33,34 +33,34 @@ def getInfo(String infoExpression, String mvnExec = "mvn", String path = "pom.xm
 /**
  * Reads the project name from a Maven project file (pom.xml).
  *
- * @param mvnExec
- *      the absolute or relative file path to the Maven executable (defaults to mvn)
  * @param path
  *      the absolute or relative file path to POM (defaults to pom.xml)
+ * @param mvnExec
+ *      the absolute or relative file path to the Maven executable (defaults to mvn)
  * @param mavenTool
  *      the name of the Maven installation configured in Jenkins (optional)
  * @param jdkTool
  *      the name of the JDK installation configured in Jenkins (optional)
  * @return the evaluated information
  */
-def getProjectName(String mvnExec = "mvn", String path = "pom.xml", String mavenTool = null, String jdkTool = null) {
+def getProjectName(String path = "pom.xml", String mvnExec = "mvn", String mavenTool = null, String jdkTool = null) {
     return getInfo("project.name", mvnExec, path, mavenTool, jdkTool)
 }
 
 /**
  * Reads the project version from a Maven project file (pom.xml).
  *
- * @param mvnExec
- *      the absolute or relative file path to the Maven executable (defaults to mvn)
  * @param path
  *      the absolute or relative file path to POM (defaults to pom.xml)
+ * @param mvnExec
+ *      the absolute or relative file path to the Maven executable (defaults to mvn)
  * @param mavenTool
  *      the name of the Maven installation configured in Jenkins (optional)
  * @param jdkTool
  *      the name of the JDK installation configured in Jenkins (optional)
  * @return the evaluated information
  */
-def getProjectVersion(String mvnExec = "mvn", String path = "pom.xml", String mavenTool = null, String jdkTool = null) {
+def getProjectVersion(String path = "pom.xml", String mvnExec = "mvn", String mavenTool = null, String jdkTool = null) {
     return getInfo("project.version", mvnExec, path, mavenTool, jdkTool)
 }
 
@@ -69,15 +69,15 @@ def getProjectVersion(String mvnExec = "mvn", String path = "pom.xml", String ma
  *
  * @param goal
  *      the Maven goal to be executed
- * @param mvnExec
- *      the absolute or relative file path to the Maven executable (defaults to mvn)
  * @param path
  *      the absolute or relative file path to POM (defaults to pom.xml)
+ * @param mvnExec
+ *      the absolute or relative file path to the Maven executable (defaults to mvn)
  * @param args
  *      the additional Maven arguments
  * @return the command output
  */
-def execute(String goal, String mvnExec = "mvn", String path = "pom.xml", String args = "") {
+def execute(String goal, String path = "pom.xml", String mvnExec = "mvn", String args = "") {
     return cmd("${mvnExec} -f ${path} ${goal} ${args}")
 }
 
