@@ -52,6 +52,8 @@ def call(log = false, jobName = '', int buildNumber = 0) {
     }
 
     def json = generateJsonReport(build, attributes, executionSteps, logFile)
+    // reset build because it's not serializable
+    build = null
 
     writeJSON file: "${filename}.json", json: json
     zip glob: "${filename}.log, ${filename}.json", zipFile: "${filename}_atx.zip"
