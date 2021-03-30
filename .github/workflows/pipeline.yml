@@ -40,7 +40,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Test with Gradle
-        run: ./gradlew test
+        run: ./gradlew test integrationTest
       - name: Cleanup Gradle Cache
         # Restoring these files from a GitHub Actions cache might cause problems for future builds.
         run: |
