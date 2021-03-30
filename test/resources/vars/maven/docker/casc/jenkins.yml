@@ -1,0 +1,17 @@
+unclassified:
+  location:
+    url: "http://127.0.0.1:8080"
+  globalLibraries:
+    libraries:
+      - defaultVersion: testcontainers
+        implicit: false
+        name: "jenkins-library"
+        retriever:
+          modernSCM:
+            scm:
+              git:
+                remote: /opt/git/jenkins-library
+tool:
+  git:
+    installations:
+      - name: "jgit"
