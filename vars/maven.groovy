@@ -26,7 +26,7 @@ def getInfo(String infoExpression, String path = "pom.xml", String mvnExec = "mv
         return executeWithTools(
                 mavenTool, jdkTool, "help:evaluate", path, "-Dexpression=${infoExpression} -q -DforceStdout")
     } else {
-        return execute("help:evaluate", mvnExec, path, "-Dexpression=${infoExpression} -q -DforceStdout")
+        return execute("help:evaluate", path, mvnExec, "-Dexpression=${infoExpression} -q -DforceStdout")
     }
 }
 
@@ -44,7 +44,7 @@ def getInfo(String infoExpression, String path = "pom.xml", String mvnExec = "mv
  * @return the evaluated information
  */
 def getProjectName(String path = "pom.xml", String mvnExec = "mvn", String mavenTool = null, String jdkTool = null) {
-    return getInfo("project.name", mvnExec, path, mavenTool, jdkTool)
+    return getInfo("project.name", path, mvnExec, mavenTool, jdkTool)
 }
 
 /**
@@ -61,7 +61,7 @@ def getProjectName(String path = "pom.xml", String mvnExec = "mvn", String maven
  * @return the evaluated information
  */
 def getProjectVersion(String path = "pom.xml", String mvnExec = "mvn", String mavenTool = null, String jdkTool = null) {
-    return getInfo("project.version", mvnExec, path, mavenTool, jdkTool)
+    return getInfo("project.version", path, mvnExec, mavenTool, jdkTool)
 }
 
 /**
