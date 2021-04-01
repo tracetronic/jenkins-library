@@ -40,7 +40,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Test with Gradle
-        run: ./gradlew test integrationTest
+        run: ./gradlew test
+      - name: Integration Test with Gradle on DinD
+        run: docker run -i --rm \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          -v "$HOME:$HOME" \
+          -v "$PWD:$PWD" \
+          -w "$PWD" \
+          openjdk:8-jdk-alpine \
+          ./gradlew integrationTest
       - name: Cleanup Gradle Cache
         # Restoring these files from a GitHub Actions cache might cause problems for future builds.
         run: |
