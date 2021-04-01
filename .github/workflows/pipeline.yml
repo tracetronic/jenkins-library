@@ -49,7 +49,7 @@ jobs:
             -v "$PWD:$PWD" \
             -w "$PWD" \
             openjdk:8-jdk-alpine \
-            ./gradlew integrationTest
+            ./gradlew --stacktrace --debug integrationTest
       - name: Cleanup Gradle Cache
         # Restoring these files from a GitHub Actions cache might cause problems for future builds.
         run: |
