@@ -41,15 +41,8 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Test with Gradle
         run: ./gradlew test
-      - name: Integration Test with Gradle on DinD
-        run: |
-          docker run -i --rm \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            -v "$HOME:$HOME" \
-            -v "$PWD:$PWD" \
-            -w "$PWD" \
-            openjdk:8-jdk-alpine \
-            ./gradlew --stacktrace --debug integrationTest
+      - name: Integration Test with Gradle
+        run: ./gradlew --stacktrace --debug integrationTest
       - name: Cleanup Gradle Cache
         # Restoring these files from a GitHub Actions cache might cause problems for future builds.
         run: |
