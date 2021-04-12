@@ -40,10 +40,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Test with Gradle
-        run: ./gradlew test
-      - name: Integration Test with Gradle
-        run: ./gradlew --stacktrace --debug integrationTest
+      - name: Run Tests with Gradle
+        run: ./gradlew test integrationTest
       - name: Cleanup Gradle Cache
         # Restoring these files from a GitHub Actions cache might cause problems for future builds.
         run: |
