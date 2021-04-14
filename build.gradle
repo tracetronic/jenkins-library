@@ -29,6 +29,9 @@ sourceSets {
         groovy {
             srcDirs = ['test']
         }
+        resources {
+            srcDirs = ['test/resources']
+        }
     }
 }
 
@@ -48,6 +51,7 @@ dependencies {
     compile 'com.cloudbees:groovy-cps:1.32@jar'
 
     testCompile 'com.lesfurets:jenkins-pipeline-unit:1.8'
+    testCompile 'org.testcontainers:spock:1.15.2'
     testCompile 'org.hamcrest:hamcrest-core:2.2@jar'
     testCompile 'org.jenkins-ci.main:jenkins-war:2.263.4'
     testCompile 'org.jenkins-ci.main:jenkins-test-harness:2.71'
@@ -61,6 +65,19 @@ dependencies {
 }
 
 test {
+    filter {
+        includeTestsMatching('*Test')
+    }
+    dependsOn cleanTest
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+}
+
+task integrationTest(type: Test) {
+    filter {
+        includeTestsMatching('*IT')
+    }
     dependsOn cleanTest
     testLogging {
         events 'passed', 'skipped', 'failed'
