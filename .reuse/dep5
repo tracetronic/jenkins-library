@@ -1,0 +1,16 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Jenkins Library
+Upstream-Contact: TraceTronic GmbH <info@tracetronic.de>
+Source: https://github.com/tracetronic/jenkins-library
+
+Files: *
+Copyright: 2021 TraceTronic GmbH
+License: MIT
+
+Files: gradlew gradlew.bat gradle/wrapper/*
+Copyright: 2007-2021 Gradle Inc.
+License: Apache-2.0
+
+Files: test/groovy/testSupport/*
+Copyright: 2017 Bill Dennis (macg33zr)
+License: Apache-2.0

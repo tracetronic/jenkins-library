@@ -62,3 +62,5 @@ If you have any questions, please contact us at [support@tracetronic.de](mailto:
 ## License
 
 This project is licensed under the terms of the [MIT license](LICENSE).
+
+Using the [REUSE helper tool](https://github.com/fsfe/reuse-tool), you can run `reuse spdx` to get a bill of materials.
