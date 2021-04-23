@@ -13,4 +13,4 @@ jobs:
         with:
           comment: |
             We do not accept any external pull requests. Auto-closing this pull request.
-            If you have any questions, please contact us at [support@tracetronic.de](mailto:support@tracetronic.de).
+            If you have any questions, please contact us at [support@tracetronic.com](mailto:support@tracetronic.com).
