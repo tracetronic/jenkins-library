@@ -6,6 +6,30 @@
 
 /**
  * Reads specific information from a Maven project file (pom.xml).
+ * @param params the parameter map
+ * @return the evaluated information
+ */
+def getInfo(Map params = [:]) {
+    String infoExpression = params.get('infoExpression')
+    if (!infoExpression) {
+        error("The info expression is required!")
+        return
+    }
+    String goal = 'help:evaluate'
+    String args = params.get('args')
+    if (args) {
+        args += " -Dexpression=${infoExpression} -q -DforceStdout"
+    } else {
+        args = "-Dexpression=${infoExpression} -q -DforceStdout"
+    }
+    params.put('goal', goal)
+    params.put('args', args)
+
+    return execute(params)
+}
+
+/**
+ * Reads specific information from a Maven project file (pom.xml).
  *
  * Allows to refer to a Maven installation configured in Jenkins (Global Tool Configuration).
  *
@@ -66,6 +90,40 @@ def getProjectVersion(String path = "pom.xml", String mvnExec = "mvn", String ma
 
 /**
  * Executes a specific goal in a Maven project.
+ * @param params the parameter map
+ * @return the command output
+ */
+def execute(Map params = [:]) {
+    if (params.containsKey('mvnExec') && params.containsKey('mavenTool')) {
+        error('mvnExec and mavenTool passed - please choose one definition!')
+        return
+    }
+    String goal = params.get('goal')
+    if (!goal) {
+        error("The maven goal to execute is required!")
+        return
+    }
+
+    String path = params.get('path', 'pom.xml')
+    String args = params.get('args', '')
+
+    if (!params.containsKey('mvnExec') && !params.containsKey('mavenTool')) {
+        return execute(goal, path, "mvn", args)
+    }
+    if (params.containsKey("mvnExec")) {
+        return execute(goal, path, params.get('mvnExec'), args)
+    }
+    if (params.containsKey('mavenTool')) {
+        if (params.containsKey('javaTool')) {
+            return executeWithTools(params.get('mavenTool'), params.get('javaTool'), goal, path, args)
+        } else {
+            return executeWithTool(params.get('mavenTool'), goal, path, args)
+        }
+    }
+}
+
+/**
+ * Executes a specific goal in a Maven project.
  *
  * @param goal
  *      the Maven goal to be executed
@@ -82,7 +140,7 @@ def execute(String goal, String path = "pom.xml", String mvnExec = "mvn", String
 }
 
 /**
- * Executes a specific Maven goal using a Maven installation configured in Jenkins (Global Tool Configuration).
+ * Executes a specific Maven goal using a Maven and Java installation configured in Jenkins (Global Tool Configuration).
  *
  * @param mavenTool
  *      the name of the Maven installation configured in Jenkins
@@ -100,6 +158,30 @@ def executeWithTools(String mavenTool, String jdkTool, String goal, String path 
     def mvnHome = tool name: mavenTool
     def javaHome = tool name: jdkTool
     withEnv(["JAVA_HOME=${javaHome}", "PATH+MAVEN=${mvnHome}/bin:${env.JAVA_HOME}/bin"]) {
+        return cmd("${mvnHome}/bin/mvn -f ${path} ${goal} ${args} -B")
+    }
+}
+
+/**
+ * Executes a specific Maven goal using a Maven installation configured in Jenkins (Global Tool Configuration).
+ *
+ * @param mavenTool
+ *      the name of the Maven installation configured in Jenkins
+ * @param goal
+ *      the Maven goal to be executed
+ * @param path
+ *      the absolute or relative file path to POM (defaults to pom.xml)
+ * @param args
+ *      the additional Maven arguments
+ * @return the command output
+ */
+def executeWithTool(String mavenTool, String goal, String path = "pom.xml", String args = "") {
+    if (!env.JAVA_HOME) {
+        error('JAVA_HOME is not set and no Java tool installation is referenced.')
+        return
+    }
+    def mvnHome = tool name: mavenTool
+    withEnv(["PATH+MAVEN=${mvnHome}/bin:${env.JAVA_HOME}/bin"]) {
         return cmd("${mvnHome}/bin/mvn -f ${path} ${goal} ${args} -B")
     }
 }
