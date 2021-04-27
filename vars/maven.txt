@@ -97,7 +97,7 @@ The <code>maven</code> variable can be used to read specific Maven information a
         </dl>
     </dd>
     <dt><code>executeWithTools(String,String,String,String,String)</code></dt>
-    <dd>Execute a maven command with jenkins tools and returns the output.
+    <dd>Execute a maven command with the Jenkins Maven and Java tools and returns the output.
         <dl>
             <dt>mavenTool</dt>
             <dd>the name of the Maven installation configured in Jenkins</dd>
@@ -105,6 +105,25 @@ The <code>maven</code> variable can be used to read specific Maven information a
         <dl>
             <dt>jdkTool</dt>
             <dd>the name of the JDK installation configured in Jenkins</dd>
+        </dl>
+        <dl>
+            <dt>goal</dt>
+            <dd>the Maven goal to be executed</dd>
+        </dl>
+        <dl>
+            <dt>path</dt>
+            <dd>the absolute or relative file path to POM (defaults to <code>pom.xml</code>)</dd>
+        </dl>
+        <dl>
+            <dt>args</dt>
+            <dd>the additional Maven arguments</dd>
+        </dl>
+    </dd>
+    <dt><code>executeWithTools(String,String,String,String,String)</code></dt>
+    <dd>Execute a maven command with the Jenkins Maven tool and returns the output.
+        <dl>
+            <dt>mavenTool</dt>
+            <dd>the name of the Maven installation configured in Jenkins</dd>
         </dl>
         <dl>
             <dt>goal</dt>
