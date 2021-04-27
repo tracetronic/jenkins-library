@@ -12,7 +12,12 @@ node {
     maven.getProjectVersion('pom.xml', "mvn", 'M3', 'JDK8')
 
     maven.getInfo("project.url")
+    maven.getInfo(infoExpression: "project.url")
     maven.getInfo("project.url", 'pom.xml')
+    maven.getInfo(infoExpression: "project.url", path: 'pom.xml')
     maven.getInfo("project.url", 'pom.xml', "mvn")
+    maven.getInfo(infoExpression: "project.url", path: 'pom.xml', mvnExec: "mvn")
     maven.getInfo("project.url", 'pom.xml', "mvn", 'M3', 'JDK8')
+    maven.getInfo(infoExpression: "project.url", path: 'pom.xml', mavenTool: "M3")
+    maven.getInfo(infoExpression: "project.url", path: 'pom.xml', mavenTool: "M3", javaTool: 'JDK8')
 }

@@ -2,6 +2,8 @@ library('jenkins-library')
 
 node {
     assert maven.getProjectVersion('/tests/maven/pom.xml') == "1.0"
+    assert maven.getInfo(infoExpression: 'project.version', path: '/tests/maven/pom.xml') == "1.0"
     assert maven.getProjectName('/tests/maven/pom.xml') == "jenkins-library"
+    assert maven.getInfo(infoExpression: 'project.name', path: '/tests/maven/pom.xml') == "jenkins-library"
     assert maven.getInfo('project.url', '/tests/maven/pom.xml') == "https://github.com/tracetronic/jenkins-library"
 }
