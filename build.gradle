@@ -84,6 +84,21 @@ task integrationTest(type: Test) {
     }
 }
 
+task renameDoc {
+    doLast {
+        file('docs/DefaultPackage').renameTo(file('docs/vars'))
+    }
+}
+task postGroovyDoc(type: Copy) {
+    from "${project.docsDir}/groovydoc"
+    into 'docs'
+    filter { line -> line.replaceAll('DefaultPackage', 'vars') }
+}
+
+task documentation(type: GradleBuild) {
+    tasks = ['groovydoc', 'postGroovyDoc', 'renameDoc']
+}
+
 idea {
     project {
         vcs = 'Git'
