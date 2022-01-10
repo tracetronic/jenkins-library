@@ -1,4 +1,4 @@
-name: Sync README and images
+name: Sync documentation
 
 on:
   workflow_dispatch:
@@ -6,14 +6,25 @@ on:
     branches:
       - main
     paths:
-      - docs/**
+      - src/**
+      - vars/**
 
 jobs:
-  sync-readme:
+  sync-documentation:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Run Documentation with Gradle
+        run: ./gradlew task documentation
 
       - name: Copy docs content
         run: |
@@ -26,7 +37,7 @@ jobs:
 
       - name: Commit and push documentation
         run: |
-          rm -r ${{ runner.temp }}/*
+          rm -r *
           cp -f -a ${{ runner.temp }}/. .
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"

@@ -67,7 +67,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Run Documentaion with Gradle
+      - name: Run Documentation with Gradle
         run: ./gradlew task documentation
       - name: Cleanup Gradle Cache
         # Restoring these files from a GitHub Actions cache might cause problems for future builds.
