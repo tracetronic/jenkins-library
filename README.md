@@ -52,9 +52,8 @@ For further information and a deeper insight into usage, dynamic loading or vers
 
 ## Documentation
 
-A complete documentation of all classes and methods can be reached at the following link:
+A complete documentation of all classes and methods can be reached at [GitHub Pages](https://tracetronic.github.io/jenkins-library/)
 
-```https://tracetronic.github.io/jenkins-library/```
 
 ## Contribution
 
