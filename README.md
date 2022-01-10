@@ -13,7 +13,7 @@ This repository consists of a Jenkins shared library to extend Jenkins pipelines
 - [Implementation](#usage)
   - [Use Cases](#use-cases)
   - [Technical Usage](#technical-usage)
-- [Documentaion](#documentation)
+- [Documentation](#documentation)
 - [Contribution](#contribution)
 - [Support](#support)
 - [License](#license)
