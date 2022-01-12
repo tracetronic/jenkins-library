@@ -1,4 +1,4 @@
-name: Sync documentation
+name: Sync GitHub Pages
 
 on:
   workflow_dispatch:
