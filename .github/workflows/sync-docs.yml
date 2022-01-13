@@ -3,8 +3,6 @@ name: Sync GitHub Pages
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
     paths:
       - src/**
       - vars/**
@@ -26,21 +24,11 @@ jobs:
       - name: Run Documentation with Gradle
         run: ./gradlew task documentation
 
-      - name: Copy docs content
-        run: |
-          cp -f -a /docs/. ${{ runner.temp }}/.
-
-      - name: Checkout GitHub Pages branch
-        uses: actions/checkout@v2
-        with:
-          ref: docs
-
       - name: Commit and push documentation
         run: |
-          rm -r *
-          cp -f -a ${{ runner.temp }}/. .
+          rm -r docs
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-          git add --all
-          git commit --signoff -m "Sync documentation from main"
+          git add docs
+          git commit --signoff -m "Sync documentation"
           git push
