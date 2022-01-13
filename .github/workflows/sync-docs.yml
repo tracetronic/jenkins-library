@@ -3,9 +3,6 @@ name: Sync GitHub Pages
 on:
   workflow_dispatch:
   push:
-    paths:
-      - src/**
-      - vars/**
 
 jobs:
   sync-documentation:
