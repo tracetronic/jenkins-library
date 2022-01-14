@@ -19,11 +19,12 @@ jobs:
           java-version: 1.8
 
       - name: Run Documentation with Gradle
-        run: ./gradlew task documentation
-
-      - name: Commit and push documentation
         run: |
           if [ -d /docs ]; then rm -Rf /docs; fi
+          ./gradlew task documentation
+
+      - name: Commit and push documentation
+        run: |          
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
           git add docs
