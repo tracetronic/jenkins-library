@@ -1,6 +1,8 @@
 name: Sync GitHub Pages
 
 on:
+  #  re-run manually does not work in case of previous successful ci action
+  #  because of the check in of the documentation itself
   workflow_dispatch:
   push:
 
