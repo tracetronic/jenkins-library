@@ -24,9 +24,13 @@ jobs:
           ./gradlew task documentation
 
       - name: Commit and push documentation
-        run: |          
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-          git add docs
-          git commit --signoff -m "Sync documentation"
-          git push
+        run: |
+          if [[ `git status --porcelain docs` ]]; then
+            git config user.name "$GITHUB_ACTOR"
+            git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+            git add docs
+            git commit --signoff -m "Sync documentation"
+            git push
+          else
+            echo "Nothing to commit, documentation is up to date."
+          fi
