@@ -1,9 +1,6 @@
 name: Sync GitHub Pages
 
 on:
-  #  re-run manually does not work in case of previous successful ci action
-  #  because of the check in of the documentation itself
-  workflow_dispatch:
   push:
 
 jobs:
@@ -22,7 +19,6 @@ jobs:
 
       - name: Run Documentation with Gradle
         run: |
-          if [ -d /docs ]; then rm -Rf /docs; fi
           ./gradlew task documentation
 
       - name: Commit and push documentation
