@@ -84,6 +84,33 @@ task integrationTest(type: Test) {
     }
 }
 
+groovydoc {
+    docTitle = "${project.name} documentation"
+    windowTitle = "${project.name} documentation"
+    noTimestamp = true
+    noVersionStamp = true
+}
+
+task renameDoc {
+    doLast {
+        file('docs/DefaultPackage').renameTo(file('docs/vars'))
+    }
+}
+task postGroovyDoc(type: Copy) {
+    from "${project.docsDir}/groovydoc"
+    into 'docs'
+    filter { line -> line.replaceAll('DefaultPackage', 'vars') }
+}
+
+task deleteOldDocs(type: Delete) {
+    delete 'docs'
+    followSymlinks = true
+}
+
+task documentation(type: GradleBuild) {
+    tasks = ['groovydoc', 'deleteOldDocs', 'postGroovyDoc', 'renameDoc']
+}
+
 idea {
     project {
         vcs = 'Git'
