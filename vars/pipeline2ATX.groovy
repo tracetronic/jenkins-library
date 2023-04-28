@@ -170,6 +170,7 @@ def getConsoleLog(build) {
  *      the build result
  * @return the according TEST-GUIDE verdict
  */
+@NonCPS
 static def resultToATXVerdict(result) {
     def verdict
     switch (result) {
