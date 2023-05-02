@@ -16,6 +16,9 @@ COPY vars /opt/git/jenkins-library/vars
 COPY resources /opt/git/jenkins-library/resources
 COPY .git /opt/git/jenkins-library/.git
 
+# Allow local checkouts
+ENV JAVA_OPTS="-Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true"
+
 # Pre-install plugins
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 RUN cd /app/jenkins && jar -cvf jenkins.war *
