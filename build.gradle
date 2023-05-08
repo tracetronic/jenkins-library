@@ -13,8 +13,8 @@ plugins {
 group 'de.tracetronic.jenkins'
 description 'This is a shared library to extend Jenkins pipelines and to keep code DRY.'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 11
+targetCompatibility = 11
 
 sourceSets {
     main {
@@ -113,12 +113,12 @@ task documentation(type: GradleBuild) {
 idea {
     project {
         vcs = 'Git'
-        jdkName = '1.8'
-        languageLevel = '8'
+        jdkName = '11'
+        languageLevel = '11'
     }
     module {
-        jdkName = '1.8'
-        languageLevel = new IdeaLanguageLevel('8')
+        jdkName = '11'
+        languageLevel = new IdeaLanguageLevel('11')
         downloadJavadoc = true
         downloadSources = true
     }
