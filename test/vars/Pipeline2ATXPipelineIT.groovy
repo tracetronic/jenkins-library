@@ -14,12 +14,14 @@ import org.testcontainers.containers.output.Slf4jLogConsumer
 import org.testcontainers.containers.startupcheck.OneShotStartupCheckStrategy
 import org.testcontainers.images.builder.ImageFromDockerfile
 import spock.lang.Shared
+import spock.lang.Ignore
 
 import java.time.Duration
 
-class MavenPipelineIT extends PipelineSpockTestBase {
+@Ignore("https://github.com/jenkinsci/jenkinsfile-runner/issues/686")
+class Pipeline2ATXPipelineIT extends PipelineSpockTestBase {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MavenPipelineIT.class)
+    private static final Logger LOGGER = LoggerFactory.getLogger(Pipeline2ATXPipelineIT.class)
 
     private static final String DOCKER_ROOT = 'vars/docker'
 
@@ -44,14 +46,12 @@ class MavenPipelineIT extends PipelineSpockTestBase {
         jenkinsContainer.stop()
     }
 
-    def 'Test Maven container pipeline'() {
+    def 'Test Pipeline2ATX container pipeline'() {
         when:
-        jenkinsContainer.withClasspathResourceMapping(
-                "${DOCKER_ROOT}/pom.xml", '/tests/maven/pom.xml', BindMode.READ_ONLY)
-        jenkinsContainer.withClasspathResourceMapping(
-                "${DOCKER_ROOT}/Jenkinsfile.maven", '/workspace/Jenkinsfile', BindMode.READ_ONLY)
-        jenkinsContainer.start()
+            jenkinsContainer.withClasspathResourceMapping(
+                    "${DOCKER_ROOT}/Jenkinsfile.pipeline2ATX", '/workspace/Jenkinsfile', BindMode.READ_ONLY)
+            jenkinsContainer.start()
         then:
-        jenkinsContainer.getLogs().contains("Finished: SUCCESS")
+            jenkinsContainer.getLogs().contains("Finished: SUCCESS")
     }
 }
