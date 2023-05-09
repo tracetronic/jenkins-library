@@ -1,0 +1,36 @@
+library('jenkins-library')
+
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'foo', defaultValue: 'bar', description: 'A foo parameter')
+    }
+
+    stages {
+        stage('Stage 1') {
+            steps {
+                echo 'Run stage 1'
+            }
+        }
+        stage('Stage 2') {
+            stages {
+                stage ('Stage 2.1') {
+                    steps {
+                        echo "Run stage 2.1"
+                    }
+                }
+            }
+        }
+        stage('Stage 3') {
+            steps {
+                echo 'Run stage 3'
+            }
+        }
+    }
+    post {
+        always {
+            pipeline2ATX()
+        }
+    }
+}
