@@ -256,7 +256,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         
                         <tr class="altColor">
                             <td class="colFirst"><code>class groovy.lang.Script</code></td>
-                            <td class="colLast"><code>groovy.lang.Script#getBinding(), groovy.lang.Script#setBinding(groovy.lang.Binding), groovy.lang.Script#evaluate(java.lang.String), groovy.lang.Script#evaluate(java.io.File), groovy.lang.Script#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.Script#println(), groovy.lang.Script#println(java.lang.Object), groovy.lang.Script#run(java.io.File, [Ljava.lang.String;), groovy.lang.Script#run(), groovy.lang.Script#getProperty(java.lang.String), groovy.lang.Script#setProperty(java.lang.String, java.lang.Object), groovy.lang.Script#print(java.lang.Object), groovy.lang.Script#printf(java.lang.String, java.lang.Object), groovy.lang.Script#printf(java.lang.String, [Ljava.lang.Object;), groovy.lang.Script#getMetaClass(), groovy.lang.Script#setMetaClass(groovy.lang.MetaClass), groovy.lang.Script#wait(long), groovy.lang.Script#wait(long, int), groovy.lang.Script#wait(), groovy.lang.Script#equals(java.lang.Object), groovy.lang.Script#toString(), groovy.lang.Script#hashCode(), groovy.lang.Script#getClass(), groovy.lang.Script#notify(), groovy.lang.Script#notifyAll()</code></td>
+                            <td class="colLast"><code>groovy.lang.Script#evaluate(java.lang.String), groovy.lang.Script#evaluate(java.io.File), groovy.lang.Script#getBinding(), groovy.lang.Script#setBinding(groovy.lang.Binding), groovy.lang.Script#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.Script#println(), groovy.lang.Script#println(java.lang.Object), groovy.lang.Script#run(java.io.File, [Ljava.lang.String;), groovy.lang.Script#run(), groovy.lang.Script#getProperty(java.lang.String), groovy.lang.Script#setProperty(java.lang.String, java.lang.Object), groovy.lang.Script#print(java.lang.Object), groovy.lang.Script#printf(java.lang.String, java.lang.Object), groovy.lang.Script#printf(java.lang.String, [Ljava.lang.Object;), groovy.lang.Script#getMetaClass(), groovy.lang.Script#setMetaClass(groovy.lang.MetaClass), groovy.lang.Script#wait(long), groovy.lang.Script#wait(long, int), groovy.lang.Script#wait(), groovy.lang.Script#equals(java.lang.Object), groovy.lang.Script#toString(), groovy.lang.Script#hashCode(), groovy.lang.Script#getClass(), groovy.lang.Script#notify(), groovy.lang.Script#notifyAll()</code></td>
                         </tr>
                         <tr class="altColor">
                             <td class="colFirst"><code>class groovy.lang.GroovyObjectSupport</code></td>
@@ -303,8 +303,12 @@ if (location.href.indexOf('is-external=true') == -1) {
 
  This method can be called downstream or within a running build.
  Without passing job and build parameters the current build is used as reference.
-
- <b>Prerequisite: <a href="https://plugins.jenkins.io/pipeline-utility-steps/">Pipeline Utility Steps Plugin</a></b>
+ </br>
+ <b>Prerequisite:</b>
+ <ul>
+<li><a href="https://plugins.jenkins.io/pipeline-utility-steps/">Pipeline Utility Steps Plugin</a></li>
+<li><a href="https://plugins.jenkins.io/pipeline-stage-view/">Pipeline Stage View Plugin</a></li>
+</ul>
  <DL><DT><B>Parameters:</B></DT><DD><code>log
 </code> -       <code>true</code>: each step log is passed to the test step description
       <code>false</code>: only the log file will be archived (optional and default)</DD><DD><code>jobName
