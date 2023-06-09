@@ -21,8 +21,12 @@ import org.jenkinsci.plugins.workflow.support.visualization.table.FlowGraphTable
  *
  * This method can be called downstream or within a running build.
  * Without passing job and build parameters the current build is used as reference.
- *
- * <b>Prerequisite: <a href="https://plugins.jenkins.io/pipeline-utility-steps/">Pipeline Utility Steps Plugin</a></b>
+ * </br>
+ * <b>Prerequisite:</b>
+ * <ul>
+ *<li><a href="https://plugins.jenkins.io/pipeline-utility-steps/">Pipeline Utility Steps Plugin</a></li>
+ *<li><a href="https://plugins.jenkins.io/pipeline-stage-view/">Pipeline Stage View Plugin</a></li>
+ *</ul>
  *
  * @param log
  *      <code>true</code>: each step log is passed to the test step description
