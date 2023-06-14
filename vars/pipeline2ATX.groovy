@@ -372,7 +372,7 @@ def createTestStep(row, debug) {
         description.addAll(crawlRows(child, true))
         child = child.nextTreeSibling
     }
-    testStep.put("description", description.join(""))
+    testStep.put("description", "")
     return testStep
 }
 
