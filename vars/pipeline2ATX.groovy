@@ -372,7 +372,8 @@ def createTestStep(row, debug) {
         description.addAll(crawlRows(child, true))
         child = child.nextTreeSibling
     }
-    testStep.put("description", "")
+    def allowedSchemaMaxStringLength = 117
+    testStep.put("description", description.join("").take(allowedSchemaMaxStringLength) + '...')
     return testStep
 }
 
