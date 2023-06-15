@@ -373,7 +373,11 @@ def createTestStep(row, debug) {
         child = child.nextTreeSibling
     }
     def allowedSchemaMaxStringLength = 117
-    testStep.put("description", description.join("").take(allowedSchemaMaxStringLength) + '...')
+    if(description.join("").isEmpty()) {
+        testStep.put("description", "")
+    } else {
+        testStep.put("description", description.join("").take(allowedSchemaMaxStringLength) + "...")
+    }
     return testStep
 }
 
