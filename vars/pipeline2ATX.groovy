@@ -372,11 +372,12 @@ def createTestStep(row, debug) {
         description.addAll(crawlRows(child, true))
         child = child.nextTreeSibling
     }
-    def allowedSchemaMaxStringLength = 117
-    if(description.join("").isEmpty()) {
-        testStep.put("description", "")
+    def allowedSchemaMaxStringLength = 120
+    if(description) {
+        //Set allowedSchemaMaxStringLength to 117 to be able to concatenate it with "..."
+        testStep.put("description", description.join(";").take(allowedSchemaMaxStringLength-3) + "...")
     } else {
-        testStep.put("description", description.join("").take(allowedSchemaMaxStringLength) + "...")
+        testStep.put("description", "")
     }
     return testStep
 }
