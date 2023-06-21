@@ -26,11 +26,11 @@ This repository is based on the predefined [directory structure](https://www.jen
 
 To simplify maintenance and to avoid duplicate implementations, some `vars` utilize features from other Jenkins plugins.
 
-| Global Vars           | Prerequisites                                                                       |
-|-----------------------|-------------------------------------------------------------------------------------|
-| *maven*               | Local Maven installation or configured in Jenkins (Global Tool Configuration)       |
-| *log*                 | [ANSI Color Plugin](https://plugins.jenkins.io/ansicolor/)                          |
-| *pipeline2ATX*        | [Pipeline Utility Steps Plugin](https://plugins.jenkins.io/pipeline-utility-steps/) |
+| Global Vars           | Prerequisites                                                                                                                            |
+|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| *maven*               | Local Maven installation or configured in Jenkins (Global Tool Configuration)                                                            |
+| *log*                 | [ANSI Color Plugin](https://plugins.jenkins.io/ansicolor/)                                                                               |
+| *pipeline2ATX*        | [Pipeline Utility Steps Plugin](https://plugins.jenkins.io/pipeline-utility-steps/), [Pipeline: Stage View](https://plugins.jenkins.io/pipeline-stage-view/) |
 
 For more information open `/pipeline-syntax/globals` on your Jenkins instance or see the help files in the `vars` folder.
 
