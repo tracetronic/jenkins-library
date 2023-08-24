@@ -197,24 +197,23 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
 
     def 'Create description item from row'() {
         given: 'a description row with node'
-            FlowNode flowNode = Mock(FlowNode)
-            flowNode.getError() >> errorAction
-
+            def node = Mock(FlowNode)
             def row = Mock(FlowGraphTable.Row)
-            row.getNode() >> flowNode
+            row.getNode() >> node
 
+            helper.registerAllowedMethod('hasNodeErrors', [Object], { return error })
             helper.registerAllowedMethod('getLogText', [Object], { return logText })
             pipeline2ATX = loadScript(scriptName)
 
         when: 'add description of node'
-            List description = pipeline2ATX.createDescription(row)
+            def description = pipeline2ATX.createDescription(row)
 
         then: 'expect a list of strings or empty list'
-            result == description
+            result.equals(description)
 
         where:
             logText << ['Another Test', null, 'Test']
-            errorAction << [[], [], ['errorAction']]
+            error << [false, false, true]
             result << [['message': 'Another Test', 'error': false], [:], ['message': 'Test', 'error': true]]
     }
 

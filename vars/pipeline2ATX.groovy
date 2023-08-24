@@ -338,13 +338,13 @@ def isTestStepFolder(row) {
 @NonCPS
 def createDescription(row) {
     def node = row.getNode()
-    def description = [:]
+    Map description = [:]
     def logText = getLogText(node)
-    def error = node.getError()
+
 
     if (logText) {
         description.put("message", logText)
-        description.put("error", !error ? false : true)
+        description.put("error", hasNodeErrors(node))
     }
     return description
 }
@@ -459,4 +459,16 @@ def getLogText(node) {
         }
     }
     return log
+}
+
+/**
+ * Checks if current node has any errors
+ *
+ * @param node
+ *      the current node
+ * @return node has errors as boolean
+ */
+@NonCPS
+boolean hasNodeErrors(node) {
+    return !node.getError() ? false : true
 }
