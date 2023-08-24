@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
+
 import com.cloudbees.workflow.flownode.FlowNodeUtil
 import groovy.testSupport.PipelineSpockTestBase
 import hudson.console.AnnotatedLargeText
@@ -196,9 +197,12 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
 
     def 'Create description item from row'() {
         given: 'a description row with node'
-            def node = Mock(FlowNode)
+            FlowNode flowNode = Mock(FlowNode)
+            flowNode.getError() >> errorAction
+
             def row = Mock(FlowGraphTable.Row)
-            row.getNode() >> node
+            row.getNode() >> flowNode
+
             helper.registerAllowedMethod('getLogText', [Object], { return logText })
             pipeline2ATX = loadScript(scriptName)
 
@@ -209,8 +213,9 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             result == description
 
         where:
-            logText << ['Test', null]
-            result << [['Test'], []]
+            logText << ['Another Test', null, 'Test']
+            errorAction << [[], [], ['errorAction']]
+            result << [['message': 'Another Test', 'error': false], [:], ['message': 'Test', 'error': true]]
     }
 
     def 'Create test step item from row'() {
