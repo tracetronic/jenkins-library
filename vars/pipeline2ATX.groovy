@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
+
 import com.cloudbees.groovy.cps.NonCPS
 import com.cloudbees.workflow.flownode.FlowNodeUtil
 import groovy.json.JsonBuilder
@@ -337,11 +338,13 @@ def isTestStepFolder(row) {
 @NonCPS
 def createDescription(row) {
     def node = row.getNode()
-    def description = []
+    Map description = [:]
     def logText = getLogText(node)
 
+
     if (logText) {
-        description.add(logText)
+        description.put("message", logText)
+        description.put("error", hasNodeErrors(node))
     }
     return description
 }
@@ -369,13 +372,22 @@ def createTestStep(row, debug) {
     def description = []
     while (debug && child) {
         // Stage might has multiple steps
-        description.addAll(crawlRows(child, true))
+        def descriptionItem = crawlRows(child, true)
+        if (descriptionItem) {
+            description.add(descriptionItem.message)
+            if (descriptionItem.error){
+                // overwrite verdict of testStep if pipeline step fails
+                testStep.verdict = resultToATXVerdict("FAILED")
+            }
+        }
         child = child.nextTreeSibling
     }
+
     def allowedSchemaMaxStringLength = 120
-    if(description) {
-        //Set allowedSchemaMaxStringLength to 117 to be able to concatenate it with "..."
-        testStep.put("description", description.join(";").take(allowedSchemaMaxStringLength-3) + "...")
+    def testCaseMessage = description.join(";") ?: ""
+    if (testCaseMessage.length() > allowedSchemaMaxStringLength) {
+        // Set allowedSchemaMaxStringLength to 117 to be able to concatenate it with "..."
+        testStep.put("description", testCaseMessage.take(allowedSchemaMaxStringLength-3) + "...")
     } else {
         testStep.put("description", "")
     }
@@ -447,4 +459,16 @@ def getLogText(node) {
         }
     }
     return log
+}
+
+/**
+ * Checks if current node has any errors
+ *
+ * @param node
+ *      the current node
+ * @return node has errors as boolean
+ */
+@NonCPS
+boolean hasNodeErrors(node) {
+    return node.getError() != null
 }

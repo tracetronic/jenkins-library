@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
+
 import com.cloudbees.workflow.flownode.FlowNodeUtil
 import groovy.testSupport.PipelineSpockTestBase
 import hudson.console.AnnotatedLargeText
@@ -199,18 +200,21 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             def node = Mock(FlowNode)
             def row = Mock(FlowGraphTable.Row)
             row.getNode() >> node
+
+            helper.registerAllowedMethod('hasNodeErrors', [Object], { return error })
             helper.registerAllowedMethod('getLogText', [Object], { return logText })
             pipeline2ATX = loadScript(scriptName)
 
         when: 'add description of node'
-            List description = pipeline2ATX.createDescription(row)
+            def description = pipeline2ATX.createDescription(row)
 
         then: 'expect a list of strings or empty list'
-            result == description
+            result.equals(description)
 
         where:
-            logText << ['Test', null]
-            result << [['Test'], []]
+            logText << ['Another Test', null, 'Test']
+            error << [false, false, true]
+            result << [['message': 'Another Test', 'error': false], [:], ['message': 'Test', 'error': true]]
     }
 
     def 'Create test step item from row'() {
