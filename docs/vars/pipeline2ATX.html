@@ -212,29 +212,35 @@ if (location.href.indexOf('is-external=true') == -1) {
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>boolean</code></td>
+                            <td class="colLast"><code><strong><a href="#hasNodeErrors(def)">hasNodeErrors</a></strong>(java.lang.Object node)</code><br>Checks if current node has any errors</td>
+                        </tr>
+                        
+                        <tr class="rowColor">
+                            <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#isDescription(def)">isDescription</a></strong>(java.lang.Object row)</code><br>Determines whether the current pipeline step corresponds to a description item.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#isTestStep(def)">isTestStep</a></strong>(java.lang.Object row)</code><br>Determines whether the current pipeline step corresponds to a test step item.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#isTestStepFolder(def)">isTestStepFolder</a></strong>(java.lang.Object row)</code><br>Determines whether the current pipeline step corresponds to a test folder item.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code>null</code></td>
                             <td class="colLast"><code>static&nbsp;void</code></td>
                             <td class="colLast"><code><strong><a href="#main(java.lang.String)">main</a></strong>(java.lang.String[] args)</code><br>Implicit main method for Groovy Scripts</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>static&nbsp;java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#resultToATXVerdict(def)">resultToATXVerdict</a></strong>(java.lang.Object result)</code><br>Maps the given build result to according TEST-GUIDE verdict.</td>
@@ -256,7 +262,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         
                         <tr class="altColor">
                             <td class="colFirst"><code>class groovy.lang.Script</code></td>
-                            <td class="colLast"><code>groovy.lang.Script#evaluate(java.io.File), groovy.lang.Script#evaluate(java.lang.String), groovy.lang.Script#getBinding(), groovy.lang.Script#setBinding(groovy.lang.Binding), groovy.lang.Script#println(java.lang.Object), groovy.lang.Script#println(), groovy.lang.Script#run(java.io.File, [Ljava.lang.String;), groovy.lang.Script#run(), groovy.lang.Script#getProperty(java.lang.String), groovy.lang.Script#setProperty(java.lang.String, java.lang.Object), groovy.lang.Script#print(java.lang.Object), groovy.lang.Script#printf(java.lang.String, java.lang.Object), groovy.lang.Script#printf(java.lang.String, [Ljava.lang.Object;), groovy.lang.Script#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.Script#getMetaClass(), groovy.lang.Script#setMetaClass(groovy.lang.MetaClass), groovy.lang.Script#wait(long), groovy.lang.Script#wait(long, int), groovy.lang.Script#wait(), groovy.lang.Script#equals(java.lang.Object), groovy.lang.Script#toString(), groovy.lang.Script#hashCode(), groovy.lang.Script#getClass(), groovy.lang.Script#notify(), groovy.lang.Script#notifyAll()</code></td>
+                            <td class="colLast"><code>groovy.lang.Script#getBinding(), groovy.lang.Script#setBinding(groovy.lang.Binding), groovy.lang.Script#println(java.lang.Object), groovy.lang.Script#println(), groovy.lang.Script#run(java.io.File, [Ljava.lang.String;), groovy.lang.Script#run(), groovy.lang.Script#getProperty(java.lang.String), groovy.lang.Script#setProperty(java.lang.String, java.lang.Object), groovy.lang.Script#print(java.lang.Object), groovy.lang.Script#printf(java.lang.String, [Ljava.lang.Object;), groovy.lang.Script#printf(java.lang.String, java.lang.Object), groovy.lang.Script#evaluate(java.io.File), groovy.lang.Script#evaluate(java.lang.String), groovy.lang.Script#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.Script#getMetaClass(), groovy.lang.Script#setMetaClass(groovy.lang.MetaClass), groovy.lang.Script#wait(long), groovy.lang.Script#wait(long, int), groovy.lang.Script#wait(), groovy.lang.Script#equals(java.lang.Object), groovy.lang.Script#toString(), groovy.lang.Script#hashCode(), groovy.lang.Script#getClass(), groovy.lang.Script#notify(), groovy.lang.Script#notifyAll()</code></td>
                         </tr>
                         <tr class="altColor">
                             <td class="colFirst"><code>class groovy.lang.GroovyObjectSupport</code></td>
@@ -438,6 +444,17 @@ java.lang.Object <strong>getLogText</strong>(java.lang.Object node)</h4>
  If not specified the current build is used as reference.
  <DL><DT><B>Parameters:</B></DT><DD><code>jobName
 </code> -       the name of the pipeline job</DD></DL><DL><DT><B>Returns:</B></DT><DD>the number of the pipeline build</DD></DL></p>
+                            </li>
+                        </ul>
+                    
+                        <a name="hasNodeErrors(def)"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>@com.cloudbees.groovy.cps.NonCPS
+boolean <strong>hasNodeErrors</strong>(java.lang.Object node)</h4>
+                                <p> Checks if current node has any errors
+ <DL><DT><B>Parameters:</B></DT><DD><code>node
+</code> -       the current node</DD></DL><DL><DT><B>Returns:</B></DT><DD>node has errors as boolean</DD></DL></p>
                             </li>
                         </ul>
                     
