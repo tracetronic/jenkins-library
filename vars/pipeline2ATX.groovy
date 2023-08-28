@@ -470,5 +470,5 @@ def getLogText(node) {
  */
 @NonCPS
 boolean hasNodeErrors(node) {
-    return !node.getError() ? false : true
+    return node.getError() != null
 }
