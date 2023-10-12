@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 TraceTronic GmbH
+ * Copyright (c) 2023 TraceTronic GmbH
  *
  * SPDX-License-Identifier: MIT
  */
@@ -9,7 +9,9 @@ import com.cloudbees.workflow.flownode.FlowNodeUtil
 import groovy.json.JsonBuilder
 import groovy.json.JsonOutput
 import jenkins.model.Jenkins
-import org.jenkinsci.plugins.workflow.actions.LabelAction
+import org.jenkinsci.plugins.workflow.actions.ArgumentsAction
+import org.jenkinsci.plugins.workflow.actions.BodyInvocationAction
+import org.jenkinsci.plugins.workflow.actions.NotExecutedNodeAction
 import org.jenkinsci.plugins.workflow.graph.AtomNode
 import org.jenkinsci.plugins.workflow.graph.BlockStartNode
 import org.jenkinsci.plugins.workflow.support.actions.LogStorageAction
@@ -53,13 +55,14 @@ def call(log = false, jobName = '', int buildNumber = 0) {
     if (log) {
         logText = getConsoleLog(build)
         logFile = "${filename}.log"
-        writeFile file: logFile, text: logText
     }
-
     def json = generateJsonReport(build, attributes, executionSteps, logFile)
     // reset build because it's not serializable
     build = null
 
+    if (logFile) {
+        writeFile file: logFile, text: logText
+    }
     writeJSON file: "${filename}.json", json: json
     zip glob: "${filename}.log, ${filename}.json", zipFile: "${filename}_atx.zip"
 }
@@ -212,9 +215,9 @@ def getExecutionSteps(build, debug) {
     table.build()
 
     // Get start of relevant pipeline steps
-    def topLevelRows = table.getRows().stream().findAll { r -> r.getTreeDepth() == 3 }.toArray()
-    for (FlowGraphTable.Row row : topLevelRows) {
-        def item = crawlRows(row, debug)
+    def Stages = table.getRows().stream().findAll { r -> r.getDisplayName() == "stage" }.toArray()
+    for (FlowGraphTable.Row row : Stages) {
+        def item = crawlRows(row, debug, false)
         if (item) {
             executionTestSteps.add(item)
         }
@@ -234,98 +237,27 @@ def getExecutionSteps(build, debug) {
  * @return the test execution steps of the current table row
  */
 @NonCPS
-def crawlRows(row, debug) {
-    def atxItem = [:]
-    def node = row.getNode()
-    def item
-
-    if (isDescription(row) && debug) {
-        item = createDescription(row)
-    } else if (isTestStep(row) && !node.isActive()) {
-        // Search inside a active stage
-        item = createTestStep(row, debug)
-    } else if (isTestStepFolder(row)) {
-        // Stages might have multiple stages, ignore the active stage
-        item = createTestStepFolder(row, debug)
-    } else {
-        // Pipeline element cannot be mapped to an ATX item, search children and siblings instead
-        def child = row.firstTreeChild
-        while (child) {
-            item = crawlRows(child, debug)
-            child = child.nextTreeSibling
-        }
-    }
-
-    if (item) {
-        if (item instanceof Map) {
-            atxItem.putAll(item)
-        } else {
-            return item
-        }
-    }
-    return atxItem
-}
-
-/**
- * Determines whether the current pipeline step corresponds to a description item.
- *
- * @param row
- *      the current table row
- * @return {@code true} if description, {@code false} otherwise
- */
-@NonCPS
-def isDescription(row) {
-    def node = row.getNode()
-    return (node.getAction(LogStorageAction.class) &&
-            node instanceof AtomNode && !row.firstTreeChild)
-}
-
-/**
- * Determines whether the current pipeline step corresponds to a test step item.
- *
- * @param row
- *      the current table row
- * @return {@code true} if test step, {@code false} otherwise
- */
-@NonCPS
-def isTestStep(row) {
+def crawlRows(row, debug, insideStage=false) {
     def node = row.getNode()
 
-    if (!(node.getAction(LabelAction.class) && node instanceof BlockStartNode)) {
-        return false
+    if (insideStage && row.getDisplayName() == "stage") {
+        // all stages are handled on top-level -> when a stage inside a stage is found stop going down the hierarchy
+        def item = createTestStep(row, false)
+        item["name"] = "creating " + item["name"]
+        return item
+    } else if (node instanceof AtomNode) {
+        // AtomNodes = test steps
+        return createTestStep(row, debug)
+    } else if (node instanceof BlockStartNode) {
+        // blocks = test step folders
+        return createTestStepFolder(row, debug)
     }
-
-    // Stage is parent of step or empty
-    if (!row.firstTreeChild) {
-        return true
-    }
-
-    // Determine node descriptor and verify a script step
-    String scriptDescriptor = row.firstTreeChild.getNode().descriptorId
-    def isScript = scriptDescriptor.endsWith('ScriptStep')
-    if (isDescription(row.firstTreeChild) || isScript) {
-        return true
-    }
-
-    return false
-}
-
-/**
- * Determines whether the current pipeline step corresponds to a test folder item.
- *
- * @param row
- *      the current table row
- * @return {@code true} if test step folder, {@code false} otherwise
- */
-@NonCPS
-def isTestStepFolder(row) {
-    def node = row.getNode()
+    // Pipeline element cannot be mapped to an ATX item -> skip row
     def child = row.firstTreeChild
-    if (!node.getAction(LogStorageAction.class) && node instanceof BlockStartNode) {
-        return (child && !isDescription(child))
-    } else {
-        return false
+    if (child) {
+        return crawlRows(child, debug, insideStage)
     }
+    return [:]
 }
 
 /**
@@ -333,20 +265,37 @@ def isTestStepFolder(row) {
  *
  * @param row
  *      the current table row
- * @return the description as an array
+ * @return the description as a string (with a max length of 120)
  */
 @NonCPS
-def createDescription(row) {
-    def node = row.getNode()
-    Map description = [:]
-    def logText = getLogText(node)
+def getDescription(row) {
+    def allowedSchemaMaxStringLength = 255
 
+    def logText = getLogText(row.getNode())
 
-    if (logText) {
-        description.put("message", logText)
-        description.put("error", hasNodeErrors(node))
+    if (logText.length() > allowedSchemaMaxStringLength) {
+        // Set allowedSchemaMaxStringLength to 117 to be able to concatenate it with "..."
+        return logText.take(allowedSchemaMaxStringLength - 3) + "..."
     }
-    return description
+    return logText
+}
+
+@NonCPS
+def getTestStepName(row) {
+    def allowedSchemaMaxNameLength = 255
+    String name = row.getDisplayName()
+
+    def arguments = ArgumentsAction.getStepArgumentsAsString(row.getNode())
+    if (arguments) {
+        // trim arguments, as it could be a long script
+        arguments = arguments.replaceAll("[\\n\\r\\t]", " ").replaceAll("\\s{2,}", " ")
+        if (arguments.length() > (allowedSchemaMaxNameLength - name.length() - 3)) {
+            arguments = arguments.take(allowedSchemaMaxNameLength - name.length() - 6) + "..."
+        }
+        name = name + " ("+arguments+")"
+    }
+
+    return name
 }
 
 /**
@@ -357,39 +306,27 @@ def createDescription(row) {
  * @return the test step as a map
  */
 @NonCPS
-def createTestStep(row, debug) {
+def createTestStep(row, addLogAsDescription) {
     def node = row.getNode()
     Map testStep = [:]
-    def name = node.getDisplayName()
+    def name = getTestStepName(row)
     def status = FlowNodeUtil.getStatus(node).toString()
     def verdict = resultToATXVerdict(status)
+
+    if (node.getAction(NotExecutedNodeAction.class)) {
+        name = name + "--> skipped"
+        verdict = "NONE"
+    }
 
     testStep.put("@type", "teststep")
     testStep.put("name", name)
     testStep.put("verdict", verdict)
 
-    def child = row.firstTreeChild
-    def description = []
-    while (debug && child) {
-        // Stage might has multiple steps
-        def descriptionItem = crawlRows(child, true)
-        if (descriptionItem) {
-            description.add(descriptionItem.message)
-            if (descriptionItem.error){
-                // overwrite verdict of testStep if pipeline step fails
-                testStep.verdict = resultToATXVerdict("FAILED")
-            }
+    if (addLogAsDescription) {
+        def description = getDescription(row)
+        if (description) {
+            testStep.put("description", description)
         }
-        child = child.nextTreeSibling
-    }
-
-    def allowedSchemaMaxStringLength = 120
-    def testCaseMessage = description.join(";") ?: ""
-    if (testCaseMessage.length() > allowedSchemaMaxStringLength) {
-        // Set allowedSchemaMaxStringLength to 117 to be able to concatenate it with "..."
-        testStep.put("description", testCaseMessage.take(allowedSchemaMaxStringLength-3) + "...")
-    } else {
-        testStep.put("description", "")
     }
     return testStep
 }
@@ -402,29 +339,42 @@ def createTestStep(row, debug) {
  * @return the test step folder as a map
  */
 @NonCPS
-def createTestStepFolder(row, debug) {
-    def node = row.getNode()
+def createTestStepFolder(row, addLogAsDescription) {
     Map testStepFolder = [:]
-    def name = node.getDisplayName()
+    def name = getTestStepName(row)
 
     def child = row.firstTreeChild
+    if (child && child.getNode().getAction(BodyInvocationAction.class) && !(child.nextTreeSibling)) {
+        // there are always two BlockStartNodes stacked. The outer is the actual block, the inner one encapsulates the
+        // body (identified by a BodyInvocationAction. Most of the time a block has just one body, so it does not have
+        // any additional value and can be ignored
+        // One example case for having multiple bodies is a "parallel" block
+        child = child.firstTreeChild
+    }
     def testSteps = []
     while (child) {
-        // Stages might have more than one stage
-        if (crawlRows(child, debug)) {
-            testSteps.add(crawlRows(child, debug))
+        def testStepItem = crawlRows(child, addLogAsDescription, true)
+        if (testStepItem) {
+            testSteps.add(testStepItem)
         }
         child = child.nextTreeSibling
     }
 
-    // Safety downstream handling
+    // if no inner test steps where found, convert row into a test step instead
     if (!testSteps) {
-        return testStepFolder
+        return createTestStep(row, addLogAsDescription)
     }
 
     testStepFolder.put("@type", "teststepfolder")
     testStepFolder.put("name", name)
     testStepFolder.put("teststeps", testSteps)
+
+    if (addLogAsDescription) {
+        def description = getDescription(row)
+        if (description) {
+            testStepFolder.put("description", description)
+        }
+    }
     return testStepFolder
 }
 
@@ -459,16 +409,4 @@ def getLogText(node) {
         }
     }
     return log
-}
-
-/**
- * Checks if current node has any errors
- *
- * @param node
- *      the current node
- * @return node has errors as boolean
- */
-@NonCPS
-boolean hasNodeErrors(node) {
-    return node.getError() != null
 }
