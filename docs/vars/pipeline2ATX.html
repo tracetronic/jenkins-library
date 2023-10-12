@@ -145,50 +145,50 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#crawlRows(def, def)">crawlRows</a></strong>(java.lang.Object row, java.lang.Object debug)</code><br>Crawls the current table row for corresponding test execution step items.
+                            <td class="colLast"><code><strong><a href="#crawlRows(def, def, def)">crawlRows</a></strong>(java.lang.Object row, java.lang.Object debug, java.lang.Object insideStage = false)</code><br>Crawls the current table row for corresponding test execution step items.
  </td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#createDescription(def)">createDescription</a></strong>(java.lang.Object row)</code><br>Create a description from the current pipeline step.</td>
+                            <td class="colLast"><code><strong><a href="#createTestStep(def, def)">createTestStep</a></strong>(java.lang.Object row, java.lang.Object addLogAsDescription)</code><br>Create a test step item from the current pipeline step.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#createTestStep(def, def)">createTestStep</a></strong>(java.lang.Object row, java.lang.Object debug)</code><br>Create a test step item from the current pipeline step.</td>
+                            <td class="colLast"><code><strong><a href="#createTestStepFolder(def, def)">createTestStepFolder</a></strong>(java.lang.Object row, java.lang.Object addLogAsDescription)</code><br>Create a test step folder item from the current pipeline step.</td>
                         </tr>
                         
                         <tr class="altColor">
-                            <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#createTestStepFolder(def, def)">createTestStepFolder</a></strong>(java.lang.Object row, java.lang.Object debug)</code><br>Create a test step folder item from the current pipeline step.</td>
-                        </tr>
-                        
-                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#generateJsonReport(def, def, def, def)">generateJsonReport</a></strong>(java.lang.Object build, java.lang.Object attributes, java.lang.Object executionTestSteps, java.lang.Object logFile)</code><br>Generates a TEST-GUIDE compatible JSON report of the pipeline build.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getBuildAttributes(def)">getBuildAttributes</a></strong>(java.lang.Object build)</code><br>Collects all relevant build information and parameter as a map.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getConsoleLog(def)">getConsoleLog</a></strong>(java.lang.Object build)</code><br>Gets the console log.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getCurrentResult(def)">getCurrentResult</a></strong>(java.lang.Object build)</code><br>Gets the current build result.</td>
+                        </tr>
+                        
+                        <tr class="altColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>java.lang.Object</code></td>
+                            <td class="colLast"><code><strong><a href="#getDescription(def)">getDescription</a></strong>(java.lang.Object row)</code><br>Create a description from the current pipeline step.</td>
                         </tr>
                         
                         <tr class="rowColor">
@@ -212,35 +212,17 @@ if (location.href.indexOf('is-external=true') == -1) {
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>boolean</code></td>
-                            <td class="colLast"><code><strong><a href="#hasNodeErrors(def)">hasNodeErrors</a></strong>(java.lang.Object node)</code><br>Checks if current node has any errors</td>
+                            <td class="colLast"><code>java.lang.Object</code></td>
+                            <td class="colLast"><code><strong><a href="#getTestStepName(def)">getTestStepName</a></strong>(java.lang.Object row)</code><br></td>
                         </tr>
                         
                         <tr class="rowColor">
-                            <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#isDescription(def)">isDescription</a></strong>(java.lang.Object row)</code><br>Determines whether the current pipeline step corresponds to a description item.</td>
-                        </tr>
-                        
-                        <tr class="altColor">
-                            <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#isTestStep(def)">isTestStep</a></strong>(java.lang.Object row)</code><br>Determines whether the current pipeline step corresponds to a test step item.</td>
-                        </tr>
-                        
-                        <tr class="rowColor">
-                            <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#isTestStepFolder(def)">isTestStepFolder</a></strong>(java.lang.Object row)</code><br>Determines whether the current pipeline step corresponds to a test folder item.</td>
-                        </tr>
-                        
-                        <tr class="altColor">
                             <td class="colFirst"><code>null</code></td>
                             <td class="colLast"><code>static&nbsp;void</code></td>
                             <td class="colLast"><code><strong><a href="#main(java.lang.String)">main</a></strong>(java.lang.String[] args)</code><br>Implicit main method for Groovy Scripts</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>static&nbsp;java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#resultToATXVerdict(def)">resultToATXVerdict</a></strong>(java.lang.Object result)</code><br>Maps the given build result to according TEST-GUIDE verdict.</td>
@@ -323,11 +305,11 @@ if (location.href.indexOf('is-external=true') == -1) {
                             </li>
                         </ul>
                     
-                        <a name="crawlRows(def, def)"><!-- --></a>
+                        <a name="crawlRows(def, def, def)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@com.cloudbees.groovy.cps.NonCPS
-java.lang.Object <strong>crawlRows</strong>(java.lang.Object row, java.lang.Object debug)</h4>
+java.lang.Object <strong>crawlRows</strong>(java.lang.Object row, java.lang.Object debug, java.lang.Object insideStage = false)</h4>
                                 <p> Crawls the current table row for corresponding test execution step items.
  Every row checks its child elements and its sibling recursively.
  Only description, test step and test step folder items are considered.
@@ -337,22 +319,11 @@ java.lang.Object <strong>crawlRows</strong>(java.lang.Object row, java.lang.Obje
                             </li>
                         </ul>
                     
-                        <a name="createDescription(def)"><!-- --></a>
-                        <ul class="blockListLast">
-                            <li class="blockList">
-                                <h4>@com.cloudbees.groovy.cps.NonCPS
-java.lang.Object <strong>createDescription</strong>(java.lang.Object row)</h4>
-                                <p> Create a description from the current pipeline step.
- <DL><DT><B>Parameters:</B></DT><DD><code>row
-</code> -       the current table row</DD></DL><DL><DT><B>Returns:</B></DT><DD>the description as an array</DD></DL></p>
-                            </li>
-                        </ul>
-                    
                         <a name="createTestStep(def, def)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@com.cloudbees.groovy.cps.NonCPS
-java.lang.Object <strong>createTestStep</strong>(java.lang.Object row, java.lang.Object debug)</h4>
+java.lang.Object <strong>createTestStep</strong>(java.lang.Object row, java.lang.Object addLogAsDescription)</h4>
                                 <p> Create a test step item from the current pipeline step.
  <DL><DT><B>Parameters:</B></DT><DD><code>row
 </code> -       the current table row</DD></DL><DL><DT><B>Returns:</B></DT><DD>the test step as a map</DD></DL></p>
@@ -363,7 +334,7 @@ java.lang.Object <strong>createTestStep</strong>(java.lang.Object row, java.lang
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@com.cloudbees.groovy.cps.NonCPS
-java.lang.Object <strong>createTestStepFolder</strong>(java.lang.Object row, java.lang.Object debug)</h4>
+java.lang.Object <strong>createTestStepFolder</strong>(java.lang.Object row, java.lang.Object addLogAsDescription)</h4>
                                 <p> Create a test step folder item from the current pipeline step.
  <DL><DT><B>Parameters:</B></DT><DD><code>row
 </code> -       the current table row</DD></DL><DL><DT><B>Returns:</B></DT><DD>the test step folder as a map</DD></DL></p>
@@ -413,6 +384,17 @@ java.lang.Object <strong>createTestStepFolder</strong>(java.lang.Object row, jav
                             </li>
                         </ul>
                     
+                        <a name="getDescription(def)"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>@com.cloudbees.groovy.cps.NonCPS
+java.lang.Object <strong>getDescription</strong>(java.lang.Object row)</h4>
+                                <p> Create a description from the current pipeline step.
+ <DL><DT><B>Parameters:</B></DT><DD><code>row
+</code> -       the current table row</DD></DL><DL><DT><B>Returns:</B></DT><DD>the description as a string (with a max length of 120)</DD></DL></p>
+                            </li>
+                        </ul>
+                    
                         <a name="getExecutionSteps(def, def)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
@@ -447,47 +429,12 @@ java.lang.Object <strong>getLogText</strong>(java.lang.Object node)</h4>
                             </li>
                         </ul>
                     
-                        <a name="hasNodeErrors(def)"><!-- --></a>
+                        <a name="getTestStepName(def)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@com.cloudbees.groovy.cps.NonCPS
-boolean <strong>hasNodeErrors</strong>(java.lang.Object node)</h4>
-                                <p> Checks if current node has any errors
- <DL><DT><B>Parameters:</B></DT><DD><code>node
-</code> -       the current node</DD></DL><DL><DT><B>Returns:</B></DT><DD>node has errors as boolean</DD></DL></p>
-                            </li>
-                        </ul>
-                    
-                        <a name="isDescription(def)"><!-- --></a>
-                        <ul class="blockListLast">
-                            <li class="blockList">
-                                <h4>@com.cloudbees.groovy.cps.NonCPS
-java.lang.Object <strong>isDescription</strong>(java.lang.Object row)</h4>
-                                <p> Determines whether the current pipeline step corresponds to a description item.
- <DL><DT><B>Parameters:</B></DT><DD><code>row
-</code> -       the current table row</DD></DL><DL><DT><B>Returns:</B></DT><DD><CODE>true</CODE> if description, <CODE>false</CODE> otherwise</DD></DL></p>
-                            </li>
-                        </ul>
-                    
-                        <a name="isTestStep(def)"><!-- --></a>
-                        <ul class="blockListLast">
-                            <li class="blockList">
-                                <h4>@com.cloudbees.groovy.cps.NonCPS
-java.lang.Object <strong>isTestStep</strong>(java.lang.Object row)</h4>
-                                <p> Determines whether the current pipeline step corresponds to a test step item.
- <DL><DT><B>Parameters:</B></DT><DD><code>row
-</code> -       the current table row</DD></DL><DL><DT><B>Returns:</B></DT><DD><CODE>true</CODE> if test step, <CODE>false</CODE> otherwise</DD></DL></p>
-                            </li>
-                        </ul>
-                    
-                        <a name="isTestStepFolder(def)"><!-- --></a>
-                        <ul class="blockListLast">
-                            <li class="blockList">
-                                <h4>@com.cloudbees.groovy.cps.NonCPS
-java.lang.Object <strong>isTestStepFolder</strong>(java.lang.Object row)</h4>
-                                <p> Determines whether the current pipeline step corresponds to a test folder item.
- <DL><DT><B>Parameters:</B></DT><DD><code>row
-</code> -       the current table row</DD></DL><DL><DT><B>Returns:</B></DT><DD><CODE>true</CODE> if test step folder, <CODE>false</CODE> otherwise</DD></DL></p>
+java.lang.Object <strong>getTestStepName</strong>(java.lang.Object row)</h4>
+                                <p></p>
                             </li>
                         </ul>
                     
