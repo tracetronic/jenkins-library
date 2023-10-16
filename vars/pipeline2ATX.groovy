@@ -41,7 +41,7 @@ import org.jenkinsci.plugins.workflow.support.visualization.table.FlowGraphTable
  */
 def call(log = false, jobName = '', int buildNumber = 0) {
     def build
-    String logFile
+    def logFile = ''
 
     build = getRawBuild(jobName, buildNumber)
     if (!build) {
@@ -98,7 +98,9 @@ def getBuildAttributes(build) {
     def buildAttributes = [BUILD_URL: buildUrl, BUILD_ID: buildId]
     buildAttributes.putAll(params)
     buildAttributes.each { k, v ->
-        attributes.add([key: k, value: v.toString()])
+        if (v) {
+            attributes.add([key: k, value: v.toString()])
+        }
     }
     return attributes
 }
@@ -202,12 +204,12 @@ static def resultToATXVerdict(result) {
  *
  * @param build
  *      the pipeline build
- * @param debug
- *      the log level
+ * @param appendLogs
+ *      if true, the individual logs of test steps are added in their description field
  * @return the test execution steps of the pipeline build
  */
 @NonCPS
-def getExecutionSteps(build, debug) {
+def getExecutionSteps(build, appendLogs) {
     def executionTestSteps = []
 
     // Table might not exist before execution is finished
@@ -217,7 +219,7 @@ def getExecutionSteps(build, debug) {
     // Get start of relevant pipeline steps
     def Stages = table.getRows().stream().findAll { r -> r.getDisplayName() == "stage" }.toArray()
     for (FlowGraphTable.Row row : Stages) {
-        def item = crawlRows(row, debug, false)
+        def item = crawlRows(row, appendLogs, false)
         if (item) {
             executionTestSteps.add(item)
         }
@@ -232,12 +234,14 @@ def getExecutionSteps(build, debug) {
  *
  * @param row
  *      the current table row
- * @param debug
- *      the log level
+ * @param appendLogs
+ *      if true, the individual logs of test steps are added in their description field
+ * @param insideStage
+ *      flag to indicate that crawling is done inside a stage block
  * @return the test execution steps of the current table row
  */
 @NonCPS
-def crawlRows(row, debug, insideStage=false) {
+def crawlRows(row, appendLogs, insideStage=false) {
     def node = row.getNode()
 
     if (insideStage && row.getDisplayName() == "stage") {
@@ -247,15 +251,15 @@ def crawlRows(row, debug, insideStage=false) {
         return item
     } else if (node instanceof AtomNode) {
         // AtomNodes = test steps
-        return createTestStep(row, debug)
+        return createTestStep(row, appendLogs)
     } else if (node instanceof BlockStartNode) {
         // blocks = test step folders
-        return createTestStepFolder(row, debug)
+        return createTestStepFolder(row, appendLogs)
     }
     // Pipeline element cannot be mapped to an ATX item -> skip row
     def child = row.firstTreeChild
     if (child) {
-        return crawlRows(child, debug, insideStage)
+        return crawlRows(child, appendLogs, insideStage)
     }
     return [:]
 }
@@ -265,7 +269,7 @@ def crawlRows(row, debug, insideStage=false) {
  *
  * @param row
  *      the current table row
- * @return the description as a string (with a max length of 120)
+ * @return the description as a string (with a max length of 255)
  */
 @NonCPS
 def getDescription(row) {
@@ -280,6 +284,12 @@ def getDescription(row) {
     return logText
 }
 
+/**
+ * Creates the test step name by combining the row name with its arguments
+ * @param row
+ *      the current table row
+ * @return the test step name as a string (with a max length of 255)
+ */
 @NonCPS
 def getTestStepName(row) {
     def allowedSchemaMaxNameLength = 255
@@ -303,17 +313,21 @@ def getTestStepName(row) {
  *
  * @param row
  *      the current table row
+ * @param appendLogs
+ *      if true, the logs of row/node are added in the description field
+ * @param skipped
+ *      possibility to mark the test step as skipped (usually for block nodes)
  * @return the test step as a map
  */
 @NonCPS
-def createTestStep(row, addLogAsDescription) {
+def createTestStep(row, appendLogs, skipped = false) {
     def node = row.getNode()
     Map testStep = [:]
     def name = getTestStepName(row)
     def status = FlowNodeUtil.getStatus(node).toString()
     def verdict = resultToATXVerdict(status)
 
-    if (node.getAction(NotExecutedNodeAction.class)) {
+    if (skipped || node.getAction(NotExecutedNodeAction.class)) {
         name = name + "--> skipped"
         verdict = "NONE"
     }
@@ -322,7 +336,7 @@ def createTestStep(row, addLogAsDescription) {
     testStep.put("name", name)
     testStep.put("verdict", verdict)
 
-    if (addLogAsDescription) {
+    if (appendLogs) {
         def description = getDescription(row)
         if (description) {
             testStep.put("description", description)
@@ -336,24 +350,31 @@ def createTestStep(row, addLogAsDescription) {
  *
  * @param row
  *      the current table row
+ * @param appendLogs
+ *      if true, the logs of row/node are added in the description field
  * @return the test step folder as a map
  */
 @NonCPS
-def createTestStepFolder(row, addLogAsDescription) {
+def createTestStepFolder(row, appendLogs) {
     Map testStepFolder = [:]
     def name = getTestStepName(row)
 
     def child = row.firstTreeChild
+    def skipped = false
+    // there are always two BlockStartNodes stacked. The outer is the actual block, the inner one encapsulates the
+    // body (identified by a BodyInvocationAction). Most of the time a block has just one body, so it does not have
+    // any additional value and can be ignored
+    // One example case for having multiple bodies is a "parallel" block
     if (child && child.getNode().getAction(BodyInvocationAction.class) && !(child.nextTreeSibling)) {
-        // there are always two BlockStartNodes stacked. The outer is the actual block, the inner one encapsulates the
-        // body (identified by a BodyInvocationAction. Most of the time a block has just one body, so it does not have
-        // any additional value and can be ignored
-        // One example case for having multiple bodies is a "parallel" block
+        // check if the block was not executed
+        if (child.getNode().getAction(NotExecutedNodeAction.class)) {
+            skipped = true
+        }
         child = child.firstTreeChild
     }
     def testSteps = []
     while (child) {
-        def testStepItem = crawlRows(child, addLogAsDescription, true)
+        def testStepItem = crawlRows(child, appendLogs, true)
         if (testStepItem) {
             testSteps.add(testStepItem)
         }
@@ -361,15 +382,15 @@ def createTestStepFolder(row, addLogAsDescription) {
     }
 
     // if no inner test steps where found, convert row into a test step instead
-    if (!testSteps) {
-        return createTestStep(row, addLogAsDescription)
+    if (!testSteps || skipped) {
+        return createTestStep(row, appendLogs, skipped)
     }
 
     testStepFolder.put("@type", "teststepfolder")
     testStepFolder.put("name", name)
     testStepFolder.put("teststeps", testSteps)
 
-    if (addLogAsDescription) {
+    if (appendLogs) {
         def description = getDescription(row)
         if (description) {
             testStepFolder.put("description", description)
@@ -398,14 +419,14 @@ def getLogText(node) {
         return log
     }
 
-    def logLen = annotated.length();
+    def logLen = annotated.length()
     if (logLen > 0) {
-        def writer = new StringWriter();
+        def writer = new StringWriter()
         try {
-            annotated.writeHtmlTo(0, writer);
-            log = writer.toString();
+            annotated.writeHtmlTo(0, writer)
+            log = writer.toString()
         } catch (e) {
-            println "Error serializing log for ${e}";
+            println "Error serializing log for ${e}"
         }
     }
     return log
