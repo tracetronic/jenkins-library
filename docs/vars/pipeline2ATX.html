@@ -145,20 +145,20 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#crawlRows(def, def, def)">crawlRows</a></strong>(java.lang.Object row, java.lang.Object debug, java.lang.Object insideStage = false)</code><br>Crawls the current table row for corresponding test execution step items.
+                            <td class="colLast"><code><strong><a href="#crawlRows(def, def, def)">crawlRows</a></strong>(java.lang.Object row, java.lang.Object appendLogs, java.lang.Object insideStage = false)</code><br>Crawls the current table row for corresponding test execution step items.
  </td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#createTestStep(def, def)">createTestStep</a></strong>(java.lang.Object row, java.lang.Object addLogAsDescription)</code><br>Create a test step item from the current pipeline step.</td>
+                            <td class="colLast"><code><strong><a href="#createTestStep(def, def, def)">createTestStep</a></strong>(java.lang.Object row, java.lang.Object appendLogs, java.lang.Object skipped = false)</code><br>Create a test step item from the current pipeline step.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#createTestStepFolder(def, def)">createTestStepFolder</a></strong>(java.lang.Object row, java.lang.Object addLogAsDescription)</code><br>Create a test step folder item from the current pipeline step.</td>
+                            <td class="colLast"><code><strong><a href="#createTestStepFolder(def, def)">createTestStepFolder</a></strong>(java.lang.Object row, java.lang.Object appendLogs)</code><br>Create a test step folder item from the current pipeline step.</td>
                         </tr>
                         
                         <tr class="altColor">
@@ -194,7 +194,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#getExecutionSteps(def, def)">getExecutionSteps</a></strong>(java.lang.Object build, java.lang.Object debug)</code><br>Create test execution steps from the current pipeline build.</td>
+                            <td class="colLast"><code><strong><a href="#getExecutionSteps(def, def)">getExecutionSteps</a></strong>(java.lang.Object build, java.lang.Object appendLogs)</code><br>Create test execution steps from the current pipeline build.</td>
                         </tr>
                         
                         <tr class="altColor">
@@ -213,7 +213,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#getTestStepName(def)">getTestStepName</a></strong>(java.lang.Object row)</code><br></td>
+                            <td class="colLast"><code><strong><a href="#getTestStepName(def)">getTestStepName</a></strong>(java.lang.Object row)</code><br>Creates the test step name by combining the row name with its arguments</td>
                         </tr>
                         
                         <tr class="rowColor">
@@ -309,24 +309,27 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@com.cloudbees.groovy.cps.NonCPS
-java.lang.Object <strong>crawlRows</strong>(java.lang.Object row, java.lang.Object debug, java.lang.Object insideStage = false)</h4>
+java.lang.Object <strong>crawlRows</strong>(java.lang.Object row, java.lang.Object appendLogs, java.lang.Object insideStage = false)</h4>
                                 <p> Crawls the current table row for corresponding test execution step items.
  Every row checks its child elements and its sibling recursively.
  Only description, test step and test step folder items are considered.
  <DL><DT><B>Parameters:</B></DT><DD><code>row
-</code> -       the current table row</DD><DD><code>debug
-</code> -       the log level</DD></DL><DL><DT><B>Returns:</B></DT><DD>the test execution steps of the current table row</DD></DL></p>
+</code> -       the current table row</DD><DD><code>appendLogs
+</code> -       if true, the individual logs of test steps are added in their description field</DD><DD><code>insideStage
+</code> -       flag to indicate that crawling is done inside a stage block</DD></DL><DL><DT><B>Returns:</B></DT><DD>the test execution steps of the current table row</DD></DL></p>
                             </li>
                         </ul>
                     
-                        <a name="createTestStep(def, def)"><!-- --></a>
+                        <a name="createTestStep(def, def, def)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@com.cloudbees.groovy.cps.NonCPS
-java.lang.Object <strong>createTestStep</strong>(java.lang.Object row, java.lang.Object addLogAsDescription)</h4>
+java.lang.Object <strong>createTestStep</strong>(java.lang.Object row, java.lang.Object appendLogs, java.lang.Object skipped = false)</h4>
                                 <p> Create a test step item from the current pipeline step.
  <DL><DT><B>Parameters:</B></DT><DD><code>row
-</code> -       the current table row</DD></DL><DL><DT><B>Returns:</B></DT><DD>the test step as a map</DD></DL></p>
+</code> -       the current table row</DD><DD><code>appendLogs
+</code> -       if true, the logs of row/node are added in the description field</DD><DD><code>skipped
+</code> -       possibility to mark the test step as skipped (usually for block nodes)</DD></DL><DL><DT><B>Returns:</B></DT><DD>the test step as a map</DD></DL></p>
                             </li>
                         </ul>
                     
@@ -334,10 +337,11 @@ java.lang.Object <strong>createTestStep</strong>(java.lang.Object row, java.lang
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@com.cloudbees.groovy.cps.NonCPS
-java.lang.Object <strong>createTestStepFolder</strong>(java.lang.Object row, java.lang.Object addLogAsDescription)</h4>
+java.lang.Object <strong>createTestStepFolder</strong>(java.lang.Object row, java.lang.Object appendLogs)</h4>
                                 <p> Create a test step folder item from the current pipeline step.
  <DL><DT><B>Parameters:</B></DT><DD><code>row
-</code> -       the current table row</DD></DL><DL><DT><B>Returns:</B></DT><DD>the test step folder as a map</DD></DL></p>
+</code> -       the current table row</DD><DD><code>appendLogs
+</code> -       if true, the logs of row/node are added in the description field</DD></DL><DL><DT><B>Returns:</B></DT><DD>the test step folder as a map</DD></DL></p>
                             </li>
                         </ul>
                     
@@ -391,7 +395,7 @@ java.lang.Object <strong>createTestStepFolder</strong>(java.lang.Object row, jav
 java.lang.Object <strong>getDescription</strong>(java.lang.Object row)</h4>
                                 <p> Create a description from the current pipeline step.
  <DL><DT><B>Parameters:</B></DT><DD><code>row
-</code> -       the current table row</DD></DL><DL><DT><B>Returns:</B></DT><DD>the description as a string (with a max length of 120)</DD></DL></p>
+</code> -       the current table row</DD></DL><DL><DT><B>Returns:</B></DT><DD>the description as a string (with a max length of 255)</DD></DL></p>
                             </li>
                         </ul>
                     
@@ -399,11 +403,11 @@ java.lang.Object <strong>getDescription</strong>(java.lang.Object row)</h4>
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@com.cloudbees.groovy.cps.NonCPS
-java.lang.Object <strong>getExecutionSteps</strong>(java.lang.Object build, java.lang.Object debug)</h4>
+java.lang.Object <strong>getExecutionSteps</strong>(java.lang.Object build, java.lang.Object appendLogs)</h4>
                                 <p> Create test execution steps from the current pipeline build.
  <DL><DT><B>Parameters:</B></DT><DD><code>build
-</code> -       the pipeline build</DD><DD><code>debug
-</code> -       the log level</DD></DL><DL><DT><B>Returns:</B></DT><DD>the test execution steps of the pipeline build</DD></DL></p>
+</code> -       the pipeline build</DD><DD><code>appendLogs
+</code> -       if true, the individual logs of test steps are added in their description field</DD></DL><DL><DT><B>Returns:</B></DT><DD>the test execution steps of the pipeline build</DD></DL></p>
                             </li>
                         </ul>
                     
@@ -434,7 +438,9 @@ java.lang.Object <strong>getLogText</strong>(java.lang.Object node)</h4>
                             <li class="blockList">
                                 <h4>@com.cloudbees.groovy.cps.NonCPS
 java.lang.Object <strong>getTestStepName</strong>(java.lang.Object row)</h4>
-                                <p></p>
+                                <p> Creates the test step name by combining the row name with its arguments
+ <DL><DT><B>Parameters:</B></DT><DD><code>row
+</code> -       the current table row</DD></DL><DL><DT><B>Returns:</B></DT><DD>the test step name as a string (with a max length of 255)</DD></DL></p>
                             </li>
                         </ul>
                     
