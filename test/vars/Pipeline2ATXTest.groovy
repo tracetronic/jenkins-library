@@ -5,8 +5,15 @@
  */
 
 import com.cloudbees.workflow.flownode.FlowNodeUtil
+import groovy.mock.interceptor.MockFor
 import groovy.testSupport.PipelineSpockTestBase
 import hudson.console.AnnotatedLargeText
+import hudson.model.Build
+import hudson.model.Job
+import hudson.model.Project
+import hudson.model.Result
+import hudson.model.Run
+import org.jenkinsci.plugins.workflow.actions.BodyInvocationAction
 import org.jenkinsci.plugins.workflow.actions.LabelAction
 import org.jenkinsci.plugins.workflow.cps.CpsFlowExecution
 import org.jenkinsci.plugins.workflow.cps.nodes.StepStartNode
@@ -15,6 +22,7 @@ import org.jenkinsci.plugins.workflow.graph.BlockStartNode
 import org.jenkinsci.plugins.workflow.graph.FlowNode
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor
 import org.jenkinsci.plugins.workflow.support.actions.LogStorageAction
+import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 import org.jenkinsci.plugins.workflow.support.visualization.table.FlowGraphTable
 
 class Pipeline2ATXTest extends PipelineSpockTestBase {
@@ -44,21 +52,62 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             result = getAttributes()
     }
 
-    def 'Get current build result'() {
-        given: 'a build'
-            def currentBuild = binding.getVariable('currentBuild')
-            currentBuild['getResult'] = { return 'FAILED' }
-            currentBuild['isInProgress'] = { return inProgress }
+    def 'Create json report'() {
+        given: 'needed arguments'
+            def build = GroovyMock(Run)
+            def parent = Mock(Project)
+            parent.getDisplayName() >> 'UnitTests'
+            parent.getDescription() >> 'My Description'
+            build.getParent() >> parent
+            build.getTimeInMillis() >> 123456000
+            build.getStartTimeInMillis() >> 123457000
 
-        when: 'get current build result'
-            def result = pipeline2ATX.getCurrentResult(currentBuild)
+            def attributes = [[key: 'testkey', value: 'testvalue']]
+            def teststeps = [['@type':'teststep']]
 
-        then: 'expect the current build result depends on progress status'
-            result == 'FAILED'
+            helper.registerAllowedMethod('getCurrentResult', [Object], {'SUCCESS'})
+            pipeline2ATX = loadScript(scriptName)
+
+        when: 'get json from input'
+            String result = pipeline2ATX.generateJsonReport(build, attributes, teststeps, logfile)
+
+        then: 'expect to find the values in the json'
+            result.contains('"name": "JenkinsPipeline"')
+            result.contains('"@type": "testcase"')
+            result.contains('"name": "UnitTests"')  // test testcase name
+            result.contains('"verdict": "PASSED"')
+            result.contains('"timestamp": 123457000')
+            result.contains('"executionTime": 1')
+            result.contains('"key": "testkey"')  // test attributes
+            result.contains('"@type": "teststep"') // test teststeps
+            if (logfile) {  // test artifacts
+                result.contains('"artifacts":')
+                result.contains(logfile)
+            }
 
         where:
-            // ToDo: implement the rainy day
-            inProgress = false
+            logfile << ["log.file", ""]
+
+    }
+
+    def 'Get current build result'() {
+        given: 'a build'
+            def build = Mock(Build)
+            build.isInProgress() >> inProgress
+            build.getResult() >> Result.SUCCESS
+            build.getExternalizableId() >> "test#123"
+            RunWrapper.metaClass.getCurrentResult = {return 'FAILED'}
+
+        when: 'get current build result'
+            def result = pipeline2ATX.getCurrentResult(build)
+
+        then: 'expect the current build result depends on progress status'
+            result == exectedResult
+
+        where:
+            inProgress | exectedResult
+            true       | 'FAILED'
+            false      | 'SUCCESS'
     }
 
     def 'Get console log'() {
@@ -91,178 +140,101 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             'INVALID'  | 'NONE'
     }
 
-    def 'Test row corresponds to description'() {
-        given: 'a description row with node'
-            def node
-            if (atomNode) {
-                node = Mock(AtomNode)
-            } else {
-                node = Mock(BlockStartNode)
-            }
-            def row = new FlowGraphTable.Row(node)
-            node.getAction(_) >> logStorage
-            row.getNode() >> node
-            if (child) {
-                row.firstTreeChild = row
-            } else {
-                row.firstTreeChild = null
-            }
-
-        when: 'check row is description'
-            Boolean description = pipeline2ATX.isDescription(row)
-
-        then: 'expect is a description'
-            description == result
-
-        where:
-            atomNode | logStorage             | child | result
-            true     | Mock(LogStorageAction) | false | true
-            false    | Mock(LogStorageAction) | false | false
-            true     | null                   | false | false
-            true     | Mock(LogStorageAction) | true  | false
-    }
-
-    def 'Test row corresponds to test step'() {
-        given: 'a testStep row with node'
-            def stepDescriptor = Mock(StepDescriptor)
-            stepDescriptor.getId() >> script
-            def stepStart = new StepStartNode(Mock(CpsFlowExecution),
-                    stepDescriptor, Mock(FlowNode))
-            def node
-            if (startNode) {
-                node = Mock(StepStartNode)
-            } else {
-                node = Mock(AtomNode)
-            }
-            def row = new FlowGraphTable.Row(node)
-            def childRow = new FlowGraphTable.Row(stepStart)
-            node.getAction(_) >> label
-            row.getNode() >> node
-            if (child) {
-                row.firstTreeChild = childRow
-            } else {
-                row.firstTreeChild = null
-            }
-            helper.registerAllowedMethod('isDescription', [Object],
-                    { return description })
-            pipeline2ATX = loadScript(scriptName)
-
-        when: 'check row is testStep'
-            Boolean testStep = pipeline2ATX.isTestStep(row)
-
-        then: 'expect is a testStep'
-            testStep == result
-
-        where:
-            startNode | label                  | child | script         | description | result
-            true      | Mock(LabelAction)      | true  | 'EchoStep'     | false       | false
-            true      | Mock(LabelAction)      | true  | 'EchoStep'     | true        | true
-            true      | Mock(LabelAction)      | true  | 'ScriptStep'   | false       | true
-            true      | Mock(LabelAction)      | false | 'EchoStep'     | false       | true
-            true      | Mock(LogStorageAction) | true  | 'EchoStep'     | false       | false
-            false     | Mock(LabelAction)      | true  | 'EchoStep'     | false       | false
-    }
-
-    def 'Test row corresponds to test step folder'() {
-        given: 'a testStepFolder row with node'
-            def node
-            if (startNode) {
-                node = Mock(StepStartNode)
-            } else {
-                node = Mock(AtomNode)
-            }
-            def row = new FlowGraphTable.Row(node)
-            node.getAction(_) >> logStorage
-            row.getNode() >> node
-            row.firstTreeChild = child
-
-            helper.registerAllowedMethod('isDescription', [Object],
-                    { return description })
-            pipeline2ATX = loadScript(scriptName)
-
-        when: 'check row is testStepFolder'
-            Boolean testStepFolder = pipeline2ATX.isTestStepFolder(row)
-
-        then: 'expect is a testStepFolder'
-            result == testStepFolder
-
-        where:
-            startNode | logStorage             | child                    | description | result
-            true      | null                   | Mock(FlowGraphTable.Row) | false       | true
-            false     | null                   | Mock(FlowGraphTable.Row) | false       | false
-            true      | Mock(LogStorageAction) | Mock(FlowGraphTable.Row) | false       | false
-            true      | null                   | null                     | false       | false
-            true      | null                   | Mock(FlowGraphTable.Row) | true        | false
-    }
-
-    def 'Create description item from row'() {
+    def 'Get description from row'() {
         given: 'a description row with node'
             def node = Mock(FlowNode)
             def row = Mock(FlowGraphTable.Row)
             row.getNode() >> node
 
-            helper.registerAllowedMethod('hasNodeErrors', [Object], { return error })
             helper.registerAllowedMethod('getLogText', [Object], { return logText })
             pipeline2ATX = loadScript(scriptName)
 
         when: 'add description of node'
-            def description = pipeline2ATX.createDescription(row)
+            def description = pipeline2ATX.getDescription(row)
 
-        then: 'expect a list of strings or empty list'
-            result.equals(description)
+        then: 'expect a string with max length 120 or empty string'
+            description.length() <= 120
+            result == description
 
         where:
-            logText << ['Another Test', null, 'Test']
-            error << [false, false, true]
-            result << [['message': 'Another Test', 'error': false], [:], ['message': 'Test', 'error': true]]
+            logText << ['Short test description', 'x'*150, '']
+            result << ['Short test description', 'x'*117+'...', '']
     }
 
     def 'Create test step item from row'() {
-        // TODO: Add child and sibling test blocked by https://github.com/jenkinsci/JenkinsPipelineUnit/issues/337
         given: 'a row with node'
-            def node = Mock(FlowNode)
+            def node = Mock(AtomNode)
             def row = new FlowGraphTable.Row(node)
-            def childRow = new FlowGraphTable.Row(node)
-            def siblingRow = new FlowGraphTable.Row(node)
-            def testStepMap = getTestStep(false, false)
-            def description = [getTestStep(false, false).get('description')]
-            node.getDisplayName() >> testStepMap['name']
 
             FlowNodeUtil.metaClass.static.getStatus = { FlowNode n -> 'SUCCESS' }
-            siblingRow.nextTreeSibling = null
-            childRow.nextTreeSibling = null
-
-            row.getNode() >> node
-            row.firstTreeChild = null
-
-            helper.registerAllowedMethod('resultToATXVerdict', [Object], { return testStepMap['verdict'] })
-            // this won't work
-            helper.registerAllowedMethod('crawlRows', [Object, Boolean], { return description })
+            helper.registerAllowedMethod('getTestStepName', [Object], { return tsName })
+            helper.registerAllowedMethod('getDescription', [Object], { return logText })
             pipeline2ATX = loadScript(scriptName)
 
         when: 'create a testStep'
-            Map result = pipeline2ATX.createTestStep(row, false)
+            Map result = pipeline2ATX.createTestStep(row, addLogs, skipped)
 
         then: 'expect a testStep map'
-            getTestStep(false, false) == result
+            result['@type'] == 'teststep'
+            result['name'] == expectedName
+            result['verdict'] == expectedVerdict
+            result.containsKey('description') == hasDesciption
+            if (hasDesciption) {
+                result['description'] == logText
+            }
+
+        where:
+            tsName  | addLogs | skipped | logText         | expectedName        | hasDesciption | expectedVerdict
+            "stage" | true    | false   | "this is a log" | "stage"             | true          | 'PASSED'
+            "stage" | false   | false   | "this is a log" | "stage"             | false         | 'PASSED'
+            "stage" | true    | true    | ""              | "stage --> skipped" | false         | 'NONE'
     }
 
     def 'Create test step folder from row'() {
         // TODO: Add child test blocked by https://github.com/jenkinsci/JenkinsPipelineUnit/issues/337
         given: 'a row with node'
-            def node = Mock(FlowNode)
-            def row = new FlowGraphTable.Row(node)
-            def childRow = new FlowGraphTable.Row(node)
-            node.getDisplayName() >> 'testStepFolder'
+            def outerNode = Mock(BlockStartNode)
+            def outerRow = new FlowGraphTable.Row(outerNode)
+            def innerNode = Mock(BlockStartNode)
+            def innerRow = new FlowGraphTable.Row(innerNode)
+            innerNode.getAction(BodyInvocationAction.class) >> new BodyInvocationAction()
 
-            row.getNode() >> node
-            row.firstTreeChild = null
+            outerRow.firstTreeChild = innerRow
+            innerRow.firstTreeChild = new FlowGraphTable.Row(outerNode)
+            if (multiInnerBlock) {
+                innerRow.nextTreeSibling = new FlowGraphTable.Row(innerNode)
+            }
+            helper.registerAllowedMethod("crawlRows", [Object, Object, Object],
+                    {arg1, arg2, arg3 -> if (crawlSuccess) {return ['@type':'dummy']} else { return null }})
+            helper.registerAllowedMethod('getTestStepName', [Object], { return 'foldertest' })
+            helper.registerAllowedMethod('getDescription', [Object], { return logText })
+            helper.registerAllowedMethod('createTestStep', [Object, Object, Object],
+                    {arg1, arg2, arg3 -> return ['@type':'teststep']})
+            pipeline2ATX = loadScript(scriptName)
 
         when: 'create a testStepFolder'
-            Map result = pipeline2ATX.createTestStepFolder(row, false)
+            Map result = pipeline2ATX.createTestStepFolder(outerRow, appendLogs)
 
         then: 'expect a testStepFolder map'
-            result == [:]
+            if (crawlSuccess) {
+                result['@type'] == 'teststepfolder'
+                result['name'] == 'foldertest'
+                result['teststeps'].size() == expectedTestSteps
+                result.containsKey('description') == expectDesciption
+                if (expectDesciption) {
+                    result['description'] == logText
+                }
+            } else {
+                result['@type'] == 'teststep'
+            }
+
+        where:
+            multiInnerBlock | crawlSuccess | logText | appendLogs | expectDesciption | expectedTestSteps
+            false           | true         | "log"   | true       | true             | 1
+            false           | false        | "log"   | false      | false            | 0
+            true            | true         | "log"   | false      | false            | 2
+            false           | true         | ""      | true       | false            | 1
+
     }
 
     def 'Get log text from pipeline step'() {
@@ -304,24 +276,5 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
         build['rawBuild'] = 'rawBuild'
 
         return build
-    }
-
-    private Map getTestStep(Boolean description, Boolean sibling) {
-        Map testStep = [:]
-        String text = ""
-
-        testStep.put("@type", "teststep")
-        testStep.put("name", "testStep")
-        testStep.put("verdict", "PASSED")
-
-        if (description) {
-            text = "Test description"
-            if (sibling) {
-                text = [text, text].join("")
-            }
-        }
-        testStep.put("description", text)
-
-        return testStep
     }
 }

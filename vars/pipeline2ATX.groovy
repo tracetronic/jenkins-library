@@ -273,7 +273,7 @@ def crawlRows(row, appendLogs, insideStage=false) {
  */
 @NonCPS
 def getDescription(row) {
-    def allowedSchemaMaxStringLength = 255
+    def allowedSchemaMaxStringLength = 120
 
     def logText = getLogText(row.getNode())
 
@@ -328,7 +328,7 @@ def createTestStep(row, appendLogs, skipped = false) {
     def verdict = resultToATXVerdict(status)
 
     if (skipped || node.getAction(NotExecutedNodeAction.class)) {
-        name = name + "--> skipped"
+        name = name + " --> skipped"
         verdict = "NONE"
     }
 
