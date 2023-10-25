@@ -292,7 +292,7 @@ def getDescription(row) {
  */
 @NonCPS
 def getTestStepName(row) {
-    def allowedSchemaMaxNameLength = 255
+    def allowedSchemaMaxNameLength = 120
     String name = row.getDisplayName()
 
     def arguments = ArgumentsAction.getStepArgumentsAsString(row.getNode())

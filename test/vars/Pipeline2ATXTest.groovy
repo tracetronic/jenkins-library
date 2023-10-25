@@ -5,22 +5,18 @@
  */
 
 import com.cloudbees.workflow.flownode.FlowNodeUtil
-import groovy.mock.interceptor.MockFor
 import groovy.testSupport.PipelineSpockTestBase
 import hudson.console.AnnotatedLargeText
 import hudson.model.Build
-import hudson.model.Job
 import hudson.model.Project
 import hudson.model.Result
 import hudson.model.Run
+import org.jenkinsci.plugins.workflow.job.WorkflowRun
+import org.jenkinsci.plugins.workflow.actions.ArgumentsAction
 import org.jenkinsci.plugins.workflow.actions.BodyInvocationAction
-import org.jenkinsci.plugins.workflow.actions.LabelAction
-import org.jenkinsci.plugins.workflow.cps.CpsFlowExecution
-import org.jenkinsci.plugins.workflow.cps.nodes.StepStartNode
 import org.jenkinsci.plugins.workflow.graph.AtomNode
 import org.jenkinsci.plugins.workflow.graph.BlockStartNode
 import org.jenkinsci.plugins.workflow.graph.FlowNode
-import org.jenkinsci.plugins.workflow.steps.StepDescriptor
 import org.jenkinsci.plugins.workflow.support.actions.LogStorageAction
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 import org.jenkinsci.plugins.workflow.support.visualization.table.FlowGraphTable
@@ -140,6 +136,95 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             'INVALID'  | 'NONE'
     }
 
+    def 'Get execution steps'() {
+        given:
+            def build = GroovyMock(WorkflowRun)
+            def rows = []
+            ['stage', 'stage', 'nostage', 'parallel','stage','test'].each {name ->
+                def row = Mock(FlowGraphTable.Row)
+                row.getDisplayName() >> name
+                rows.add(row)
+            }
+            FlowGraphTable.metaClass.getRows = {return rows}
+            // use the appendLogs flag to change behavior and test different paths of the function
+            helper.registerAllowedMethod("crawlRows", [Object, Object, Object], {arg1, arg2, arg3 ->
+                if (arg2) {return ['@type':'dummy']}; return [:]
+            })
+            pipeline2ATX = loadScript(scriptName)
+
+        when:
+            def result = pipeline2ATX.getExecutionSteps(build, appendLogs)
+
+        then:
+            result.size() == expectedSize
+
+        where:
+            appendLogs << [true, false]
+            expectedSize << [3, 0]
+
+    }
+
+    def 'Crawl a row with direct match'() {
+        given:
+            def row = Mock(FlowGraphTable.Row)
+            row.getNode() >> node
+            row.getDisplayName() >> name
+
+            helper.registerAllowedMethod('createTestStep', [Object, Object], { row1, arg2 ->
+                return ['@type': 'teststep', 'name': row1.getDisplayName()]
+            })
+            helper.registerAllowedMethod('createTestStepFolder', [Object, Object], { row1, arg2 ->
+                return ['@type': 'teststepfolder', 'name': row1.getDisplayName()]
+            })
+            pipeline2ATX = loadScript(scriptName)
+
+        when:
+            def result = pipeline2ATX.crawlRows(row, false, insideStage)
+
+        then:
+            result.size() == 2
+            result['name'] == expectedName
+            result['@type'] == expectedType
+
+        where:
+            node | name | insideStage | expectedName | expectedType
+            Mock(AtomNode) | "stage" | true | "creating stage" | "teststep"
+            Mock(BlockStartNode) | "stage" | true | "creating stage" | "teststep"
+            Mock(AtomNode) | "parallel" | true | "parallel" | "teststep"
+            Mock(BlockStartNode) | "stage" | false | "stage" | "teststepfolder"
+    }
+
+    def 'Crawl a row - edge cases'() {
+        given:
+            def outerRow = new FlowGraphTable.Row(Mock(FlowNode))
+            def innerRow = Mock(FlowGraphTable.Row)
+            innerRow.getNode() >> Mock(AtomNode)
+            innerRow.getDisplayName() >> "bat"
+
+            if (stack) {
+                outerRow.firstTreeChild = innerRow
+            }
+
+            helper.registerAllowedMethod('createTestStep', [Object, Object], { row1, arg2 ->
+                return ['@type': 'teststep', 'name': row1.getDisplayName()]
+            })
+            pipeline2ATX = loadScript(scriptName)
+
+        when:
+            def result = pipeline2ATX.crawlRows(outerRow, false, false)
+
+        then:
+            result.size() == expectedSize
+            if (expectedSize > 0) {
+                result['name'] == 'bat'
+                result['@type'] == 'teststep'
+            }
+
+        where:
+            stack << [true, false]
+            expectedSize << [2, 0]
+    }
+
     def 'Get description from row'() {
         given: 'a description row with node'
             def node = Mock(FlowNode)
@@ -149,7 +234,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             helper.registerAllowedMethod('getLogText', [Object], { return logText })
             pipeline2ATX = loadScript(scriptName)
 
-        when: 'add description of node'
+        when: 'get description of node'
             def description = pipeline2ATX.getDescription(row)
 
         then: 'expect a string with max length 120 or empty string'
@@ -159,6 +244,27 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
         where:
             logText << ['Short test description', 'x'*150, '']
             result << ['Short test description', 'x'*117+'...', '']
+    }
+
+    def 'Get TestStep Name from row'() {
+        given: 'A row opionally with arguments'
+            def node = Mock(AtomNode)
+            def row = new FlowGraphTable.Row(node)
+            node.getDisplayFunctionName() >> 'testnode'
+
+            ArgumentsAction.metaClass.static.getStepArgumentsAsString = {FlowNode n -> return arguments}
+
+        when: 'get step name of row'
+            String result = pipeline2ATX.getTestStepName(row)
+
+        then: 'result is the expected string'
+            result == expectedResult
+        where:
+            arguments                                       | expectedResult
+            ''                                              | 'testnode'
+            'short'                                         | 'testnode (short)'
+            'x' * 150                                       | 'testnode (' + 'x' * 106 + '...)'
+            ' ' * 10 + '\t' * 10 + '\n' * 10 + 'stripped  ' | 'testnode ( stripped )'
     }
 
     def 'Create test step item from row'() {
