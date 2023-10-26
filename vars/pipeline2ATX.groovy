@@ -297,12 +297,12 @@ def getTestStepName(row) {
 
     def arguments = ArgumentsAction.getStepArgumentsAsString(row.getNode())
     if (arguments) {
-        // trim arguments, as it could be a long script
-        arguments = arguments.replaceAll("[\\n\\r\\t]", " ").replaceAll("\\s{2,}", " ")
-        if (arguments.length() > (allowedSchemaMaxNameLength - name.length() - 3)) {
-            arguments = arguments.take(allowedSchemaMaxNameLength - name.length() - 6) + "..."
-        }
-        name = name + " ("+arguments+")"
+        arguments = arguments.replaceAll(/\s+/, ' ').trim()
+
+        def maxArgumentLength = allowedSchemaMaxNameLength - name.length() - 6
+        arguments = arguments.length() > maxArgumentLength ? arguments.take(maxArgumentLength) + "..." : arguments
+
+        name = "$name ($arguments)"
     }
 
     return name

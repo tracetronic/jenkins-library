@@ -49,7 +49,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
     }
 
     def 'Create json report'() {
-        given: 'needed arguments'
+        given: 'all needed information to create a report'
             def build = GroovyMock(Run)
             def parent = Mock(Project)
             parent.getDisplayName() >> 'UnitTests'
@@ -64,10 +64,10 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             helper.registerAllowedMethod('getCurrentResult', [Object], {'SUCCESS'})
             pipeline2ATX = loadScript(scriptName)
 
-        when: 'get json from input'
+        when: 'json string is generated'
             String result = pipeline2ATX.generateJsonReport(build, attributes, teststeps, logfile)
 
-        then: 'expect to find the values in the json'
+        then: 'expect to find the values in the json string'
             result.contains('"name": "JenkinsPipeline"')
             result.contains('"@type": "testcase"')
             result.contains('"name": "UnitTests"')  // test testcase name
@@ -87,7 +87,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
     }
 
     def 'Get current build result'() {
-        given: 'a build'
+        given: 'a build that will have FAILED result when its in progress and SUCCESS when already finished'
             def build = Mock(Build)
             build.isInProgress() >> inProgress
             build.getResult() >> Result.SUCCESS
@@ -137,7 +137,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
     }
 
     def 'Get execution steps'() {
-        given:
+        given: 'a list of rows with different display names'
             def build = GroovyMock(WorkflowRun)
             def rows = []
             ['stage', 'stage', 'nostage', 'parallel','stage','test'].each {name ->
@@ -152,10 +152,10 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             })
             pipeline2ATX = loadScript(scriptName)
 
-        when:
+        when: 'list of rows is evaluated'
             def result = pipeline2ATX.getExecutionSteps(build, appendLogs)
 
-        then:
+        then: 'result has the size of the number of `stage` rows that return a nonempty crawl result'
             result.size() == expectedSize
 
         where:
@@ -165,7 +165,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
     }
 
     def 'Crawl a row with direct match'() {
-        given:
+        given: 'A row with a specific node type and display name'
             def row = Mock(FlowGraphTable.Row)
             row.getNode() >> node
             row.getDisplayName() >> name
@@ -178,24 +178,24 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             })
             pipeline2ATX = loadScript(scriptName)
 
-        when:
+        when: 'row is crawled'
             def result = pipeline2ATX.crawlRows(row, false, insideStage)
 
-        then:
+        then: 'the correct atx item is returned'
             result.size() == 2
             result['name'] == expectedName
             result['@type'] == expectedType
 
         where:
-            node | name | insideStage | expectedName | expectedType
-            Mock(AtomNode) | "stage" | true | "creating stage" | "teststep"
-            Mock(BlockStartNode) | "stage" | true | "creating stage" | "teststep"
-            Mock(AtomNode) | "parallel" | true | "parallel" | "teststep"
-            Mock(BlockStartNode) | "stage" | false | "stage" | "teststepfolder"
+            node                 | name       | insideStage | expectedName     | expectedType
+            Mock(AtomNode)       | "stage"    | true        | "creating stage" | "teststep"
+            Mock(BlockStartNode) | "stage"    | true        | "creating stage" | "teststep"
+            Mock(AtomNode)       | "parallel" | true        | "parallel"       | "teststep"
+            Mock(BlockStartNode) | "stage"    | false       | "stage"          | "teststepfolder"
     }
 
     def 'Crawl a row - edge cases'() {
-        given:
+        given: 'A undefined row with or without a crawlable child row'
             def outerRow = new FlowGraphTable.Row(Mock(FlowNode))
             def innerRow = Mock(FlowGraphTable.Row)
             innerRow.getNode() >> Mock(AtomNode)
@@ -210,10 +210,10 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             })
             pipeline2ATX = loadScript(scriptName)
 
-        when:
+        when: 'row is crawled'
             def result = pipeline2ATX.crawlRows(outerRow, false, false)
 
-        then:
+        then: 'crawl result of the child row or an empty result is returned'
             result.size() == expectedSize
             if (expectedSize > 0) {
                 result['name'] == 'bat'
@@ -247,7 +247,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
     }
 
     def 'Get TestStep Name from row'() {
-        given: 'A row opionally with arguments'
+        given: 'A row optionally with arguments'
             def node = Mock(AtomNode)
             def row = new FlowGraphTable.Row(node)
             node.getDisplayFunctionName() >> 'testnode'
@@ -259,12 +259,13 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
 
         then: 'result is the expected string'
             result == expectedResult
+
         where:
             arguments                                       | expectedResult
             ''                                              | 'testnode'
             'short'                                         | 'testnode (short)'
             'x' * 150                                       | 'testnode (' + 'x' * 106 + '...)'
-            ' ' * 10 + '\t' * 10 + '\n' * 10 + 'stripped  ' | 'testnode ( stripped )'
+            ' ' * 10 + '\t' * 10 + '\n' * 10 + 'stripped  ' | 'testnode (stripped)'
     }
 
     def 'Create test step item from row'() {
@@ -297,7 +298,6 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
     }
 
     def 'Create test step folder from row'() {
-        // TODO: Add child test blocked by https://github.com/jenkinsci/JenkinsPipelineUnit/issues/337
         given: 'a row with node'
             def outerNode = Mock(BlockStartNode)
             def outerRow = new FlowGraphTable.Row(outerNode)
