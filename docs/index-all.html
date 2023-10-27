@@ -148,12 +148,10 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block">Process management for Windows (via Powershell) and Linux (via Shell).</div></dd>
 <dt><span class="strong"><a href="vars/cmd.html" title="Script in cmd">cmd</a></span> - Script in <a href="./cmd/package-summary.html">cmd</a>
 </dt><dd><div class="block"></div></dd>
-<dt><span class="strong"><a href="vars/pipeline2ATX.html#crawlRows(def, def)" title="Method in pipeline2ATX">crawlRows(def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
+<dt><span class="strong"><a href="vars/pipeline2ATX.html#crawlRows(def, def, def)" title="Method in pipeline2ATX">crawlRows(def, def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
 </dt><dd> <div class="block">Crawls the current table row for corresponding test execution step items.
  </div></dd>
-<dt><span class="strong"><a href="vars/pipeline2ATX.html#createDescription(def)" title="Method in pipeline2ATX">createDescription(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">Create a description from the current pipeline step.</div></dd>
-<dt><span class="strong"><a href="vars/pipeline2ATX.html#createTestStep(def, def)" title="Method in pipeline2ATX">createTestStep(def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
+<dt><span class="strong"><a href="vars/pipeline2ATX.html#createTestStep(def, def, def)" title="Method in pipeline2ATX">createTestStep(def, def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
 </dt><dd> <div class="block">Create a test step item from the current pipeline step.</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#createTestStepFolder(def, def)" title="Method in pipeline2ATX">createTestStepFolder(def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
 </dt><dd> <div class="block">Create a test step folder item from the current pipeline step.</div></dd>
@@ -205,6 +203,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block">Gets the console log.</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getCurrentResult(def)" title="Method in pipeline2ATX">getCurrentResult(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
 </dt><dd> <div class="block">Gets the current build result.</div></dd>
+<dt><span class="strong"><a href="vars/pipeline2ATX.html#getDescription(def)" title="Method in pipeline2ATX">getDescription(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
+</dt><dd> <div class="block">Create a description from the current pipeline step.</div></dd>
 <dt><span class="strong"><a href="vars/log.html#getEscapeCode()" title="Method in log">getEscapeCode()</a></span> - Method in <a href="vars/log.html">log</a>
 </dt><dd> <div class="block">Returns the ANSI escape sequence code.</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getExecutionSteps(def, def)" title="Method in pipeline2ATX">getExecutionSteps(def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
@@ -222,6 +222,8 @@ if (location.href.indexOf('is-external=true') == -1) {
  </div></dd>
 <dt><span class="strong"><a href="vars/log.html#getStyleCode(java.lang.String)" title="Method in log">getStyleCode(String)</a></span> - Method in <a href="vars/log.html">log</a>
 </dt><dd> <div class="block">Returns the ANSI code for a given style.</div></dd>
+<dt><span class="strong"><a href="vars/pipeline2ATX.html#getTestStepName(def)" title="Method in pipeline2ATX">getTestStepName(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
+</dt><dd> <div class="block">Creates the test step name by combining the row name with its arguments</div></dd>
 </dl>
 
     
@@ -229,8 +231,6 @@ if (location.href.indexOf('is-external=true') == -1) {
 <h2 class="title">H</h2>
 <dl>
 
-<dt><span class="strong"><a href="vars/pipeline2ATX.html#hasNodeErrors(def)" title="Method in pipeline2ATX">hasNodeErrors(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">Checks if current node has any errors</div></dd>
 </dl>
 
     
@@ -240,14 +240,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 
 <dt><span class="strong"><a href="vars/log.html#info(java.lang.String)" title="Method in log">info(String)</a></span> - Method in <a href="vars/log.html">log</a>
 </dt><dd> <div class="block">Prints a formatted informative logging message to console output.</div></dd>
-<dt><span class="strong"><a href="vars/pipeline2ATX.html#isDescription(def)" title="Method in pipeline2ATX">isDescription(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">Determines whether the current pipeline step corresponds to a description item.</div></dd>
 <dt><span class="strong"><a href="vars/task.html#isRunning(java.lang.String)" title="Method in task">isRunning(String)</a></span> - Method in <a href="vars/task.html">task</a>
 </dt><dd> <div class="block">Checks whether a process is still running.</div></dd>
-<dt><span class="strong"><a href="vars/pipeline2ATX.html#isTestStep(def)" title="Method in pipeline2ATX">isTestStep(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">Determines whether the current pipeline step corresponds to a test step item.</div></dd>
-<dt><span class="strong"><a href="vars/pipeline2ATX.html#isTestStepFolder(def)" title="Method in pipeline2ATX">isTestStepFolder(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">Determines whether the current pipeline step corresponds to a test folder item.</div></dd>
 </dl>
 
     
