@@ -50,13 +50,14 @@ def call(log = false, jobName = '', int buildNumber = 0) {
 
     def filename = "${build.getParent().getDisplayName()}_${build.getNumber()}"
     def attributes = getBuildAttributes(build)
+    def constants = getBuildConstants(build)
     def executionSteps = getExecutionSteps(build, log)
 
     if (log) {
         logText = getConsoleLog(build)
         logFile = "${filename}.log"
     }
-    def json = generateJsonReport(build, attributes, executionSteps, logFile)
+    def json = generateJsonReport(build, attributes, constants, executionSteps, logFile)
     // reset build because it's not serializable
     build = null
 
@@ -93,9 +94,11 @@ def getRawBuild(String jobName, int buildNumber) {
  */
 def getBuildAttributes(build) {
     def attributes = []
-    def buildUrl = build.absoluteUrl
-    def buildId = build.id
-    def buildAttributes = [BUILD_URL: buildUrl, BUILD_ID: buildId]
+    def buildAttributes = [PRODUCT_VERSION: "${PRODUCT_VERSION}".toString(), 
+                           GIT_URL: "${GIT_URL}".toString(), 
+                           JENKINS_PIPELINE: build.getDisplayName(), 
+                           JENKINS_URL: build.getAbsoluteUrl(), 
+                           JENKINS_WORKSPACE: "${WORKSPACE}".toString()]
     buildAttributes.putAll(params)
     buildAttributes.each { k, v ->
         if (v) {
@@ -103,6 +106,29 @@ def getBuildAttributes(build) {
         }
     }
     return attributes
+}
+
+/**
+ * Collects all relevant build information and parameter as a map for constant.
+ *
+ * @param build
+ *      the pipeline raw build
+ * @return the collected build information and parameters
+ */
+def getBuildConstants(build) {
+    def constants = []
+    def buildConstants = [PRODUCT_NAME: "${PRODUCT_NAME}".toString(),
+                          GIT_COMMIT: "${GIT_COMMIT}".toString(),
+                          JENKINS_BUILD_ID: build.id,
+                          JENKINS_EXECUTOR_NUMBER: "${EXECUTOR_NUMBER}".toString(),
+                          JENKINS_NODE_NAME: "${NODE_NAME}".toString()]
+    buildConstants.putAll(params)
+    buildConstants.each { k, v ->
+        if (v) {
+            constants.add([key: k, value: v.toString()])
+        }
+    }
+    return constants
 }
 
 /**
@@ -118,7 +144,7 @@ def getBuildAttributes(build) {
  *      the log file name if per-step logging is enabled
  * @return the formatted JSON report
  */
-def generateJsonReport(build, attributes, executionTestSteps, logFile) {
+def generateJsonReport(build, attributes, constants, executionTestSteps, logFile) {
     Map testcase = [:]
 
     testcase.put("@type", "testcase")
@@ -131,6 +157,7 @@ def generateJsonReport(build, attributes, executionTestSteps, logFile) {
     if (logFile) {
         testcase.put("artifacts", [logFile])
     }
+    testcase.put("constants", constants)
     testcase.put("executionTestSteps", executionTestSteps)
     def testCases = [testcase]
 
