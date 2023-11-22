@@ -164,7 +164,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#generateJsonReport(def, def, def, def)">generateJsonReport</a></strong>(java.lang.Object build, java.lang.Object attributes, java.lang.Object executionTestSteps, java.lang.Object logFile)</code><br>Generates a TEST-GUIDE compatible JSON report of the pipeline build.</td>
+                            <td class="colLast"><code><strong><a href="#generateJsonReport(def, def, def, def, def)">generateJsonReport</a></strong>(java.lang.Object build, java.lang.Object attributes, java.lang.Object constants, java.lang.Object executionTestSteps, java.lang.Object logFile)</code><br>Generates a TEST-GUIDE compatible JSON report of the pipeline build.</td>
                         </tr>
                         
                         <tr class="rowColor">
@@ -176,53 +176,59 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#getConsoleLog(def)">getConsoleLog</a></strong>(java.lang.Object build)</code><br>Gets the console log.</td>
+                            <td class="colLast"><code><strong><a href="#getBuildConstants(def)">getBuildConstants</a></strong>(java.lang.Object build)</code><br>Collects all relevant build information and parameter as a map for constant.</td>
                         </tr>
                         
                         <tr class="rowColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>java.lang.Object</code></td>
+                            <td class="colLast"><code><strong><a href="#getConsoleLog(def)">getConsoleLog</a></strong>(java.lang.Object build)</code><br>Gets the console log.</td>
+                        </tr>
+                        
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getCurrentResult(def)">getCurrentResult</a></strong>(java.lang.Object build)</code><br>Gets the current build result.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getDescription(def)">getDescription</a></strong>(java.lang.Object row)</code><br>Create a description from the current pipeline step.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getExecutionSteps(def, def)">getExecutionSteps</a></strong>(java.lang.Object build, java.lang.Object appendLogs)</code><br>Create test execution steps from the current pipeline build.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getLogText(def)">getLogText</a></strong>(java.lang.Object node)</code><br>Get the log of a node.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getRawBuild(java.lang.String, int)">getRawBuild</a></strong>(java.lang.String jobName, int buildNumber)</code><br>Gets the pipeline raw build by given job name and build number,.
  </td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getTestStepName(def)">getTestStepName</a></strong>(java.lang.Object row)</code><br>Creates the test step name by combining the row name with its arguments</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code>null</code></td>
                             <td class="colLast"><code>static&nbsp;void</code></td>
                             <td class="colLast"><code><strong><a href="#main(java.lang.String)">main</a></strong>(java.lang.String[] args)</code><br>Implicit main method for Groovy Scripts</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>static&nbsp;java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#resultToATXVerdict(def)">resultToATXVerdict</a></strong>(java.lang.Object result)</code><br>Maps the given build result to according TEST-GUIDE verdict.</td>
@@ -345,10 +351,10 @@ java.lang.Object <strong>createTestStepFolder</strong>(java.lang.Object row, jav
                             </li>
                         </ul>
                     
-                        <a name="generateJsonReport(def, def, def, def)"><!-- --></a>
+                        <a name="generateJsonReport(def, def, def, def, def)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>java.lang.Object <strong>generateJsonReport</strong>(java.lang.Object build, java.lang.Object attributes, java.lang.Object executionTestSteps, java.lang.Object logFile)</h4>
+                                <h4>java.lang.Object <strong>generateJsonReport</strong>(java.lang.Object build, java.lang.Object attributes, java.lang.Object constants, java.lang.Object executionTestSteps, java.lang.Object logFile)</h4>
                                 <p> Generates a TEST-GUIDE compatible JSON report of the pipeline build.
  <DL><DT><B>Parameters:</B></DT><DD><code>build
 </code> -       the pipeline build</DD><DD><code>attributes
@@ -363,6 +369,16 @@ java.lang.Object <strong>createTestStepFolder</strong>(java.lang.Object row, jav
                             <li class="blockList">
                                 <h4>java.lang.Object <strong>getBuildAttributes</strong>(java.lang.Object build)</h4>
                                 <p> Collects all relevant build information and parameter as a map.
+ <DL><DT><B>Parameters:</B></DT><DD><code>build
+</code> -       the pipeline raw build</DD></DL><DL><DT><B>Returns:</B></DT><DD>the collected build information and parameters</DD></DL></p>
+                            </li>
+                        </ul>
+                    
+                        <a name="getBuildConstants(def)"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>java.lang.Object <strong>getBuildConstants</strong>(java.lang.Object build)</h4>
+                                <p> Collects all relevant build information and parameter as a map for constant.
  <DL><DT><B>Parameters:</B></DT><DD><code>build
 </code> -       the pipeline raw build</DD></DL><DL><DT><B>Returns:</B></DT><DD>the collected build information and parameters</DD></DL></p>
                             </li>
