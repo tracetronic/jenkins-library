@@ -30,7 +30,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
         pipeline2ATX = loadScript(scriptName)
     }
 
-    def 'Collect build attributes and parameters'() {
+    def 'Collect build attributes'() {
         given: 'a build'
             def build = binding.getVariable('currentBuild')
             def buildProps = getCurrentBuild()
@@ -48,6 +48,23 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             result = getAttributes()
     }
 
+    def 'Collect build constants'() {
+        given: 'a build'
+            def build = binding.getVariable('currentBuild')
+            def buildProps = getCurrentBuild()
+            build['id'] = buildProps.get('id')
+            build['absoluteUrl'] = buildProps.get('url')
+            addParam(result.last().get('key'), result.last().get('value'))
+
+        when: 'collect the build constants'
+            List constants = pipeline2ATX.getBuildConstants(build)
+
+        then: 'expect a attributes list with build information'
+            result == constants
+
+        where:
+            result = getConstants()
+    
     def 'Create json report'() {
         given: 'all needed information to create a report'
             def build = GroovyMock(Run)
@@ -58,23 +75,27 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             build.getTimeInMillis() >> 123456000
             build.getStartTimeInMillis() >> 123457000
 
-            def attributes = [[key: 'testkey', value: 'testvalue']]
+            def attributes = [[key: 'testAttr', value: 'testAttrValue']]
+            def constants = [[key: 'testConst', value: 'testConstValue']]
             def teststeps = [['@type':'teststep']]
 
             helper.registerAllowedMethod('getCurrentResult', [Object], {'SUCCESS'})
             pipeline2ATX = loadScript(scriptName)
 
         when: 'json string is generated'
-            String result = pipeline2ATX.generateJsonReport(build, attributes, teststeps, logfile)
+            String result = pipeline2ATX.generateJsonReport(build, attributes, constants, teststeps, logfile)
 
         then: 'expect to find the values in the json string'
-            result.contains('"name": "JenkinsPipeline"')
+            result.contains('"name": "JenkinsPipeline"') // TODO: Wrong value. Why the test is working?
             result.contains('"@type": "testcase"')
             result.contains('"name": "UnitTests"')  // test testcase name
             result.contains('"verdict": "PASSED"')
             result.contains('"timestamp": 123457000')
             result.contains('"executionTime": 1')
-            result.contains('"key": "testkey"')  // test attributes
+            result.contains('"key": "testAttr"')  // test attributes
+            result.contains('"value": "testAttrValue')
+            result.contains('"key": "testConst"')  // test constants
+            result.contains('"value": "testConstValue')
             result.contains('"@type": "teststep"') // test teststeps
             if (logfile) {  // test artifacts
                 result.contains('"artifacts":')
@@ -372,6 +393,24 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
 
         return [['key':'BUILD_URL', 'value':build.get('url')],
                 ['key':'BUILD_ID', 'value':build.get('id').toString()],
+                ['key':'PRODUCT_VERSION', 'value':'1.2.3'],
+                ['key':'GIT_URL', 'value':'https://mygit/blub'],
+                ['key':'JENKINS_PIPELINE', 'value':build.getDisplayName()],
+                ['key':'JENKINS_URL', 'value':build.getAbsoluteUrl()],
+                ['key':'JENKINS_WORKSPACE', 'value':'TEST'],
+                ['key':'testParam', 'value':'241543903']]
+    }
+
+    private List getConstants() {
+        def build = getCurrentBuild()
+
+        return [['key':'BUILD_URL', 'value':build.get('url')],
+                ['key':'BUILD_ID', 'value':build.get('id').toString()],
+                ['key':'PRODUCT_VERSION', 'value':'1.2.3'],
+                ['key':'GIT_URL', 'value':'https://mygit/blub'],
+                ['key':'JENKINS_PIPELINE', 'value':build.getDisplayName()],
+                ['key':'JENKINS_URL', 'value':build.getAbsoluteUrl()],
+                ['key':'JENKINS_WORKSPACE', 'value':'TEST'],
                 ['key':'testParam', 'value':'241543903']]
     }
 
