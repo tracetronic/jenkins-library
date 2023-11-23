@@ -32,12 +32,12 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
 
     def 'Collect build attributes'() {
         given: 'a build'
-            def build = binding.getVariable('currentBuild')
-            def buildProps = getCurrentBuild()
-            build['id'] = buildProps.get('id')
-            build['absoluteUrl'] = buildProps.get('url')
-            addParam(result.last().get('key'), result.last().get('value'))
-
+            def build = GroovyMock(Run) // Run object, because Build does not have the method "getAbsoluteUrl"
+            build.getDisplayName() >> 'TestBuild'
+            build.getAbsoluteUrl() >> 'https://testurl'
+            def jenkinsEnvVars = [PRODUCT_VERSION: '1.2.3', 
+                                  GIT_URL: 'https://mygit/blub',
+                                  JENKINS_WORKSPACE: 'C:/ws/TestBuild/build42']
         when: 'collect the build attributes'
             List attributes = pipeline2ATX.getBuildAttributes(build)
 
@@ -45,7 +45,27 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             result == attributes
 
         where:
-            result = getAttributes()
+            result = [['key':'PRODUCT_VERSION', 'value':'1.2.3'],
+                      ['key':'GIT_URL', 'value':'https://mygit/blub'],
+                      ['key':'JENKINS_PIPELINE', 'value':'TestBuild'],
+                      ['key':'JENKINS_URL', 'value':'https://testurl'],
+                      ['key':'JENKINS_WORKSPACE', 'value':'C:/ws/TestBuild/build42']]
+    }
+
+    def 'Collect build attributes - missing env vars'() {
+        given: 'a build'
+            def build = GroovyMock(Run) // Run object, because Build does not have the method "getAbsoluteUrl"
+            build.getDisplayName() >> 'TestBuild'
+            build.getAbsoluteUrl() >> 'https://testurl'
+        when: 'collect the build attributes'
+            List attributes = pipeline2ATX.getBuildAttributes(build)
+
+        then: 'expect a attributes list with build information'
+            result == attributes
+
+        where:
+            result = [['key':'JENKINS_PIPELINE', 'value':'TestBuild'],
+                      ['key':'JENKINS_URL', 'value':'https://testurl']]
     }
 
     def 'Collect build constants'() {
@@ -113,7 +133,6 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             def build = Mock(Build)
             build.isInProgress() >> inProgress
             build.getResult() >> Result.SUCCESS
-            build.getExternalizableId() >> "test#123"
             RunWrapper.metaClass.getCurrentResult = {return 'FAILED'}
 
         when: 'get current build result'
@@ -387,32 +406,6 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             Mock(LogStorageAction)  | Mock(AnnotatedLargeText)  | 0
             Mock(LogStorageAction)  | null                      | 0
             null                    | null                      | 0
-    }
-
-    private List getAttributes() {
-        def build = getCurrentBuild()
-
-        return [['key':'BUILD_URL', 'value':build.get('url')],
-                ['key':'BUILD_ID', 'value':build.get('id').toString()],
-                ['key':'PRODUCT_VERSION', 'value':'1.2.3'],
-                ['key':'GIT_URL', 'value':'https://mygit/blub'],
-                ['key':'JENKINS_PIPELINE', 'value':build.getDisplayName()],
-                ['key':'JENKINS_URL', 'value':build.getAbsoluteUrl()],
-                ['key':'JENKINS_WORKSPACE', 'value':'TEST'],
-                ['key':'testParam', 'value':'241543903']]
-    }
-
-    private List getConstants() {
-        def build = getCurrentBuild()
-
-        return [['key':'BUILD_URL', 'value':build.get('url')],
-                ['key':'BUILD_ID', 'value':build.get('id').toString()],
-                ['key':'PRODUCT_VERSION', 'value':'1.2.3'],
-                ['key':'GIT_URL', 'value':'https://mygit/blub'],
-                ['key':'JENKINS_PIPELINE', 'value':build.getDisplayName()],
-                ['key':'JENKINS_URL', 'value':build.getAbsoluteUrl()],
-                ['key':'JENKINS_WORKSPACE', 'value':'TEST'],
-                ['key':'testParam', 'value':'241543903']]
     }
 
     private Map getCurrentBuild() {
