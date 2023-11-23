@@ -64,6 +64,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
 
         where:
             result = getConstants()
+    }
     
     def 'Create json report'() {
         given: 'all needed information to create a report'
