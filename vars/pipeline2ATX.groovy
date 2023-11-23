@@ -94,12 +94,11 @@ def getRawBuild(String jobName, int buildNumber) {
  */
 def getBuildAttributes(build) {
     def attributes = []
-    def buildAttributes = [PRODUCT_VERSION: "${PRODUCT_VERSION}".toString(), 
-                           GIT_URL: "${GIT_URL}".toString(), 
+    def buildAttributes = [PRODUCT_VERSION: System.getenv("PRODUCT_VERSION"), 
+                           GIT_URL: System.getenv("GIT_URL"), 
                            JENKINS_PIPELINE: build.getDisplayName(), 
                            JENKINS_URL: build.getAbsoluteUrl(), 
-                           JENKINS_WORKSPACE: "${WORKSPACE}".toString()]
-    buildAttributes.putAll(params)
+                           JENKINS_WORKSPACE: System.getenv("WORKSPACE")]
     buildAttributes.each { k, v ->
         if (v) {
             attributes.add([key: k, value: v.toString()])
@@ -117,12 +116,11 @@ def getBuildAttributes(build) {
  */
 def getBuildConstants(build) {
     def constants = []
-    def buildConstants = [PRODUCT_NAME: "${PRODUCT_NAME}".toString(),
-                          GIT_COMMIT: "${GIT_COMMIT}".toString(),
+    def buildConstants = [PRODUCT_NAME: System.getenv("PRODUCT_NAME"),
+                          GIT_COMMIT: System.getenv("GIT_COMMIT"),
                           JENKINS_BUILD_ID: build.id,
-                          JENKINS_EXECUTOR_NUMBER: "${EXECUTOR_NUMBER}".toString(),
-                          JENKINS_NODE_NAME: "${NODE_NAME}".toString()]
-    buildConstants.putAll(params)
+                          JENKINS_EXECUTOR_NUMBER: System.getenv("EXECUTOR_NUMBER"),
+                          JENKINS_NODE_NAME: System.getenv("NODE_NAME")]
     buildConstants.each { k, v ->
         if (v) {
             constants.add([key: k, value: v.toString()])
