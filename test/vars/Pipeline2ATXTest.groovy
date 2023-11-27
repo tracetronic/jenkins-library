@@ -30,16 +30,20 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
         pipeline2ATX = loadScript(scriptName)
     }
 
+    //@RestoreSystemProperties
     def 'Collect build attributes'() {
         given: 'a build'
-            def build = GroovyMock(Run) // Run object, because Build does not have the method "getAbsoluteUrl"
+            def build = GroovyMock(Run) // Run, because Build does not have the method "getAbsoluteUrl"
             build.getDisplayName() >> 'TestBuild'
             build.getAbsoluteUrl() >> 'https://testurl'
-            def jenkinsEnvVars = [PRODUCT_VERSION: '1.2.3', 
-                                  GIT_URL: 'https://mygit/blub',
-                                  JENKINS_WORKSPACE: 'C:/ws/TestBuild/build42']
-        when: 'collect the build attributes'
+
+            addEnvVar('PRODUCT_VERSION', '1.2.3')
+            addEnvVar('GIT_URL', 'https://mygit/blub')
+            addEnvVar('WORKSPACE', 'C:/ws/TestBuild/build42')
+
+        when: 'collect the build attributes'       
             List attributes = pipeline2ATX.getBuildAttributes(build)
+                       
 
         then: 'expect a attributes list with build information'
             result == attributes
@@ -70,11 +74,14 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
 
     def 'Collect build constants'() {
         given: 'a build'
-            def build = binding.getVariable('currentBuild')
-            def buildProps = getCurrentBuild()
-            build['id'] = buildProps.get('id')
-            build['absoluteUrl'] = buildProps.get('url')
-            addParam(result.last().get('key'), result.last().get('value'))
+            def build = GroovyMock(Run)
+            build.id >> 42
+            
+            addEnvVar('PRODUCT_NAME', 'testProd')
+            addEnvVar('GIT_COMMIT', 'gitCommit')
+            addEnvVar('EXECUTOR_NUMBER', '0815')
+            addEnvVar('NODE_NAME', 'Runner0815')
+
 
         when: 'collect the build constants'
             List constants = pipeline2ATX.getBuildConstants(build)
@@ -83,9 +90,27 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             result == constants
 
         where:
-            result = getConstants()
+            result = [['key':'PRODUCT_NAME', 'value':'testProd'],
+                      ['key':'GIT_COMMIT', 'value':'gitCommit'],
+                      ['key':'JENKINS_BUILD_ID', 'value':'42'],
+                      ['key':'JENKINS_EXECUTOR_NUMBER', 'value':'0815'],
+                      ['key':'JENKINS_NODE_NAME', 'value':'Runner0815']]
     }
     
+    def 'Collect build constants - missing env vars'() {
+        given: 'a build'
+            def build = GroovyMock(Run)
+            build.id >> 42
+
+        when: 'collect the build constants'
+            List constants = pipeline2ATX.getBuildConstants(build)
+
+        then: 'expect a attributes list with build information'
+            result == constants
+
+        where:
+            result = [['key':'JENKINS_BUILD_ID', 'value':'42']]
+    }
     def 'Create json report'() {
         given: 'all needed information to create a report'
             def build = GroovyMock(Run)
