@@ -94,11 +94,12 @@ def getRawBuild(String jobName, int buildNumber) {
  */
 def getBuildAttributes(build) {
     def attributes = []
-    def buildAttributes = [PRODUCT_VERSION: env.PRODUCT_VERSION,
+    def buildAttributes = [PRODUCT_NAME: env.PRODUCT_NAME,
                            GIT_URL: env.GIT_URL, 
                            JENKINS_PIPELINE: build.getDisplayName(), 
-                           JENKINS_URL: build.getAbsoluteUrl(), 
-                           JENKINS_WORKSPACE: env.WORKSPACE]
+                           JENKINS_URL: build.getAbsoluteUrl(),
+                           JENKINS_WORKSPACE: env.WORKSPACE,
+                           TEST_LEVEL: env.TEST_LEVEL]
     buildAttributes.each { k, v ->
         if (v) {
             attributes.add([key: k, value: v.toString()])
@@ -116,7 +117,7 @@ def getBuildAttributes(build) {
  */
 def getBuildConstants(build) {
     def constants = []
-    def buildConstants = [PRODUCT_NAME: env.PRODUCT_NAME,
+    def buildConstants = [PRODUCT_VERSION: env.PRODUCT_VERSION,
                           GIT_COMMIT: env.GIT_COMMIT,
                           JENKINS_BUILD_ID: build.id,
                           JENKINS_EXECUTOR_NUMBER: env.EXECUTOR_NUMBER,
