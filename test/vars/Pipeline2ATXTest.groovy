@@ -37,9 +37,10 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             build.getDisplayName() >> 'TestBuild'
             build.getAbsoluteUrl() >> 'https://testurl'
 
-            addEnvVar('PRODUCT_VERSION', '1.2.3')
+            addEnvVar('PRODUCT_NAME', 'testProd')
             addEnvVar('GIT_URL', 'https://mygit/blub')
             addEnvVar('WORKSPACE', 'C:/ws/TestBuild/build42')
+            addEnvVar('TEST_LEVEL', 'Unit Test')
 
         when: 'collect the build attributes'       
             List attributes = pipeline2ATX.getBuildAttributes(build)
@@ -49,11 +50,12 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             result == attributes
 
         where:
-            result = [['key':'PRODUCT_VERSION', 'value':'1.2.3'],
+            result = [['key':'PRODUCT_NAME', 'value':'testProd'],
                       ['key':'GIT_URL', 'value':'https://mygit/blub'],
                       ['key':'JENKINS_PIPELINE', 'value':'TestBuild'],
                       ['key':'JENKINS_URL', 'value':'https://testurl'],
-                      ['key':'JENKINS_WORKSPACE', 'value':'C:/ws/TestBuild/build42']]
+                      ['key':'JENKINS_WORKSPACE', 'value':'C:/ws/TestBuild/build42'],
+                      ['key':'TEST_LEVEL', 'value':'Unit Test']]
     }
 
     def 'Collect build attributes - missing env vars'() {
@@ -77,7 +79,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             def build = GroovyMock(Run)
             build.id >> 42
             
-            addEnvVar('PRODUCT_NAME', 'testProd')
+            addEnvVar('PRODUCT_VERSION', '1.2.3')
             addEnvVar('GIT_COMMIT', 'gitCommit')
             addEnvVar('EXECUTOR_NUMBER', '0815')
             addEnvVar('NODE_NAME', 'Runner0815')
@@ -90,7 +92,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             result == constants
 
         where:
-            result = [['key':'PRODUCT_NAME', 'value':'testProd'],
+            result = [['key':'PRODUCT_VERSION', 'value':'1.2.3'],
                       ['key':'GIT_COMMIT', 'value':'gitCommit'],
                       ['key':'JENKINS_BUILD_ID', 'value':'42'],
                       ['key':'JENKINS_EXECUTOR_NUMBER', 'value':'0815'],
