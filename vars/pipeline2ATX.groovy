@@ -27,10 +27,23 @@ import org.jenkinsci.plugins.workflow.support.visualization.table.FlowGraphTable
  * </br>
  * <b>Prerequisite:</b>
  * <ul>
- *<li><a href="https://plugins.jenkins.io/pipeline-utility-steps/">Pipeline Utility Steps Plugin</a></li>
- *<li><a href="https://plugins.jenkins.io/pipeline-stage-view/">Pipeline Stage View Plugin</a></li>
- *</ul>
- *
+ * <li><a href="https://plugins.jenkins.io/pipeline-utility-steps/">Pipeline Utility Steps Plugin</a></li>
+ * <li><a href="https://plugins.jenkins.io/pipeline-stage-view/">Pipeline Stage View Plugin</a></li>
+ * </ul>
+ * <b>Additional test case information:</b>
+ * <ul>
+ * <li>Test case attribute "PRODUCT_NAME" with the name of the software product (only added, if the environment variable "PRODUCT_NAME" is specified).</li>
+ * <li>Test case attribute "TEST_LEVEL" with the name of the corresponding test level (only added, if the environment variable "TEST_LEVEL" is specified).</li>
+ * <li>Test case attribute "GIT_URL" with the url of the git repository (automatically added by using the Jenkins Plugin "Git", or explicitly added if the environment variable "GIT_URL" is specified).</li>
+ * <li>Test case attribute "JENKINS_PIPELINE" with the name of the current jenkins pipeline.</li>
+ * <li>Test case attribute "JENKINS_URL" with the url to the current jenkins pipeline job.</li>
+ * <li>Test case attribute "JENKINS_WORKSPACE" with the path to the current jenkins workspace.</li>
+ * <li>Test case constant "PRODUCT_VERSION" with the version string of the product (only added, if the environment variable "PRODUCT_VERSION" is specified).</li>
+ * <li>Test case constant "GIT_COMMIT" with the version string of the product (automatically added by using the Jenkins Plugin "Git", or explicitly added if the environment variable "GIT_COMMIT" is specified).</li>
+ * <li>Test case constant "JENKINS_BUILD_ID" with the build number of the current jenkins pipeline.</li>
+ * <li>Test case constant "JENKINS_EXECUTOR_NUMBER" with the number that identifies the jenkins executor.</li>
+ * <li>Test case constant "JENKINS_NODE_NAME" with the name of the node the current build is running on.</li>
+ * </ul>
  * @param log
  *      <code>true</code>: each step log is passed to the test step description
  *      <code>false</code>: only the log file will be archived (optional and default)
@@ -86,11 +99,17 @@ def getRawBuild(String jobName, int buildNumber) {
 }
 
 /**
- * Collects all relevant build information and parameter as a map.
- *
+ * Collects all relevant build information and parameter as a key-value-map:
+ * - PRODUCT_NAME (content of the env var PRODUCT_NAME, only added if present)
+ * - GIT_URL (content of env var GIT_URL, only added if present)
+ * - JENKINS_PIPELINE (name of the current Jenkins build job)
+ * - JENKINS_URL (url to the current Jenkins build job)
+ * - JENKINS_WORKSPACE (path to the Jenkins pipeline workspace)
+ * - TEST_LEVEL (content of env var TEST_LEVEL, only added if present)
+ * 
  * @param build
  *      the pipeline raw build
- * @return the collected build information and parameters
+ * @return the collected build information and parameters in ATX attribute format 
  */
 def getBuildAttributes(build) {
     def attributes = []
@@ -109,11 +128,16 @@ def getBuildAttributes(build) {
 }
 
 /**
- * Collects all relevant build information and parameter as a map for constant.
+ * Collects all relevant build information and parameter as a key-value-map:
+ * - PRODUCT_VERSION (content of env var PRODUCT_VERSION, only added if present)
+ * - GIT_COMMIT (content of env var GIT_COMMIT, only added if present)
+ * - JENKINS_BUILD_ID (number of current Jenkins build)
+ * - JENKINS_EXECUTOR_NUMBER (number of currecnt Jenkins executor)
+ * - JENKINS_NODE_NAME (name of current node the current build is running on)
  *
  * @param build
  *      the pipeline raw build
- * @return the collected build information and parameters
+ * @return the collected build information and parameters in ATX constants format 
  */
 def getBuildConstants(build) {
     def constants = []
