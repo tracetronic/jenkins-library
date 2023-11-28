@@ -5,9 +5,21 @@ The report is compressed as a zip file within the build workspace and can be upl
 <ul>
 <li><a href="https://plugins.jenkins.io/pipeline-utility-steps/">Pipeline Utility Steps Plugin</a></li>
 <li><a href="https://plugins.jenkins.io/pipeline-stage-view/">Pipeline Stage View Plugin</a></li>
-<li>Environment variable "TEST_LEVEL" with a string of the corresponding test level</li>
-<li>Environment variable "PRODUCT_NAME" with the name of the software product</li>
-<li>Environment variable "PRODUCT_VERSION" with the version number of the software product</li>
+</ul>
+</br>
+<b>Additional test case information:</b>
+<ul>
+<li>Test case attribute "PRODUCT_NAME" with the name of the software product (only added, if the environment variable "PRODUCT_NAME" is specified).</li>
+<li>Test case attribute "TEST_LEVEL" with the name of the corresponding test level (only added, if the environment variable "TEST_LEVEL" is specified).</li>
+<li>Test case attribute "GIT_URL" with the url of the git repository (automatically added by using the Jenkins Plugin "Git", or explicitly added if the environment variable "GIT_URL" is specified).</li>
+<li>Test case attribute "JENKINS_PIPELINE" with the name of the current jenkins pipeline.</li>
+<li>Test case attribute "JENKINS_URL" with the url to the current jenkins pipeline job.</li>
+<li>Test case attribute "JENKINS_WORKSPACE" with the path to the current jenkins workspace.</li>
+<li>Test case constant "PRODUCT_VERSION" with the version string of the product (only added, if the environment variable "PRODUCT_VERSION" is specified).</li>
+<li>Test case constant "GIT_COMMIT" with the version string of the product (automatically added by using the Jenkins Plugin "Git", or explicitly added if the environment variable "GIT_COMMIT" is specified).</li>
+<li>Test case constant "JENKINS_BUILD_ID" with the build number of the current jenkins pipeline.</li>
+<li>Test case constant "JENKINS_EXECUTOR_NUMBER" with the number that identifies the jenkins executor.</li>
+<li>Test case constant "JENKINS_NODE_NAME" with the name of the node the current build is running on.</li>
 </ul>
 <p></p>
 <dl>
