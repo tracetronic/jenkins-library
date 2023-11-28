@@ -196,9 +196,20 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#generateJsonReport(def, def, def, def, def)" title="Method in pipeline2ATX">generateJsonReport(def, def, def, def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
 </dt><dd> <div class="block">Generates a TEST-GUIDE compatible JSON report of the pipeline build.</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getBuildAttributes(def)" title="Method in pipeline2ATX">getBuildAttributes(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">Collects all relevant build information and parameter as a map.</div></dd>
+</dt><dd> <div class="block">Collects all relevant build information and parameter as a key-value-map:
+ - PRODUCT_NAME (content of the env var PRODUCT_NAME, only added if present)
+ - GIT_URL (content of env var GIT_URL, only added if present)
+ - JENKINS_PIPELINE (name of the current Jenkins build job)
+ - JENKINS_URL (url to the current Jenkins build job)
+ - JENKINS_WORKSPACE (path to the Jenkins pipeline workspace)
+ - TEST_LEVEL (content of env var TEST_LEVEL, only added if present)</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getBuildConstants(def)" title="Method in pipeline2ATX">getBuildConstants(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">Collects all relevant build information and parameter as a map for constant.</div></dd>
+</dt><dd> <div class="block">Collects all relevant build information and parameter as a key-value-map:
+ - PRODUCT_VERSION (content of env var PRODUCT_VERSION, only added if present)
+ - GIT_COMMIT (content of env var GIT_COMMIT, only added if present)
+ - JENKINS_BUILD_ID (number of current Jenkins build)
+ - JENKINS_EXECUTOR_NUMBER (number of currecnt Jenkins executor)
+ - JENKINS_NODE_NAME (name of current node the current build is running on)</div></dd>
 <dt><span class="strong"><a href="vars/log.html#getColorCode(java.lang.String)" title="Method in log">getColorCode(String)</a></span> - Method in <a href="vars/log.html">log</a>
 </dt><dd> <div class="block">Returns the ANSI code for a given color.</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getConsoleLog(def)" title="Method in pipeline2ATX">getConsoleLog(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
