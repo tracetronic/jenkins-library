@@ -30,7 +30,6 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
         pipeline2ATX = loadScript(scriptName)
     }
 
-    //@RestoreSystemProperties
     def 'Collect build attributes'() {
         given: 'a build'
             def build = GroovyMock(Run) // Run, because Build does not have the method "getAbsoluteUrl"
