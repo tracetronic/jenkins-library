@@ -133,7 +133,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             String result = pipeline2ATX.generateJsonReport(build, attributes, constants, teststeps, logfile)
 
         then: 'expect to find the values in the json string'
-            result.contains('"name": "JenkinsPipeline"') // TODO: Wrong value. Why the test is working?
+            result.contains('"name": "JenkinsPipeline"')
             result.contains('"@type": "testcase"')
             result.contains('"name": "UnitTests"')  // test testcase name
             result.contains('"verdict": "PASSED"')
