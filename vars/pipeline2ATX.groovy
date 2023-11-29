@@ -27,10 +27,23 @@ import org.jenkinsci.plugins.workflow.support.visualization.table.FlowGraphTable
  * </br>
  * <b>Prerequisite:</b>
  * <ul>
- *<li><a href="https://plugins.jenkins.io/pipeline-utility-steps/">Pipeline Utility Steps Plugin</a></li>
- *<li><a href="https://plugins.jenkins.io/pipeline-stage-view/">Pipeline Stage View Plugin</a></li>
- *</ul>
- *
+ * <li><a href="https://plugins.jenkins.io/pipeline-utility-steps/">Pipeline Utility Steps Plugin</a></li>
+ * <li><a href="https://plugins.jenkins.io/pipeline-stage-view/">Pipeline Stage View Plugin</a></li>
+ * </ul>
+ * <b>Additional test case information:</b>
+ * <ul>
+ * <li>Test case attribute "PRODUCT_NAME" with the name of the software product (only added, if the environment variable "PRODUCT_NAME" is specified).</li>
+ * <li>Test case attribute "TEST_LEVEL" with the name of the corresponding test level (only added, if the environment variable "TEST_LEVEL" is specified).</li>
+ * <li>Test case attribute "GIT_URL" with the url of the git repository (automatically added by using the Jenkins Plugin "Git", or explicitly added if the environment variable "GIT_URL" is specified).</li>
+ * <li>Test case attribute "JENKINS_PIPELINE" with the name of the current jenkins pipeline.</li>
+ * <li>Test case attribute "JENKINS_URL" with the url to the current jenkins pipeline job.</li>
+ * <li>Test case attribute "JENKINS_WORKSPACE" with the path to the current jenkins workspace.</li>
+ * <li>Test case constant "PRODUCT_VERSION" with the version string of the product (only added, if the environment variable "PRODUCT_VERSION" is specified).</li>
+ * <li>Test case constant "GIT_COMMIT" with the version string of the product (automatically added by using the Jenkins Plugin "Git", or explicitly added if the environment variable "GIT_COMMIT" is specified).</li>
+ * <li>Test case constant "JENKINS_BUILD_ID" with the build number of the current jenkins pipeline.</li>
+ * <li>Test case constant "JENKINS_EXECUTOR_NUMBER" with the number that identifies the jenkins executor.</li>
+ * <li>Test case constant "JENKINS_NODE_NAME" with the name of the node the current build is running on.</li>
+ * </ul>
  * @param log
  *      <code>true</code>: each step log is passed to the test step description
  *      <code>false</code>: only the log file will be archived (optional and default)
@@ -50,13 +63,14 @@ def call(log = false, jobName = '', int buildNumber = 0) {
 
     def filename = "${build.getParent().getDisplayName()}_${build.getNumber()}"
     def attributes = getBuildAttributes(build)
+    def constants = getBuildConstants(build)
     def executionSteps = getExecutionSteps(build, log)
 
     if (log) {
         logText = getConsoleLog(build)
         logFile = "${filename}.log"
     }
-    def json = generateJsonReport(build, attributes, executionSteps, logFile)
+    def json = generateJsonReport(build, attributes, constants, executionSteps, logFile)
     // reset build because it's not serializable
     build = null
 
@@ -85,18 +99,26 @@ def getRawBuild(String jobName, int buildNumber) {
 }
 
 /**
- * Collects all relevant build information and parameter as a map.
- *
+ * Collects all relevant build information and parameter as a key-value-map:
+ * - PRODUCT_NAME (content of the env var PRODUCT_NAME, only added if present)
+ * - GIT_URL (content of env var GIT_URL, only added if present)
+ * - JENKINS_PIPELINE (name of the current Jenkins build job)
+ * - JENKINS_URL (url to the current Jenkins build job)
+ * - JENKINS_WORKSPACE (path to the Jenkins pipeline workspace)
+ * - TEST_LEVEL (content of env var TEST_LEVEL, only added if present)
+ * 
  * @param build
  *      the pipeline raw build
- * @return the collected build information and parameters
+ * @return the collected build information and parameters in ATX attribute format 
  */
 def getBuildAttributes(build) {
     def attributes = []
-    def buildUrl = build.absoluteUrl
-    def buildId = build.id
-    def buildAttributes = [BUILD_URL: buildUrl, BUILD_ID: buildId]
-    buildAttributes.putAll(params)
+    def buildAttributes = [PRODUCT_NAME: env.PRODUCT_NAME,
+                           GIT_URL: env.GIT_URL, 
+                           JENKINS_PIPELINE: build.getDisplayName(), 
+                           JENKINS_URL: build.getAbsoluteUrl(),
+                           JENKINS_WORKSPACE: env.WORKSPACE,
+                           TEST_LEVEL: env.TEST_LEVEL]
     buildAttributes.each { k, v ->
         if (v) {
             attributes.add([key: k, value: v.toString()])
@@ -106,19 +128,48 @@ def getBuildAttributes(build) {
 }
 
 /**
+ * Collects all relevant build information and parameter as a key-value-map:
+ * - PRODUCT_VERSION (content of env var PRODUCT_VERSION, only added if present)
+ * - GIT_COMMIT (content of env var GIT_COMMIT, only added if present)
+ * - JENKINS_BUILD_ID (number of current Jenkins build)
+ * - JENKINS_EXECUTOR_NUMBER (number of currecnt Jenkins executor)
+ * - JENKINS_NODE_NAME (name of current node the current build is running on)
+ *
+ * @param build
+ *      the pipeline raw build
+ * @return the collected build information and parameters in ATX constants format 
+ */
+def getBuildConstants(build) {
+    def constants = []
+    def buildConstants = [PRODUCT_VERSION: env.PRODUCT_VERSION,
+                          GIT_COMMIT: env.GIT_COMMIT,
+                          JENKINS_BUILD_ID: build.id,
+                          JENKINS_EXECUTOR_NUMBER: env.EXECUTOR_NUMBER,
+                          JENKINS_NODE_NAME: env.NODE_NAME]
+    buildConstants.each { k, v ->
+        if (v) {
+            constants.add([key: k, value: v.toString()])
+        }
+    }
+    return constants
+}
+
+/**
  * Generates a TEST-GUIDE compatible JSON report of the pipeline build.
  *
  * @param build
  *      the pipeline build
  * @param attributes
- *      the collected build attributes
+ *      the collected attributes
+ * @param constants
+ *      the collected constants
  * @param executionTestSteps
  *      the stages of the pipeline build
  * @param logFile
  *      the log file name if per-step logging is enabled
  * @return the formatted JSON report
  */
-def generateJsonReport(build, attributes, executionTestSteps, logFile) {
+def generateJsonReport(build, attributes, constants, executionTestSteps, logFile) {
     Map testcase = [:]
 
     testcase.put("@type", "testcase")
@@ -131,6 +182,7 @@ def generateJsonReport(build, attributes, executionTestSteps, logFile) {
     if (logFile) {
         testcase.put("artifacts", [logFile])
     }
+    testcase.put("constants", constants)
     testcase.put("executionTestSteps", executionTestSteps)
     def testCases = [testcase]
 

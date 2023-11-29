@@ -30,14 +30,38 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
         pipeline2ATX = loadScript(scriptName)
     }
 
-    def 'Collect build attributes and parameters'() {
+    def 'Collect build attributes'() {
         given: 'a build'
-            def build = binding.getVariable('currentBuild')
-            def buildProps = getCurrentBuild()
-            build['id'] = buildProps.get('id')
-            build['absoluteUrl'] = buildProps.get('url')
-            addParam(result.last().get('key'), result.last().get('value'))
+            def build = GroovyMock(Run) // Run, because Build does not have the method "getAbsoluteUrl"
+            build.getDisplayName() >> 'TestBuild'
+            build.getAbsoluteUrl() >> 'https://testurl'
 
+            addEnvVar('PRODUCT_NAME', 'testProd')
+            addEnvVar('GIT_URL', 'https://mygit/blub')
+            addEnvVar('WORKSPACE', 'C:/ws/TestBuild/build42')
+            addEnvVar('TEST_LEVEL', 'Unit Test')
+
+        when: 'collect the build attributes'       
+            List attributes = pipeline2ATX.getBuildAttributes(build)
+                       
+
+        then: 'expect a attributes list with build information'
+            result == attributes
+
+        where:
+            result = [['key':'PRODUCT_NAME', 'value':'testProd'],
+                      ['key':'GIT_URL', 'value':'https://mygit/blub'],
+                      ['key':'JENKINS_PIPELINE', 'value':'TestBuild'],
+                      ['key':'JENKINS_URL', 'value':'https://testurl'],
+                      ['key':'JENKINS_WORKSPACE', 'value':'C:/ws/TestBuild/build42'],
+                      ['key':'TEST_LEVEL', 'value':'Unit Test']]
+    }
+
+    def 'Collect build attributes - missing env vars'() {
+        given: 'a build'
+            def build = GroovyMock(Run) // Run object, because Build does not have the method "getAbsoluteUrl"
+            build.getDisplayName() >> 'TestBuild'
+            build.getAbsoluteUrl() >> 'https://testurl'
         when: 'collect the build attributes'
             List attributes = pipeline2ATX.getBuildAttributes(build)
 
@@ -45,9 +69,49 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             result == attributes
 
         where:
-            result = getAttributes()
+            result = [['key':'JENKINS_PIPELINE', 'value':'TestBuild'],
+                      ['key':'JENKINS_URL', 'value':'https://testurl']]
     }
 
+    def 'Collect build constants'() {
+        given: 'a build'
+            def build = GroovyMock(Run)
+            build.id >> 42
+            
+            addEnvVar('PRODUCT_VERSION', '1.2.3')
+            addEnvVar('GIT_COMMIT', 'gitCommit')
+            addEnvVar('EXECUTOR_NUMBER', '0815')
+            addEnvVar('NODE_NAME', 'Runner0815')
+
+
+        when: 'collect the build constants'
+            List constants = pipeline2ATX.getBuildConstants(build)
+
+        then: 'expect a attributes list with build information'
+            result == constants
+
+        where:
+            result = [['key':'PRODUCT_VERSION', 'value':'1.2.3'],
+                      ['key':'GIT_COMMIT', 'value':'gitCommit'],
+                      ['key':'JENKINS_BUILD_ID', 'value':'42'],
+                      ['key':'JENKINS_EXECUTOR_NUMBER', 'value':'0815'],
+                      ['key':'JENKINS_NODE_NAME', 'value':'Runner0815']]
+    }
+    
+    def 'Collect build constants - missing env vars'() {
+        given: 'a build'
+            def build = GroovyMock(Run)
+            build.id >> 42
+
+        when: 'collect the build constants'
+            List constants = pipeline2ATX.getBuildConstants(build)
+
+        then: 'expect a attributes list with build information'
+            result == constants
+
+        where:
+            result = [['key':'JENKINS_BUILD_ID', 'value':'42']]
+    }
     def 'Create json report'() {
         given: 'all needed information to create a report'
             def build = GroovyMock(Run)
@@ -58,14 +122,15 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             build.getTimeInMillis() >> 123456000
             build.getStartTimeInMillis() >> 123457000
 
-            def attributes = [[key: 'testkey', value: 'testvalue']]
+            def attributes = [[key: 'testAttr', value: 'testAttrValue']]
+            def constants = [[key: 'testConst', value: 'testConstValue']]
             def teststeps = [['@type':'teststep']]
 
             helper.registerAllowedMethod('getCurrentResult', [Object], {'SUCCESS'})
             pipeline2ATX = loadScript(scriptName)
 
         when: 'json string is generated'
-            String result = pipeline2ATX.generateJsonReport(build, attributes, teststeps, logfile)
+            String result = pipeline2ATX.generateJsonReport(build, attributes, constants, teststeps, logfile)
 
         then: 'expect to find the values in the json string'
             result.contains('"name": "JenkinsPipeline"')
@@ -74,7 +139,10 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             result.contains('"verdict": "PASSED"')
             result.contains('"timestamp": 123457000')
             result.contains('"executionTime": 1')
-            result.contains('"key": "testkey"')  // test attributes
+            result.contains('"key": "testAttr"')  // test attributes
+            result.contains('"value": "testAttrValue')
+            result.contains('"key": "testConst"')  // test constants
+            result.contains('"value": "testConstValue')
             result.contains('"@type": "teststep"') // test teststeps
             if (logfile) {  // test artifacts
                 result.contains('"artifacts":')
@@ -91,7 +159,6 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             def build = Mock(Build)
             build.isInProgress() >> inProgress
             build.getResult() >> Result.SUCCESS
-            build.getExternalizableId() >> "test#123"
             RunWrapper.metaClass.getCurrentResult = {return 'FAILED'}
 
         when: 'get current build result'
@@ -365,14 +432,6 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             Mock(LogStorageAction)  | Mock(AnnotatedLargeText)  | 0
             Mock(LogStorageAction)  | null                      | 0
             null                    | null                      | 0
-    }
-
-    private List getAttributes() {
-        def build = getCurrentBuild()
-
-        return [['key':'BUILD_URL', 'value':build.get('url')],
-                ['key':'BUILD_ID', 'value':build.get('id').toString()],
-                ['key':'testParam', 'value':'241543903']]
     }
 
     private Map getCurrentBuild() {

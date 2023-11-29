@@ -164,65 +164,82 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#generateJsonReport(def, def, def, def)">generateJsonReport</a></strong>(java.lang.Object build, java.lang.Object attributes, java.lang.Object executionTestSteps, java.lang.Object logFile)</code><br>Generates a TEST-GUIDE compatible JSON report of the pipeline build.</td>
+                            <td class="colLast"><code><strong><a href="#generateJsonReport(def, def, def, def, def)">generateJsonReport</a></strong>(java.lang.Object build, java.lang.Object attributes, java.lang.Object constants, java.lang.Object executionTestSteps, java.lang.Object logFile)</code><br>Generates a TEST-GUIDE compatible JSON report of the pipeline build.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#getBuildAttributes(def)">getBuildAttributes</a></strong>(java.lang.Object build)</code><br>Collects all relevant build information and parameter as a map.</td>
+                            <td class="colLast"><code><strong><a href="#getBuildAttributes(def)">getBuildAttributes</a></strong>(java.lang.Object build)</code><br>Collects all relevant build information and parameter as a key-value-map:
+ - PRODUCT_NAME (content of the env var PRODUCT_NAME, only added if present)
+ - GIT_URL (content of env var GIT_URL, only added if present)
+ - JENKINS_PIPELINE (name of the current Jenkins build job)
+ - JENKINS_URL (url to the current Jenkins build job)
+ - JENKINS_WORKSPACE (path to the Jenkins pipeline workspace)
+ - TEST_LEVEL (content of env var TEST_LEVEL, only added if present)</td>
                         </tr>
                         
                         <tr class="altColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>java.lang.Object</code></td>
+                            <td class="colLast"><code><strong><a href="#getBuildConstants(def)">getBuildConstants</a></strong>(java.lang.Object build)</code><br>Collects all relevant build information and parameter as a key-value-map:
+ - PRODUCT_VERSION (content of env var PRODUCT_VERSION, only added if present)
+ - GIT_COMMIT (content of env var GIT_COMMIT, only added if present)
+ - JENKINS_BUILD_ID (number of current Jenkins build)
+ - JENKINS_EXECUTOR_NUMBER (number of currecnt Jenkins executor)
+ - JENKINS_NODE_NAME (name of current node the current build is running on)</td>
+                        </tr>
+                        
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getConsoleLog(def)">getConsoleLog</a></strong>(java.lang.Object build)</code><br>Gets the console log.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getCurrentResult(def)">getCurrentResult</a></strong>(java.lang.Object build)</code><br>Gets the current build result.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getDescription(def)">getDescription</a></strong>(java.lang.Object row)</code><br>Create a description from the current pipeline step.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getExecutionSteps(def, def)">getExecutionSteps</a></strong>(java.lang.Object build, java.lang.Object appendLogs)</code><br>Create test execution steps from the current pipeline build.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getLogText(def)">getLogText</a></strong>(java.lang.Object node)</code><br>Get the log of a node.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getRawBuild(java.lang.String, int)">getRawBuild</a></strong>(java.lang.String jobName, int buildNumber)</code><br>Gets the pipeline raw build by given job name and build number,.
  </td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getTestStepName(def)">getTestStepName</a></strong>(java.lang.Object row)</code><br>Creates the test step name by combining the row name with its arguments</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code>null</code></td>
                             <td class="colLast"><code>static&nbsp;void</code></td>
                             <td class="colLast"><code><strong><a href="#main(java.lang.String)">main</a></strong>(java.lang.String[] args)</code><br>Implicit main method for Groovy Scripts</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>static&nbsp;java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#resultToATXVerdict(def)">resultToATXVerdict</a></strong>(java.lang.Object result)</code><br>Maps the given build result to according TEST-GUIDE verdict.</td>
@@ -244,11 +261,11 @@ if (location.href.indexOf('is-external=true') == -1) {
                         
                         <tr class="altColor">
                             <td class="colFirst"><code>class groovy.lang.Script</code></td>
-                            <td class="colLast"><code>groovy.lang.Script#getBinding(), groovy.lang.Script#setBinding(groovy.lang.Binding), groovy.lang.Script#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.Script#evaluate(java.lang.String), groovy.lang.Script#evaluate(java.io.File), groovy.lang.Script#println(), groovy.lang.Script#println(java.lang.Object), groovy.lang.Script#run(java.io.File, [Ljava.lang.String;), groovy.lang.Script#run(), groovy.lang.Script#getProperty(java.lang.String), groovy.lang.Script#setProperty(java.lang.String, java.lang.Object), groovy.lang.Script#print(java.lang.Object), groovy.lang.Script#printf(java.lang.String, java.lang.Object), groovy.lang.Script#printf(java.lang.String, [Ljava.lang.Object;), groovy.lang.Script#getMetaClass(), groovy.lang.Script#setMetaClass(groovy.lang.MetaClass), groovy.lang.Script#wait(long), groovy.lang.Script#wait(long, int), groovy.lang.Script#wait(), groovy.lang.Script#equals(java.lang.Object), groovy.lang.Script#toString(), groovy.lang.Script#hashCode(), groovy.lang.Script#getClass(), groovy.lang.Script#notify(), groovy.lang.Script#notifyAll()</code></td>
+                            <td class="colLast"><code>groovy.lang.Script#getBinding(), groovy.lang.Script#setBinding(groovy.lang.Binding), groovy.lang.Script#println(java.lang.Object), groovy.lang.Script#println(), groovy.lang.Script#run(java.io.File, [Ljava.lang.String;), groovy.lang.Script#run(), groovy.lang.Script#getProperty(java.lang.String), groovy.lang.Script#setProperty(java.lang.String, java.lang.Object), groovy.lang.Script#print(java.lang.Object), groovy.lang.Script#printf(java.lang.String, [Ljava.lang.Object;), groovy.lang.Script#printf(java.lang.String, java.lang.Object), groovy.lang.Script#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.Script#evaluate(java.lang.String), groovy.lang.Script#evaluate(java.io.File), groovy.lang.Script#getMetaClass(), groovy.lang.Script#setMetaClass(groovy.lang.MetaClass), groovy.lang.Script#wait(long), groovy.lang.Script#wait(long, int), groovy.lang.Script#wait(), groovy.lang.Script#equals(java.lang.Object), groovy.lang.Script#toString(), groovy.lang.Script#hashCode(), groovy.lang.Script#getClass(), groovy.lang.Script#notify(), groovy.lang.Script#notifyAll()</code></td>
                         </tr>
                         <tr class="altColor">
                             <td class="colFirst"><code>class groovy.lang.GroovyObjectSupport</code></td>
-                            <td class="colLast"><code>groovy.lang.GroovyObjectSupport#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.GroovyObjectSupport#getMetaClass(), groovy.lang.GroovyObjectSupport#setMetaClass(groovy.lang.MetaClass), groovy.lang.GroovyObjectSupport#getProperty(java.lang.String), groovy.lang.GroovyObjectSupport#setProperty(java.lang.String, java.lang.Object), groovy.lang.GroovyObjectSupport#wait(long), groovy.lang.GroovyObjectSupport#wait(long, int), groovy.lang.GroovyObjectSupport#wait(), groovy.lang.GroovyObjectSupport#equals(java.lang.Object), groovy.lang.GroovyObjectSupport#toString(), groovy.lang.GroovyObjectSupport#hashCode(), groovy.lang.GroovyObjectSupport#getClass(), groovy.lang.GroovyObjectSupport#notify(), groovy.lang.GroovyObjectSupport#notifyAll()</code></td>
+                            <td class="colLast"><code>groovy.lang.GroovyObjectSupport#getProperty(java.lang.String), groovy.lang.GroovyObjectSupport#setProperty(java.lang.String, java.lang.Object), groovy.lang.GroovyObjectSupport#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.GroovyObjectSupport#getMetaClass(), groovy.lang.GroovyObjectSupport#setMetaClass(groovy.lang.MetaClass), groovy.lang.GroovyObjectSupport#wait(long), groovy.lang.GroovyObjectSupport#wait(long, int), groovy.lang.GroovyObjectSupport#wait(), groovy.lang.GroovyObjectSupport#equals(java.lang.Object), groovy.lang.GroovyObjectSupport#toString(), groovy.lang.GroovyObjectSupport#hashCode(), groovy.lang.GroovyObjectSupport#getClass(), groovy.lang.GroovyObjectSupport#notify(), groovy.lang.GroovyObjectSupport#notifyAll()</code></td>
                         </tr>
                     </table>
                    </ul>
@@ -294,9 +311,23 @@ if (location.href.indexOf('is-external=true') == -1) {
  </br>
  <b>Prerequisite:</b>
  <ul>
-<li><a href="https://plugins.jenkins.io/pipeline-utility-steps/">Pipeline Utility Steps Plugin</a></li>
-<li><a href="https://plugins.jenkins.io/pipeline-stage-view/">Pipeline Stage View Plugin</a></li>
-</ul>
+ <li><a href="https://plugins.jenkins.io/pipeline-utility-steps/">Pipeline Utility Steps Plugin</a></li>
+ <li><a href="https://plugins.jenkins.io/pipeline-stage-view/">Pipeline Stage View Plugin</a></li>
+ </ul>
+ <b>Additional test case information:</b>
+ <ul>
+ <li>Test case attribute "PRODUCT_NAME" with the name of the software product (only added, if the environment variable "PRODUCT_NAME" is specified).</li>
+ <li>Test case attribute "TEST_LEVEL" with the name of the corresponding test level (only added, if the environment variable "TEST_LEVEL" is specified).</li>
+ <li>Test case attribute "GIT_URL" with the url of the git repository (automatically added by using the Jenkins Plugin "Git", or explicitly added if the environment variable "GIT_URL" is specified).</li>
+ <li>Test case attribute "JENKINS_PIPELINE" with the name of the current jenkins pipeline.</li>
+ <li>Test case attribute "JENKINS_URL" with the url to the current jenkins pipeline job.</li>
+ <li>Test case attribute "JENKINS_WORKSPACE" with the path to the current jenkins workspace.</li>
+ <li>Test case constant "PRODUCT_VERSION" with the version string of the product (only added, if the environment variable "PRODUCT_VERSION" is specified).</li>
+ <li>Test case constant "GIT_COMMIT" with the version string of the product (automatically added by using the Jenkins Plugin "Git", or explicitly added if the environment variable "GIT_COMMIT" is specified).</li>
+ <li>Test case constant "JENKINS_BUILD_ID" with the build number of the current jenkins pipeline.</li>
+ <li>Test case constant "JENKINS_EXECUTOR_NUMBER" with the number that identifies the jenkins executor.</li>
+ <li>Test case constant "JENKINS_NODE_NAME" with the name of the node the current build is running on.</li>
+ </ul>
  <DL><DT><B>Parameters:</B></DT><DD><code>log
 </code> -       <code>true</code>: each step log is passed to the test step description
       <code>false</code>: only the log file will be archived (optional and default)</DD><DD><code>jobName
@@ -345,14 +376,15 @@ java.lang.Object <strong>createTestStepFolder</strong>(java.lang.Object row, jav
                             </li>
                         </ul>
                     
-                        <a name="generateJsonReport(def, def, def, def)"><!-- --></a>
+                        <a name="generateJsonReport(def, def, def, def, def)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>java.lang.Object <strong>generateJsonReport</strong>(java.lang.Object build, java.lang.Object attributes, java.lang.Object executionTestSteps, java.lang.Object logFile)</h4>
+                                <h4>java.lang.Object <strong>generateJsonReport</strong>(java.lang.Object build, java.lang.Object attributes, java.lang.Object constants, java.lang.Object executionTestSteps, java.lang.Object logFile)</h4>
                                 <p> Generates a TEST-GUIDE compatible JSON report of the pipeline build.
  <DL><DT><B>Parameters:</B></DT><DD><code>build
 </code> -       the pipeline build</DD><DD><code>attributes
-</code> -       the collected build attributes</DD><DD><code>executionTestSteps
+</code> -       the collected attributes</DD><DD><code>constants
+</code> -       the collected constants</DD><DD><code>executionTestSteps
 </code> -       the stages of the pipeline build</DD><DD><code>logFile
 </code> -       the log file name if per-step logging is enabled</DD></DL><DL><DT><B>Returns:</B></DT><DD>the formatted JSON report</DD></DL></p>
                             </li>
@@ -362,9 +394,30 @@ java.lang.Object <strong>createTestStepFolder</strong>(java.lang.Object row, jav
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>java.lang.Object <strong>getBuildAttributes</strong>(java.lang.Object build)</h4>
-                                <p> Collects all relevant build information and parameter as a map.
+                                <p> Collects all relevant build information and parameter as a key-value-map:
+ - PRODUCT_NAME (content of the env var PRODUCT_NAME, only added if present)
+ - GIT_URL (content of env var GIT_URL, only added if present)
+ - JENKINS_PIPELINE (name of the current Jenkins build job)
+ - JENKINS_URL (url to the current Jenkins build job)
+ - JENKINS_WORKSPACE (path to the Jenkins pipeline workspace)
+ - TEST_LEVEL (content of env var TEST_LEVEL, only added if present) 
  <DL><DT><B>Parameters:</B></DT><DD><code>build
-</code> -       the pipeline raw build</DD></DL><DL><DT><B>Returns:</B></DT><DD>the collected build information and parameters</DD></DL></p>
+</code> -       the pipeline raw build</DD></DL><DL><DT><B>Returns:</B></DT><DD>the collected build information and parameters in ATX attribute format</DD></DL></p>
+                            </li>
+                        </ul>
+                    
+                        <a name="getBuildConstants(def)"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>java.lang.Object <strong>getBuildConstants</strong>(java.lang.Object build)</h4>
+                                <p> Collects all relevant build information and parameter as a key-value-map:
+ - PRODUCT_VERSION (content of env var PRODUCT_VERSION, only added if present)
+ - GIT_COMMIT (content of env var GIT_COMMIT, only added if present)
+ - JENKINS_BUILD_ID (number of current Jenkins build)
+ - JENKINS_EXECUTOR_NUMBER (number of currecnt Jenkins executor)
+ - JENKINS_NODE_NAME (name of current node the current build is running on) 
+ <DL><DT><B>Parameters:</B></DT><DD><code>build
+</code> -       the pipeline raw build</DD></DL><DL><DT><B>Returns:</B></DT><DD>the collected build information and parameters in ATX constants format</DD></DL></p>
                             </li>
                         </ul>
                     
