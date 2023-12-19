@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 TraceTronic GmbH
+ * Copyright (c) 2023 tracetronic GmbH
  *
  * SPDX-License-Identifier: MIT
  */
@@ -19,7 +19,7 @@ import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 import org.jenkinsci.plugins.workflow.support.visualization.table.FlowGraphTable
 
 /**
- * Generates a TEST-GUIDE compatible JSON report of a pipeline build including logs and stage meta data.
+ * Generates a test.guide compatible JSON report of a pipeline build including logs and stage meta data.
  * The report is compressed as a zip file within the build workspace and can be uploaded using the JSON2ATX converter.
  *
  * This method can be called downstream or within a running build.
@@ -155,7 +155,7 @@ def getBuildConstants(build) {
 }
 
 /**
- * Generates a TEST-GUIDE compatible JSON report of the pipeline build.
+ * Generates a test.guide compatible JSON report of the pipeline build.
  *
  * @param build
  *      the pipeline build
@@ -226,11 +226,11 @@ def getConsoleLog(build) {
 }
 
 /**
- * Maps the given build result to according TEST-GUIDE verdict.
+ * Maps the given build result to according test.guide verdict.
  *
  * @param result
  *      the build result
- * @return the according TEST-GUIDE verdict
+ * @return the according test.guide verdict
  */
 @NonCPS
 static def resultToATXVerdict(result) {

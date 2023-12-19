@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 TraceTronic GmbH
+ * Copyright (c) 2021 - 2023 tracetronic GmbH
  *
  * SPDX-License-Identifier: MIT
  */
