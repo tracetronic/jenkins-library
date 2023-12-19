@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 TraceTronic GmbH
+ * Copyright (c) 2021 - 2023 tracetronic GmbH
  *
  * SPDX-License-Identifier: MIT
  */
@@ -190,8 +190,8 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
                         []]
     }
 
-    def 'Map result to TEST-GUIDE verdict'() {
-        expect: 'expect result is mapped to according TEST-GUIDE verdict'
+    def 'Map result to test.guide verdict'() {
+        expect: 'expect result is mapped to according test.guide verdict'
             verdict == pipeline2ATX.resultToATXVerdict(result)
 
         where:

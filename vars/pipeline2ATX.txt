@@ -1,4 +1,4 @@
-The <code>pipeline2ATX</code> variable can be used to generate a <a href="https://www.tracetronic.de/produkte/test-guide/" target="_blank">TEST-GUIDE</a> compatible JSON report of a pipeline build including logs and stage meta data.<br>
+The <code>pipeline2ATX</code> variable can be used to generate a <a href="https://www.tracetronic.de/produkte/test-guide/" target="_blank">test.guide</a> compatible JSON report of a pipeline build including logs and stage meta data.<br>
 The report is compressed as a zip file within the build workspace and can be uploaded using the JSON2ATX converter.
 </br>
 <b>Prerequisite:</b>
@@ -24,7 +24,7 @@ The report is compressed as a zip file within the build workspace and can be upl
 <p></p>
 <dl>
     <dt><code>call(boolean, String, int)</code></dt>
-    <dd>Generates a TEST-GUIDE compatible JSON report of a pipeline build including logs and stage meta data.
+    <dd>Generates a test.guide compatible JSON report of a pipeline build including logs and stage meta data.
         <dl>
             <dt>log</dt>
             <dd><code>true</code>: each step log is passed to the test step description<br>
