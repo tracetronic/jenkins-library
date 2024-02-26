@@ -33,6 +33,10 @@ The report is compressed as a zip file within the build workspace and can be upl
             <dd>the name of the pipeline job (optional)</dd>
             <dt>buildNumber</dt>
             <dd>the number of the pipeline build (optional)</dd>
+            <dt> customAttributes</dt>
+            <dd> customAttribues to add to testcase (will override buildAttributes)</dd>
+            <dt> customConstants</dt>
+            <dd> customConstants to add to testcase (will override buildConstants)</dd>
         </dl>
     </dd>
 </dl>

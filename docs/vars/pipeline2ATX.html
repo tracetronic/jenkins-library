@@ -138,7 +138,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#call(def, def, int)">call</a></strong>(java.lang.Object log = false, java.lang.Object jobName = '', int buildNumber = 0)</code><br>Generates a test.guide compatible JSON report of a pipeline build including logs and stage meta data.
+                            <td class="colLast"><code><strong><a href="#call(def, def, int, def, def)">call</a></strong>(java.lang.Object log = false, java.lang.Object jobName = '', int buildNumber = 0, java.lang.Object customAttributes = [:], java.lang.Object customConstants = [:])</code><br>Generates a test.guide compatible JSON report of a pipeline build including logs and stage meta data.
  </td>
                         </tr>
                         
@@ -170,7 +170,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#getBuildAttributes(def)">getBuildAttributes</a></strong>(java.lang.Object build)</code><br>Collects all relevant build information and parameter as a key-value-map:
+                            <td class="colLast"><code><strong><a href="#getBuildAttributes(def, def)">getBuildAttributes</a></strong>(java.lang.Object build, java.lang.Object customAttributes)</code><br>Collects all relevant build information and parameter as a key-value-map:
  - PRODUCT_NAME (content of the env var PRODUCT_NAME, only added if present)
  - GIT_URL (content of env var GIT_URL, only added if present)
  - JENKINS_PIPELINE (name of the current Jenkins build job)
@@ -182,7 +182,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#getBuildConstants(def)">getBuildConstants</a></strong>(java.lang.Object build)</code><br>Collects all relevant build information and parameter as a key-value-map:
+                            <td class="colLast"><code><strong><a href="#getBuildConstants(def, def)">getBuildConstants</a></strong>(java.lang.Object build, java.lang.Object customConstants)</code><br>Collects all relevant build information and parameter as a key-value-map:
  - PRODUCT_VERSION (content of env var PRODUCT_VERSION, only added if present)
  - GIT_COMMIT (content of env var GIT_COMMIT, only added if present)
  - JENKINS_BUILD_ID (number of current Jenkins build)
@@ -261,11 +261,11 @@ if (location.href.indexOf('is-external=true') == -1) {
                         
                         <tr class="altColor">
                             <td class="colFirst"><code>class groovy.lang.Script</code></td>
-                            <td class="colLast"><code>groovy.lang.Script#getBinding(), groovy.lang.Script#setBinding(groovy.lang.Binding), groovy.lang.Script#evaluate(java.lang.String), groovy.lang.Script#evaluate(java.io.File), groovy.lang.Script#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.Script#println(), groovy.lang.Script#println(java.lang.Object), groovy.lang.Script#run(java.io.File, [Ljava.lang.String;), groovy.lang.Script#run(), groovy.lang.Script#getProperty(java.lang.String), groovy.lang.Script#setProperty(java.lang.String, java.lang.Object), groovy.lang.Script#print(java.lang.Object), groovy.lang.Script#printf(java.lang.String, java.lang.Object), groovy.lang.Script#printf(java.lang.String, [Ljava.lang.Object;), groovy.lang.Script#getMetaClass(), groovy.lang.Script#setMetaClass(groovy.lang.MetaClass), groovy.lang.Script#wait(long), groovy.lang.Script#wait(long, int), groovy.lang.Script#wait(), groovy.lang.Script#equals(java.lang.Object), groovy.lang.Script#toString(), groovy.lang.Script#hashCode(), groovy.lang.Script#getClass(), groovy.lang.Script#notify(), groovy.lang.Script#notifyAll()</code></td>
+                            <td class="colLast"><code>groovy.lang.Script#getBinding(), groovy.lang.Script#setBinding(groovy.lang.Binding), groovy.lang.Script#evaluate(java.io.File), groovy.lang.Script#evaluate(java.lang.String), groovy.lang.Script#println(java.lang.Object), groovy.lang.Script#println(), groovy.lang.Script#run(java.io.File, [Ljava.lang.String;), groovy.lang.Script#run(), groovy.lang.Script#getProperty(java.lang.String), groovy.lang.Script#setProperty(java.lang.String, java.lang.Object), groovy.lang.Script#print(java.lang.Object), groovy.lang.Script#printf(java.lang.String, java.lang.Object), groovy.lang.Script#printf(java.lang.String, [Ljava.lang.Object;), groovy.lang.Script#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.Script#getMetaClass(), groovy.lang.Script#setMetaClass(groovy.lang.MetaClass), groovy.lang.Script#wait(long), groovy.lang.Script#wait(long, int), groovy.lang.Script#wait(), groovy.lang.Script#equals(java.lang.Object), groovy.lang.Script#toString(), groovy.lang.Script#hashCode(), groovy.lang.Script#getClass(), groovy.lang.Script#notify(), groovy.lang.Script#notifyAll()</code></td>
                         </tr>
                         <tr class="altColor">
                             <td class="colFirst"><code>class groovy.lang.GroovyObjectSupport</code></td>
-                            <td class="colLast"><code>groovy.lang.GroovyObjectSupport#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.GroovyObjectSupport#getMetaClass(), groovy.lang.GroovyObjectSupport#setMetaClass(groovy.lang.MetaClass), groovy.lang.GroovyObjectSupport#getProperty(java.lang.String), groovy.lang.GroovyObjectSupport#setProperty(java.lang.String, java.lang.Object), groovy.lang.GroovyObjectSupport#wait(long), groovy.lang.GroovyObjectSupport#wait(long, int), groovy.lang.GroovyObjectSupport#wait(), groovy.lang.GroovyObjectSupport#equals(java.lang.Object), groovy.lang.GroovyObjectSupport#toString(), groovy.lang.GroovyObjectSupport#hashCode(), groovy.lang.GroovyObjectSupport#getClass(), groovy.lang.GroovyObjectSupport#notify(), groovy.lang.GroovyObjectSupport#notifyAll()</code></td>
+                            <td class="colLast"><code>groovy.lang.GroovyObjectSupport#getProperty(java.lang.String), groovy.lang.GroovyObjectSupport#setProperty(java.lang.String, java.lang.Object), groovy.lang.GroovyObjectSupport#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.GroovyObjectSupport#getMetaClass(), groovy.lang.GroovyObjectSupport#setMetaClass(groovy.lang.MetaClass), groovy.lang.GroovyObjectSupport#wait(long), groovy.lang.GroovyObjectSupport#wait(long, int), groovy.lang.GroovyObjectSupport#wait(), groovy.lang.GroovyObjectSupport#equals(java.lang.Object), groovy.lang.GroovyObjectSupport#toString(), groovy.lang.GroovyObjectSupport#hashCode(), groovy.lang.GroovyObjectSupport#getClass(), groovy.lang.GroovyObjectSupport#notify(), groovy.lang.GroovyObjectSupport#notifyAll()</code></td>
                         </tr>
                     </table>
                    </ul>
@@ -299,10 +299,10 @@ if (location.href.indexOf('is-external=true') == -1) {
                 </a>
                     <h3>Method Detail</h3>
                     
-                        <a name="call(def, def, int)"><!-- --></a>
+                        <a name="call(def, def, int, def, def)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>java.lang.Object <strong>call</strong>(java.lang.Object log = false, java.lang.Object jobName = '', int buildNumber = 0)</h4>
+                                <h4>java.lang.Object <strong>call</strong>(java.lang.Object log = false, java.lang.Object jobName = '', int buildNumber = 0, java.lang.Object customAttributes = [:], java.lang.Object customConstants = [:])</h4>
                                 <p> Generates a test.guide compatible JSON report of a pipeline build including logs and stage meta data.
  The report is compressed as a zip file within the build workspace and can be uploaded using the JSON2ATX converter.
 
@@ -390,32 +390,36 @@ java.lang.Object <strong>createTestStepFolder</strong>(java.lang.Object row, jav
                             </li>
                         </ul>
                     
-                        <a name="getBuildAttributes(def)"><!-- --></a>
+                        <a name="getBuildAttributes(def, def)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>java.lang.Object <strong>getBuildAttributes</strong>(java.lang.Object build)</h4>
+                                <h4>java.lang.Object <strong>getBuildAttributes</strong>(java.lang.Object build, java.lang.Object customAttributes)</h4>
                                 <p> Collects all relevant build information and parameter as a key-value-map:
  - PRODUCT_NAME (content of the env var PRODUCT_NAME, only added if present)
  - GIT_URL (content of env var GIT_URL, only added if present)
  - JENKINS_PIPELINE (name of the current Jenkins build job)
  - JENKINS_URL (url to the current Jenkins build job)
  - JENKINS_WORKSPACE (path to the Jenkins pipeline workspace)
- - TEST_LEVEL (content of env var TEST_LEVEL, only added if present) 
+ - TEST_LEVEL (content of env var TEST_LEVEL, only added if present)
+ 
+  customAttributes overrides build attributes (when adding maps the second map will override values present in both) 
  <DL><DT><B>Parameters:</B></DT><DD><code>build
 </code> -       the pipeline raw build</DD></DL><DL><DT><B>Returns:</B></DT><DD>the collected build information and parameters in ATX attribute format</DD></DL></p>
                             </li>
                         </ul>
                     
-                        <a name="getBuildConstants(def)"><!-- --></a>
+                        <a name="getBuildConstants(def, def)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>java.lang.Object <strong>getBuildConstants</strong>(java.lang.Object build)</h4>
+                                <h4>java.lang.Object <strong>getBuildConstants</strong>(java.lang.Object build, java.lang.Object customConstants)</h4>
                                 <p> Collects all relevant build information and parameter as a key-value-map:
  - PRODUCT_VERSION (content of env var PRODUCT_VERSION, only added if present)
  - GIT_COMMIT (content of env var GIT_COMMIT, only added if present)
  - JENKINS_BUILD_ID (number of current Jenkins build)
  - JENKINS_EXECUTOR_NUMBER (number of currecnt Jenkins executor)
- - JENKINS_NODE_NAME (name of current node the current build is running on) 
+ - JENKINS_NODE_NAME (name of current node the current build is running on)
+
+ customConstants overrides build constants (when adding maps the second map will override values present in both) 
  <DL><DT><B>Parameters:</B></DT><DD><code>build
 </code> -       the pipeline raw build</DD></DL><DL><DT><B>Returns:</B></DT><DD>the collected build information and parameters in ATX constants format</DD></DL></p>
                             </li>

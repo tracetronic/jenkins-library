@@ -42,7 +42,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             addEnvVar('TEST_LEVEL', 'Unit Test')
 
         when: 'collect the build attributes'       
-            List attributes = pipeline2ATX.getBuildAttributes(build)
+            List attributes = pipeline2ATX.getBuildAttributes(build,['GIT_URL':'https://mycustomgit/blub','TOOL_NAME':'test.tool'])
                        
 
         then: 'expect a attributes list with build information'
@@ -50,11 +50,12 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
 
         where:
             result = [['key':'PRODUCT_NAME', 'value':'testProd'],
-                      ['key':'GIT_URL', 'value':'https://mygit/blub'],
+                      ['key':'GIT_URL', 'value':'https://mycustomgit/blub'],
                       ['key':'JENKINS_PIPELINE', 'value':'TestBuild'],
                       ['key':'JENKINS_URL', 'value':'https://testurl'],
                       ['key':'JENKINS_WORKSPACE', 'value':'C:/ws/TestBuild/build42'],
-                      ['key':'TEST_LEVEL', 'value':'Unit Test']]
+                      ['key':'TEST_LEVEL', 'value':'Unit Test'],
+                      ['key':'TOOL_NAME', 'value':'test.tool']]
     }
 
     def 'Collect build attributes - missing env vars'() {
@@ -63,7 +64,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             build.getDisplayName() >> 'TestBuild'
             build.getAbsoluteUrl() >> 'https://testurl'
         when: 'collect the build attributes'
-            List attributes = pipeline2ATX.getBuildAttributes(build)
+            List attributes = pipeline2ATX.getBuildAttributes(build,[:])
 
         then: 'expect a attributes list with build information'
             result == attributes
@@ -85,17 +86,18 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
 
 
         when: 'collect the build constants'
-            List constants = pipeline2ATX.getBuildConstants(build)
+            List constants = pipeline2ATX.getBuildConstants(build,['GIT_COMMIT':'customGitCommit','TOOL_NAME':'test.tool'])
 
         then: 'expect a attributes list with build information'
             result == constants
 
         where:
             result = [['key':'PRODUCT_VERSION', 'value':'1.2.3'],
-                      ['key':'GIT_COMMIT', 'value':'gitCommit'],
+                      ['key':'GIT_COMMIT', 'value':'customGitCommit'],
                       ['key':'JENKINS_BUILD_ID', 'value':'42'],
                       ['key':'JENKINS_EXECUTOR_NUMBER', 'value':'0815'],
-                      ['key':'JENKINS_NODE_NAME', 'value':'Runner0815']]
+                      ['key':'JENKINS_NODE_NAME', 'value':'Runner0815'],
+                      ['key':'TOOL_NAME', 'value':'test.tool']]
     }
     
     def 'Collect build constants - missing env vars'() {
@@ -104,7 +106,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             build.id >> 42
 
         when: 'collect the build constants'
-            List constants = pipeline2ATX.getBuildConstants(build)
+            List constants = pipeline2ATX.getBuildConstants(build,[:])
 
         then: 'expect a attributes list with build information'
             result == constants

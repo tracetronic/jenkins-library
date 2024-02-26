@@ -52,7 +52,7 @@ import org.jenkinsci.plugins.workflow.support.visualization.table.FlowGraphTable
  * @param buildNumber
  *      the number of the pipeline build (optional)
  */
-def call(log = false, jobName = '', int buildNumber = 0) {
+def call(log = false, jobName = '', int buildNumber = 0, def customAttributes = [:], def customConstants = [:]) {
     def build
     def logFile = ''
 
@@ -62,8 +62,8 @@ def call(log = false, jobName = '', int buildNumber = 0) {
     }
 
     def filename = "${build.getParent().getDisplayName()}_${build.getNumber()}"
-    def attributes = getBuildAttributes(build)
-    def constants = getBuildConstants(build)
+    def attributes = getBuildAttributes(build, customAttributes)
+    def constants = getBuildConstants(build, customConstants)
     def executionSteps = getExecutionSteps(build, log)
 
     if (log) {
@@ -107,24 +107,19 @@ def getRawBuild(String jobName, int buildNumber) {
  * - JENKINS_WORKSPACE (path to the Jenkins pipeline workspace)
  * - TEST_LEVEL (content of env var TEST_LEVEL, only added if present)
  * 
+ *  customAttributes overrides build attributes (when adding maps the second map will override values present in both)
  * @param build
  *      the pipeline raw build
  * @return the collected build information and parameters in ATX attribute format 
  */
-def getBuildAttributes(build) {
-    def attributes = []
-    def buildAttributes = [PRODUCT_NAME: env.PRODUCT_NAME,
+def getBuildAttributes(build, customAttributes) {
+    def attributes = [PRODUCT_NAME: env.PRODUCT_NAME,
                            GIT_URL: env.GIT_URL, 
                            JENKINS_PIPELINE: build.getDisplayName(), 
                            JENKINS_URL: build.getAbsoluteUrl(),
                            JENKINS_WORKSPACE: env.WORKSPACE,
-                           TEST_LEVEL: env.TEST_LEVEL]
-    buildAttributes.each { k, v ->
-        if (v) {
-            attributes.add([key: k, value: v.toString()])
-        }
-    }
-    return attributes
+                           TEST_LEVEL: env.TEST_LEVEL] + customAttributes
+    return attributes.findAll{k,v -> v}.collect{ k, v -> [key: k, value: v.toString()]}
 }
 
 /**
@@ -135,23 +130,18 @@ def getBuildAttributes(build) {
  * - JENKINS_EXECUTOR_NUMBER (number of currecnt Jenkins executor)
  * - JENKINS_NODE_NAME (name of current node the current build is running on)
  *
+ * customConstants overrides build constants (when adding maps the second map will override values present in both)
  * @param build
  *      the pipeline raw build
  * @return the collected build information and parameters in ATX constants format 
  */
-def getBuildConstants(build) {
-    def constants = []
-    def buildConstants = [PRODUCT_VERSION: env.PRODUCT_VERSION,
+def getBuildConstants(build, customConstants) {
+    def constants = [PRODUCT_VERSION: env.PRODUCT_VERSION,
                           GIT_COMMIT: env.GIT_COMMIT,
                           JENKINS_BUILD_ID: build.id,
                           JENKINS_EXECUTOR_NUMBER: env.EXECUTOR_NUMBER,
-                          JENKINS_NODE_NAME: env.NODE_NAME]
-    buildConstants.each { k, v ->
-        if (v) {
-            constants.add([key: k, value: v.toString()])
-        }
-    }
-    return constants
+                          JENKINS_NODE_NAME: env.NODE_NAME] + customConstants
+    return constants.findAll{k,v -> v}.collect{ k, v -> [key: k, value: v.toString()]}
 }
 
 /**
