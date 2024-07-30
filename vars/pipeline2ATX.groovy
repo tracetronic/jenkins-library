@@ -65,12 +65,13 @@ def call(log = false, jobName = '', int buildNumber = 0, def customAttributes = 
     def attributes = getBuildAttributes(build, customAttributes)
     def constants = getBuildConstants(build, customConstants)
     def executionSteps = getExecutionSteps(build, log)
+    def metrics = getBuildMetrics(build, executionSteps)
 
     if (log) {
         logText = getConsoleLog(build)
         logFile = "${filename}.log"
     }
-    def json = generateJsonReport(build, attributes, constants, executionSteps, logFile)
+    def json = generateJsonReport(build, attributes, constants, executionSteps, metrics, logFile)
     // reset build because it's not serializable
     build = null
 
@@ -106,19 +107,19 @@ def getRawBuild(String jobName, int buildNumber) {
  * - JENKINS_URL (url to the current Jenkins build job)
  * - JENKINS_WORKSPACE (path to the Jenkins pipeline workspace)
  * - TEST_LEVEL (content of env var TEST_LEVEL, only added if present)
- * 
+ *
  *  customAttributes overrides build attributes (when adding maps the second map will override values present in both)
  * @param build
  *      the pipeline raw build
- * @return the collected build information and parameters in ATX attribute format 
+ * @return the collected build information and parameters in ATX attribute format
  */
 def getBuildAttributes(build, customAttributes) {
     def attributes = [PRODUCT_NAME: env.PRODUCT_NAME,
-                           GIT_URL: env.GIT_URL, 
-                           JENKINS_PIPELINE: build.getDisplayName(), 
-                           JENKINS_URL: build.getAbsoluteUrl(),
-                           JENKINS_WORKSPACE: env.WORKSPACE,
-                           TEST_LEVEL: env.TEST_LEVEL] + customAttributes
+                          GIT_URL: env.GIT_URL,
+                          JENKINS_PIPELINE: build.getDisplayName(),
+                          JENKINS_URL: build.getAbsoluteUrl(),
+                          JENKINS_WORKSPACE: env.WORKSPACE,
+                          TEST_LEVEL: env.TEST_LEVEL] + customAttributes
     return attributes.findAll{k,v -> v}.collect{ k, v -> [key: k, value: v.toString()]}
 }
 
@@ -133,15 +134,36 @@ def getBuildAttributes(build, customAttributes) {
  * customConstants overrides build constants (when adding maps the second map will override values present in both)
  * @param build
  *      the pipeline raw build
- * @return the collected build information and parameters in ATX constants format 
+ * @return the collected build information and parameters in ATX constants format
  */
 def getBuildConstants(build, customConstants) {
     def constants = [PRODUCT_VERSION: env.PRODUCT_VERSION,
-                          GIT_COMMIT: env.GIT_COMMIT,
-                          JENKINS_BUILD_ID: build.id,
-                          JENKINS_EXECUTOR_NUMBER: env.EXECUTOR_NUMBER,
-                          JENKINS_NODE_NAME: env.NODE_NAME] + customConstants
+                         GIT_COMMIT: env.GIT_COMMIT,
+                         JENKINS_BUILD_ID: build.id,
+                         JENKINS_EXECUTOR_NUMBER: env.EXECUTOR_NUMBER,
+                         JENKINS_NODE_NAME: env.NODE_NAME] + customConstants
     return constants.findAll{k,v -> v}.collect{ k, v -> [key: k, value: v.toString()]}
+}
+
+/**
+ * ...
+ * @param build
+ * @param executionTestSteps
+ * @return
+ */
+def getBuildMetrics(build, executionTestSteps) {
+    def timeValues = calculateTime(executionTestSteps, build)
+    def metrics = [TOTAL_EXECUTION_TIME : timeValues.totalDuration,
+                       SETUP_TIME: timeValues.setupDuration,
+                       EXECUTION_TIME: timeValues.executionDuration,
+                       TEARDOWN_TIME: timeValues.teardownDuration,
+                       SETUP_PERCENTAGE: timeValues.setupPercentage,
+                       EXECUTION_PERCENTAGE: timeValues.executionPercentage,
+                       TEARDOWN_PERCENTAGE: timeValues.teardownPercentage,
+                       QUEUE_TIME: timeValues.queueDuration,
+                       COMMIT_TO_START_TIME: timeValues.fromCommitToStartTime,
+                       TIME_TO_ERROR: timeValues.errorTime]
+    return metrics.findAll{k,v -> v != null}.collect{k, v -> [key: k, value: v.toString()]}
 }
 
 /**
@@ -159,7 +181,7 @@ def getBuildConstants(build, customConstants) {
  *      the log file name if per-step logging is enabled
  * @return the formatted JSON report
  */
-def generateJsonReport(build, attributes, constants, executionTestSteps, logFile) {
+def generateJsonReport(build, attributes, constants, executionTestSteps, metrics, logFile) {
     Map testcase = [:]
 
     testcase.put("@type", "testcase")
@@ -174,6 +196,7 @@ def generateJsonReport(build, attributes, constants, executionTestSteps, logFile
     }
     testcase.put("constants", constants)
     testcase.put("executionTestSteps", executionTestSteps)
+    testcase.put("metrics", metrics)
     def testCases = [testcase]
 
     JsonBuilder jsonBuilder = new JsonBuilder([name     : 'JenkinsPipeline',
@@ -181,6 +204,160 @@ def generateJsonReport(build, attributes, constants, executionTestSteps, logFile
                                                testcases: testCases])
     String jsonString = jsonBuilder
     return JsonOutput.prettyPrint(jsonString)
+}
+
+/**
+ * ...
+ * @param executionTestSteps
+ * @param build
+ * @return
+ */
+def calculateTime(executionTestSteps, build) {
+    def currentPhase = 'setup'
+    def setupDuration = 0
+    def executionDuration = 0
+    def teardownDuration = 0
+    def queueDuration = (build.getStartTimeInMillis() - build.getTimeInMillis()) / 1000
+    def errorTime = calculateErrorTime(executionTestSteps)
+    def fromCommitToStartTime = currentBuild.getBuildCauses('jenkins.branch.BranchEventCause').isEmpty() ? null : getTimeFromCommitToStart(build)
+
+    executionTestSteps.each { stage ->
+        def stageName = stage.name
+        // Update the current phase based on the stage name
+        currentPhase = getCurrentPhase(stageName, currentPhase)
+
+        if (currentPhase == 'teardown') {
+            teardownDuration += stage.duration
+        } else if (currentPhase == 'setup') {
+            setupDuration += stage.duration
+        } else if (currentPhase == 'execution') {
+            executionDuration += stage.duration
+        }
+    }
+
+    def totalDuration = queueDuration + setupDuration + executionDuration + teardownDuration
+
+    def setupPercentage = (setupDuration / totalDuration) * 100
+    def executionPercentage = (executionDuration / totalDuration) * 100
+    def teardownPercentage = (teardownDuration / totalDuration) * 100
+
+    return [
+            setupDuration: setupDuration,
+            setupPercentage: setupPercentage,
+            executionDuration: executionDuration,
+            executionPercentage: executionPercentage,
+            teardownDuration: teardownDuration,
+            teardownPercentage: teardownPercentage,
+            queueDuration: queueDuration,
+            totalDuration: totalDuration,
+            fromCommitToStartTime: fromCommitToStartTime,
+            errorTime: errorTime != null ? setupDuration + queueDuration + errorTime : null]
+}
+
+/**
+ * ...
+ * @param stageName
+ * @param currentPhase
+ * @return
+ */
+def getCurrentPhase(stageName, currentPhase) {
+    if (stageName.contains("stage (Declarative: Post")) {
+        return 'teardown'
+    } else if (!stageName.contains("stage (Declarative") && currentPhase == 'setup') {
+        return 'execution'
+    }
+    return currentPhase
+}
+
+/**
+ * ...
+ * @param steps
+ * @param accumulatedTime
+ * @return
+ */
+def processTestSteps(steps, accumulatedTime) {
+    def errorTime = null
+    steps.each { step ->
+        if (step == null) {
+            return
+        }
+
+        def stepType = step.get('@type')
+        if (stepType == 'teststep') {
+            accumulatedTime += step.get('duration', 0)
+
+            def verdict = step.get('verdict')
+            if (verdict == 'FAILED' || verdict == 'ERROR') {
+                errorTime = accumulatedTime
+                return errorTime
+            }
+        } else if (stepType == 'teststepfolder') {
+            def nestedSteps = step.get('teststeps', [])
+            errorTime = processTestSteps(nestedSteps, accumulatedTime)
+            if (errorTime != null) {
+                return errorTime
+            }
+        }
+    }
+    return errorTime
+}
+
+/**
+ * ...
+ * @param executionTestSteps
+ * @return
+ */
+def calculateErrorTime(executionTestSteps) {
+    def errorTime = null
+    def accumulatedTime = 0
+    def currentPhase = 'setup'
+
+    executionTestSteps.each { stage ->
+        if (stage == null) {
+            return
+        }
+
+        def stageName = stage.get('name')
+
+        // Update the current phase based on the stage name
+        currentPhase = getCurrentPhase(stageName, currentPhase)
+
+        // Only process stages in the execution phase
+        if (currentPhase == 'execution') {
+            def teststeps = stage.get('teststeps', [])
+            errorTime = processTestSteps(teststeps, accumulatedTime)
+            if (errorTime != null) {
+                return errorTime
+            }
+        }
+    }
+    return errorTime
+}
+
+/**
+ * ...
+ * @param build
+ * @return
+ */
+@NonCPS
+def getTimeFromCommitToStart(build) {
+    def commitTime = null
+    def startTime = build.getStartTimeInMillis() / 1000
+    try {
+        def process = ["git", "-C", env.WORKSPACE, "show", "-s", "--format=%ct", env.GIT_COMMIT].execute()
+        def output = new StringBuffer()
+        def error = new StringBuffer()
+        process.consumeProcessOutput(output, error)
+        process.waitFor()
+
+        if (process.exitValue() == 0) {
+            def commitTimeStamp = output.toString().trim().toLong()
+            commitTime = startTime - commitTimeStamp
+        }
+    } catch (Exception e) {
+        println("Exception occurred: ${e.message}")
+    }
+    return commitTime
 }
 
 /**
@@ -364,6 +541,7 @@ def getTestStepName(row) {
 @NonCPS
 def createTestStep(row, appendLogs, skipped = false) {
     def node = row.getNode()
+    def duration = row.getDurationMillis() / 1000
     Map testStep = [:]
     def name = getTestStepName(row)
     def status = FlowNodeUtil.getStatus(node).toString()
@@ -377,6 +555,7 @@ def createTestStep(row, appendLogs, skipped = false) {
     testStep.put("@type", "teststep")
     testStep.put("name", name)
     testStep.put("verdict", verdict)
+    testStep.put("duration", duration)
 
     if (appendLogs) {
         def description = getDescription(row)
@@ -398,6 +577,7 @@ def createTestStep(row, appendLogs, skipped = false) {
  */
 @NonCPS
 def createTestStepFolder(row, appendLogs) {
+    def duration = row.getDurationMillis() / 1000
     Map testStepFolder = [:]
     def name = getTestStepName(row)
 
@@ -430,6 +610,7 @@ def createTestStepFolder(row, appendLogs) {
 
     testStepFolder.put("@type", "teststepfolder")
     testStepFolder.put("name", name)
+    testStepFolder.put("duration", duration)
     testStepFolder.put("teststeps", testSteps)
 
     if (appendLogs) {
