@@ -140,13 +140,13 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dl>
 
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#calculateErrorTime(def)" title="Method in pipeline2ATX">calculateErrorTime(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">...</div></dd>
+</dt><dd> <div class="block">Determines the time until an error within the execution phase occurs.</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#calculateTime(def, def)" title="Method in pipeline2ATX">calculateTime(def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">...</div></dd>
+</dt><dd> <div class="block">Calculates the duration metrics and their percentages.</div></dd>
 <dt><span class="strong"><a href="vars/cmd.html#call(java.lang.String)" title="Method in cmd">call(String)</a></span> - Method in <a href="vars/cmd.html">cmd</a>
 </dt><dd> <div class="block">Executes a passed command on Linux Shell or Windows Batch depending on the node.</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#call(def, def, int, def, def)" title="Method in pipeline2ATX">call(def, def, int, def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">Generates a test.guide compatible JSON report of a pipeline build including logs and stage meta data.
+</dt><dd> <div class="block">Generates a test.guide compatible JSON report of a pipeline build including logs, metrics, and stage meta data.
  </div></dd>
 <dt><span class="strong"><a href="vars/task.html#call(java.lang.String, List, java.lang.String, boolean, boolean)" title="Method in task">call(String, List, String, boolean, boolean)</a></span> - Method in <a href="vars/task.html">task</a>
 </dt><dd> <div class="block">Process management for Windows (via Powershell) and Linux (via Shell).</div></dd>
@@ -215,13 +215,23 @@ if (location.href.indexOf('is-external=true') == -1) {
  - JENKINS_EXECUTOR_NUMBER (number of currecnt Jenkins executor)
  - JENKINS_NODE_NAME (name of current node the current build is running on)</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getBuildMetrics(def, def)" title="Method in pipeline2ATX">getBuildMetrics(def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">...</div></dd>
+</dt><dd> <div class="block">Collects all relevant build metrics information and parameter as a key-value-map:
+ - TOTAL_EXECUTION_TIME (full run time of the build in seconds)
+ - SETUP_TIME (full run time of the setup phase of the build in seconds)
+ - EXECUTION_TIME (full run time of the execution phase of the build in seconds)
+ - TEARDOWN_TIME (full run time of the teardown phase of the build in seconds)
+ - SETUP_PERCENTAGE (percentage of the setup phase in relation to the TOTAL_EXECUTION_TIME)
+ - EXECUTION_PERCENTAGE (percentage of the execution phase in relation to the TOTAL_EXECUTION_TIME)
+ - TEARDOWN_PERCENTAGE ((percentage of the teardown phase in relation to the TOTAL_EXECUTION_TIME)
+ - QUEUE_TIME (time until the build starts in seconds)
+ - COMMIT_TO_START_TIME (time from commit to start of the build in seconds, only for push based executions)
+ - TIME_TO_ERROR (time until an error occurred in seconds, only for stages in the execution phase)</div></dd>
 <dt><span class="strong"><a href="vars/log.html#getColorCode(java.lang.String)" title="Method in log">getColorCode(String)</a></span> - Method in <a href="vars/log.html">log</a>
 </dt><dd> <div class="block">Returns the ANSI code for a given color.</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getConsoleLog(def)" title="Method in pipeline2ATX">getConsoleLog(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
 </dt><dd> <div class="block">Gets the console log.</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getCurrentPhase(def, def)" title="Method in pipeline2ATX">getCurrentPhase(def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">...</div></dd>
+</dt><dd> <div class="block">Determines the respective phase of the stage being examined.</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getCurrentResult(def)" title="Method in pipeline2ATX">getCurrentResult(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
 </dt><dd> <div class="block">Gets the current build result.</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getDescription(def)" title="Method in pipeline2ATX">getDescription(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
@@ -246,7 +256,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getTestStepName(def)" title="Method in pipeline2ATX">getTestStepName(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
 </dt><dd> <div class="block">Creates the test step name by combining the row name with its arguments</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getTimeFromCommitToStart(def)" title="Method in pipeline2ATX">getTimeFromCommitToStart(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">...</div></dd>
+</dt><dd> <div class="block">Determines the time from commit to start of the build</div></dd>
 </dl>
 
     
@@ -331,7 +341,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="vars/pipeline2ATX.html" title="Script in pipeline2ATX">pipeline2ATX</a></span> - Script in <a href="./pipeline2ATX/package-summary.html">pipeline2ATX</a>
 </dt><dd><div class="block"></div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#processTestSteps(def, def)" title="Method in pipeline2ATX">processTestSteps(def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">...</div></dd>
+</dt><dd> <div class="block">Traverses the steps of the stage being examined.</div></dd>
 </dl>
 
     

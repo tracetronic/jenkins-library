@@ -138,19 +138,19 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#calculateErrorTime(def)">calculateErrorTime</a></strong>(java.lang.Object executionTestSteps)</code><br>...</td>
+                            <td class="colLast"><code><strong><a href="#calculateErrorTime(def)">calculateErrorTime</a></strong>(java.lang.Object executionTestSteps)</code><br>Determines the time until an error within the execution phase occurs.</td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#calculateTime(def, def)">calculateTime</a></strong>(java.lang.Object executionTestSteps, java.lang.Object build)</code><br>...</td>
+                            <td class="colLast"><code><strong><a href="#calculateTime(def, def)">calculateTime</a></strong>(java.lang.Object executionTestSteps, java.lang.Object build)</code><br>Calculates the duration metrics and their percentages.</td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#call(def, def, int, def, def)">call</a></strong>(java.lang.Object log = false, java.lang.Object jobName = '', int buildNumber = 0, java.lang.Object customAttributes = [:], java.lang.Object customConstants = [:])</code><br>Generates a test.guide compatible JSON report of a pipeline build including logs and stage meta data.
+                            <td class="colLast"><code><strong><a href="#call(def, def, int, def, def)">call</a></strong>(java.lang.Object log = false, java.lang.Object jobName = '', int buildNumber = 0, java.lang.Object customAttributes = [:], java.lang.Object customConstants = [:])</code><br>Generates a test.guide compatible JSON report of a pipeline build including logs, metrics, and stage meta data.
  </td>
                         </tr>
                         
@@ -205,7 +205,17 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#getBuildMetrics(def, def)">getBuildMetrics</a></strong>(java.lang.Object build, java.lang.Object executionTestSteps)</code><br>...</td>
+                            <td class="colLast"><code><strong><a href="#getBuildMetrics(def, def)">getBuildMetrics</a></strong>(java.lang.Object build, java.lang.Object executionTestSteps)</code><br>Collects all relevant build metrics information and parameter as a key-value-map:
+ - TOTAL_EXECUTION_TIME (full run time of the build in seconds)
+ - SETUP_TIME (full run time of the setup phase of the build in seconds)
+ - EXECUTION_TIME (full run time of the execution phase of the build in seconds)
+ - TEARDOWN_TIME (full run time of the teardown phase of the build in seconds)
+ - SETUP_PERCENTAGE (percentage of the setup phase in relation to the TOTAL_EXECUTION_TIME)
+ - EXECUTION_PERCENTAGE (percentage of the execution phase in relation to the TOTAL_EXECUTION_TIME)
+ - TEARDOWN_PERCENTAGE ((percentage of the teardown phase in relation to the TOTAL_EXECUTION_TIME)
+ - QUEUE_TIME (time until the build starts in seconds)
+ - COMMIT_TO_START_TIME (time from commit to start of the build in seconds, only for push based executions)
+ - TIME_TO_ERROR (time until an error occurred in seconds, only for stages in the execution phase)</td>
                         </tr>
                         
                         <tr class="altColor">
@@ -217,7 +227,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#getCurrentPhase(def, def)">getCurrentPhase</a></strong>(java.lang.Object stageName, java.lang.Object currentPhase)</code><br>...</td>
+                            <td class="colLast"><code><strong><a href="#getCurrentPhase(def, def)">getCurrentPhase</a></strong>(java.lang.Object stageName, java.lang.Object currentPhase)</code><br>Determines the respective phase of the stage being examined.</td>
                         </tr>
                         
                         <tr class="altColor">
@@ -260,7 +270,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#getTimeFromCommitToStart(def)">getTimeFromCommitToStart</a></strong>(java.lang.Object build)</code><br>...</td>
+                            <td class="colLast"><code><strong><a href="#getTimeFromCommitToStart(def)">getTimeFromCommitToStart</a></strong>(java.lang.Object build)</code><br>Determines the time from commit to start of the build</td>
                         </tr>
                         
                         <tr class="rowColor">
@@ -272,7 +282,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#processTestSteps(def, def)">processTestSteps</a></strong>(java.lang.Object steps, java.lang.Object accumulatedTime)</code><br>...</td>
+                            <td class="colLast"><code><strong><a href="#processTestSteps(def, def)">processTestSteps</a></strong>(java.lang.Object steps, java.lang.Object accumulatedTime)</code><br>Traverses the steps of the stage being examined.</td>
                         </tr>
                         
                         <tr class="rowColor">
@@ -297,7 +307,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         
                         <tr class="altColor">
                             <td class="colFirst"><code>class groovy.lang.Script</code></td>
-                            <td class="colLast"><code>groovy.lang.Script#getBinding(), groovy.lang.Script#setBinding(groovy.lang.Binding), groovy.lang.Script#evaluate(java.io.File), groovy.lang.Script#evaluate(java.lang.String), groovy.lang.Script#println(java.lang.Object), groovy.lang.Script#println(), groovy.lang.Script#run(java.io.File, [Ljava.lang.String;), groovy.lang.Script#run(), groovy.lang.Script#getProperty(java.lang.String), groovy.lang.Script#setProperty(java.lang.String, java.lang.Object), groovy.lang.Script#print(java.lang.Object), groovy.lang.Script#printf(java.lang.String, java.lang.Object), groovy.lang.Script#printf(java.lang.String, [Ljava.lang.Object;), groovy.lang.Script#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.Script#getMetaClass(), groovy.lang.Script#setMetaClass(groovy.lang.MetaClass), groovy.lang.Script#wait(long), groovy.lang.Script#wait(long, int), groovy.lang.Script#wait(), groovy.lang.Script#equals(java.lang.Object), groovy.lang.Script#toString(), groovy.lang.Script#hashCode(), groovy.lang.Script#getClass(), groovy.lang.Script#notify(), groovy.lang.Script#notifyAll()</code></td>
+                            <td class="colLast"><code>groovy.lang.Script#getBinding(), groovy.lang.Script#setBinding(groovy.lang.Binding), groovy.lang.Script#println(java.lang.Object), groovy.lang.Script#println(), groovy.lang.Script#run(java.io.File, [Ljava.lang.String;), groovy.lang.Script#run(), groovy.lang.Script#getProperty(java.lang.String), groovy.lang.Script#setProperty(java.lang.String, java.lang.Object), groovy.lang.Script#print(java.lang.Object), groovy.lang.Script#printf(java.lang.String, [Ljava.lang.Object;), groovy.lang.Script#printf(java.lang.String, java.lang.Object), groovy.lang.Script#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.Script#evaluate(java.lang.String), groovy.lang.Script#evaluate(java.io.File), groovy.lang.Script#getMetaClass(), groovy.lang.Script#setMetaClass(groovy.lang.MetaClass), groovy.lang.Script#wait(long), groovy.lang.Script#wait(long, int), groovy.lang.Script#wait(), groovy.lang.Script#equals(java.lang.Object), groovy.lang.Script#toString(), groovy.lang.Script#hashCode(), groovy.lang.Script#getClass(), groovy.lang.Script#notify(), groovy.lang.Script#notifyAll()</code></td>
                         </tr>
                         <tr class="altColor">
                             <td class="colFirst"><code>class groovy.lang.GroovyObjectSupport</code></td>
@@ -339,7 +349,9 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>java.lang.Object <strong>calculateErrorTime</strong>(java.lang.Object executionTestSteps)</h4>
-                                <p> ... <DL><DT><B>Parameters:</B></DT><DD>executionTestSteps</DD></DL><DL><DT><B>Returns:</B></DT><DD></DD></DL></p>
+                                <p> Determines the time until an error within the execution phase occurs.
+ <DL><DT><B>Parameters:</B></DT><DD><code>executionTestSteps
+</code> -       the stages of the pipeline build</DD></DL><DL><DT><B>Returns:</B></DT><DD>the duration value in seconds or null in case of a error free build</DD></DL></p>
                             </li>
                         </ul>
                     
@@ -347,7 +359,10 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>java.lang.Object <strong>calculateTime</strong>(java.lang.Object executionTestSteps, java.lang.Object build)</h4>
-                                <p> ... <DL><DT><B>Parameters:</B></DT><DD>executionTestSteps</DD><DD>build</DD></DL><DL><DT><B>Returns:</B></DT><DD></DD></DL></p>
+                                <p>  Calculates the duration metrics and their percentages.
+ <DL><DT><B>Parameters:</B></DT><DD><code>executionTestSteps
+</code> -       the stages of the pipeline build</DD><DD><code>build
+</code> -       the pipeline build</DD></DL><DL><DT><B>Returns:</B></DT><DD>a map containing the calculated durations in seconds and percentages</DD></DL></p>
                             </li>
                         </ul>
                     
@@ -355,7 +370,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>java.lang.Object <strong>call</strong>(java.lang.Object log = false, java.lang.Object jobName = '', int buildNumber = 0, java.lang.Object customAttributes = [:], java.lang.Object customConstants = [:])</h4>
-                                <p> Generates a test.guide compatible JSON report of a pipeline build including logs and stage meta data.
+                                <p> Generates a test.guide compatible JSON report of a pipeline build including logs, metrics, and stage meta data.
  The report is compressed as a zip file within the build workspace and can be uploaded using the JSON2ATX converter.
 
  This method can be called downstream or within a running build.
@@ -437,7 +452,8 @@ java.lang.Object <strong>createTestStepFolder</strong>(java.lang.Object row, jav
 </code> -       the pipeline build</DD><DD><code>attributes
 </code> -       the collected attributes</DD><DD><code>constants
 </code> -       the collected constants</DD><DD><code>executionTestSteps
-</code> -       the stages of the pipeline build</DD><DD><code>logFile
+</code> -       the stages of the pipeline build</DD><DD><code>metrics
+</code> -       the collected metrics</DD><DD><code>logFile
 </code> -       the log file name if per-step logging is enabled</DD></DL><DL><DT><B>Returns:</B></DT><DD>the formatted JSON report</DD></DL></p>
                             </li>
                         </ul>
@@ -481,7 +497,22 @@ java.lang.Object <strong>createTestStepFolder</strong>(java.lang.Object row, jav
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>java.lang.Object <strong>getBuildMetrics</strong>(java.lang.Object build, java.lang.Object executionTestSteps)</h4>
-                                <p> ... <DL><DT><B>Parameters:</B></DT><DD>build</DD><DD>executionTestSteps</DD></DL><DL><DT><B>Returns:</B></DT><DD></DD></DL></p>
+                                <p> Collects all relevant build metrics information and parameter as a key-value-map:
+ - TOTAL_EXECUTION_TIME (full run time of the build in seconds)
+ - SETUP_TIME (full run time of the setup phase of the build in seconds)
+ - EXECUTION_TIME (full run time of the execution phase of the build in seconds)
+ - TEARDOWN_TIME (full run time of the teardown phase of the build in seconds)
+ - SETUP_PERCENTAGE (percentage of the setup phase in relation to the TOTAL_EXECUTION_TIME)
+ - EXECUTION_PERCENTAGE (percentage of the execution phase in relation to the TOTAL_EXECUTION_TIME)
+ - TEARDOWN_PERCENTAGE ((percentage of the teardown phase in relation to the TOTAL_EXECUTION_TIME)
+ - QUEUE_TIME (time until the build starts in seconds)
+ - COMMIT_TO_START_TIME (time from commit to start of the build in seconds, only for push based executions)
+ - TIME_TO_ERROR (time until an error occurred in seconds, only for stages in the execution phase)
+
+ values that not always occur, such as TIME_TO_ERROR, will be filtered out before collection
+ <DL><DT><B>Parameters:</B></DT><DD><code>build
+</code> -       the pipeline raw build</DD><DD><code>executionTestSteps
+</code> -       the stages of the pipeline build</DD></DL><DL><DT><B>Returns:</B></DT><DD>the collected build information and parameters in ATX metrics format</DD></DL></p>
                             </li>
                         </ul>
                     
@@ -499,7 +530,10 @@ java.lang.Object <strong>createTestStepFolder</strong>(java.lang.Object row, jav
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>java.lang.Object <strong>getCurrentPhase</strong>(java.lang.Object stageName, java.lang.Object currentPhase)</h4>
-                                <p> ... <DL><DT><B>Parameters:</B></DT><DD>stageName</DD><DD>currentPhase</DD></DL><DL><DT><B>Returns:</B></DT><DD></DD></DL></p>
+                                <p> Determines the respective phase of the stage being examined.
+ <DL><DT><B>Parameters:</B></DT><DD><code>stageName
+</code> -       the name of the current stage</DD><DD><code>currentPhase
+</code> -       the corresponding phase in which the current stage is located</DD></DL><DL><DT><B>Returns:</B></DT><DD>the current phase</DD></DL></p>
                             </li>
                         </ul>
                     
@@ -574,7 +608,9 @@ java.lang.Object <strong>getTestStepName</strong>(java.lang.Object row)</h4>
                             <li class="blockList">
                                 <h4>@com.cloudbees.groovy.cps.NonCPS
 java.lang.Object <strong>getTimeFromCommitToStart</strong>(java.lang.Object build)</h4>
-                                <p> ... <DL><DT><B>Parameters:</B></DT><DD>build</DD></DL><DL><DT><B>Returns:</B></DT><DD></DD></DL></p>
+                                <p> Determines the time from commit to start of the build
+ <DL><DT><B>Parameters:</B></DT><DD><code>build
+</code> -       the pipeline build</DD></DL><DL><DT><B>Returns:</B></DT><DD>the duration value in seconds</DD></DL></p>
                             </li>
                         </ul>
                     
@@ -590,7 +626,10 @@ java.lang.Object <strong>getTimeFromCommitToStart</strong>(java.lang.Object buil
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>java.lang.Object <strong>processTestSteps</strong>(java.lang.Object steps, java.lang.Object accumulatedTime)</h4>
-                                <p> ... <DL><DT><B>Parameters:</B></DT><DD>steps</DD><DD>accumulatedTime</DD></DL><DL><DT><B>Returns:</B></DT><DD></DD></DL></p>
+                                <p> Traverses the steps of the stage being examined.
+ <DL><DT><B>Parameters:</B></DT><DD><code>steps
+</code> -       the steps within a stage</DD><DD><code>accumulatedTime
+</code> -       accumulated duration values until an error occurred</DD></DL><DL><DT><B>Returns:</B></DT><DD>the duration value in seconds or null in case of a error free build</DD></DL></p>
                             </li>
                         </ul>
                     
