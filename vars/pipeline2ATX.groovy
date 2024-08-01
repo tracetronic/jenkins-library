@@ -19,7 +19,7 @@ import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 import org.jenkinsci.plugins.workflow.support.visualization.table.FlowGraphTable
 
 /**
- * Generates a test.guide compatible JSON report of a pipeline build including logs and stage meta data.
+ * Generates a test.guide compatible JSON report of a pipeline build including logs, metrics, and stage meta data.
  * The report is compressed as a zip file within the build workspace and can be uploaded using the JSON2ATX converter.
  *
  * This method can be called downstream or within a running build.
@@ -146,10 +146,24 @@ def getBuildConstants(build, customConstants) {
 }
 
 /**
- * ...
+ * Collects all relevant build metrics information and parameter as a key-value-map:
+ * - TOTAL_EXECUTION_TIME (full run time of the build in seconds)
+ * - SETUP_TIME (full run time of the setup phase of the build in seconds)
+ * - EXECUTION_TIME (full run time of the execution phase of the build in seconds)
+ * - TEARDOWN_TIME (full run time of the teardown phase of the build in seconds)
+ * - SETUP_PERCENTAGE (percentage of the setup phase in relation to the TOTAL_EXECUTION_TIME)
+ * - EXECUTION_PERCENTAGE (percentage of the execution phase in relation to the TOTAL_EXECUTION_TIME)
+ * - TEARDOWN_PERCENTAGE ((percentage of the teardown phase in relation to the TOTAL_EXECUTION_TIME)
+ * - QUEUE_TIME (time until the build starts in seconds)
+ * - COMMIT_TO_START_TIME (time from commit to start of the build in seconds, only for push based executions)
+ * - TIME_TO_ERROR (time until an error occurred in seconds, only for stages in the execution phase)
+ *
+ * values that not always occur, such as TIME_TO_ERROR, will be filtered out before collection
  * @param build
+ *      the pipeline raw build
  * @param executionTestSteps
- * @return
+ *      the stages of the pipeline build
+ * @return the collected build information and parameters in ATX metrics format
  */
 def getBuildMetrics(build, executionTestSteps) {
     def timeValues = calculateTime(executionTestSteps, build)
@@ -177,6 +191,8 @@ def getBuildMetrics(build, executionTestSteps) {
  *      the collected constants
  * @param executionTestSteps
  *      the stages of the pipeline build
+ * @param metrics
+ *      the collected metrics
  * @param logFile
  *      the log file name if per-step logging is enabled
  * @return the formatted JSON report
@@ -207,17 +223,20 @@ def generateJsonReport(build, attributes, constants, executionTestSteps, metrics
 }
 
 /**
- * ...
+ *  Calculates the duration metrics and their percentages.
+ *
  * @param executionTestSteps
+ *      the stages of the pipeline build
  * @param build
- * @return
+ *      the pipeline build
+ * @return a map containing the calculated durations in seconds and percentages
  */
 def calculateTime(executionTestSteps, build) {
     def currentPhase = 'setup'
     def setupDuration = 0
     def executionDuration = 0
     def teardownDuration = 0
-    def queueDuration = (build.getStartTimeInMillis() - build.getTimeInMillis()) / 1000
+    def queueDuration = (int) ((build.getStartTimeInMillis() - build.getTimeInMillis()) / 1000)
     def errorTime = calculateErrorTime(executionTestSteps)
     def fromCommitToStartTime = currentBuild.getBuildCauses('jenkins.branch.BranchEventCause').isEmpty() ? null : getTimeFromCommitToStart(build)
 
@@ -242,23 +261,62 @@ def calculateTime(executionTestSteps, build) {
     def teardownPercentage = (teardownDuration / totalDuration) * 100
 
     return [
-            setupDuration: setupDuration,
-            setupPercentage: setupPercentage,
-            executionDuration: executionDuration,
-            executionPercentage: executionPercentage,
-            teardownDuration: teardownDuration,
-            teardownPercentage: teardownPercentage,
-            queueDuration: queueDuration,
-            totalDuration: totalDuration,
-            fromCommitToStartTime: fromCommitToStartTime,
-            errorTime: errorTime != null ? setupDuration + queueDuration + errorTime : null]
+            setupDuration: (int) setupDuration,
+            setupPercentage: (int) setupPercentage,
+            executionDuration: (int) executionDuration,
+            executionPercentage: (int) executionPercentage,
+            teardownDuration: (int) teardownDuration,
+            teardownPercentage: (int) teardownPercentage,
+            queueDuration: (int) queueDuration,
+            totalDuration: (int) totalDuration,
+            fromCommitToStartTime: fromCommitToStartTime != null ? (int) fromCommitToStartTime : null,
+            errorTime: errorTime != null ? (int) (setupDuration + queueDuration + errorTime) : null]
 }
 
 /**
- * ...
+ * Determines the time until an error within the execution phase occurs.
+ *
+ * @param executionTestSteps
+ *      the stages of the pipeline build
+ * @return the duration value in seconds or null in case of a error free build
+ */
+def calculateErrorTime(executionTestSteps) {
+    def errorTime = null
+    def accumulatedTime = 0
+    def currentPhase = 'setup'
+
+    executionTestSteps.each { stage ->
+        if (stage == null) {
+            return
+        }
+
+        def stageName = stage.get('name')
+        def stageDuration = stage.get('duration', 0)
+
+        currentPhase = getCurrentPhase(stageName, currentPhase)
+
+        // Only process stages in the execution phase
+        if (currentPhase == 'execution') {
+            def teststeps = stage.get('teststeps', [])
+            def stageErrorTime = processTestSteps(teststeps, stageDuration)
+            if (stageErrorTime != null) {
+                errorTime = accumulatedTime + stageErrorTime
+                return errorTime
+            }
+            accumulatedTime += stageDuration
+        }
+    }
+    return errorTime
+}
+
+/**
+ * Determines the respective phase of the stage being examined.
+ *
  * @param stageName
+ *      the name of the current stage
  * @param currentPhase
- * @return
+ *      the corresponding phase in which the current stage is located
+ * @return the current phase
  */
 def getCurrentPhase(stageName, currentPhase) {
     if (stageName.contains("stage (Declarative: Post")) {
@@ -270,10 +328,13 @@ def getCurrentPhase(stageName, currentPhase) {
 }
 
 /**
- * ...
+ * Traverses the steps of the stage being examined.
+ *
  * @param steps
+ *      the steps within a stage
  * @param accumulatedTime
- * @return
+ *      accumulated duration values until an error occurred
+ * @return the duration value in seconds or null in case of a error free build
  */
 def processTestSteps(steps, accumulatedTime) {
     def errorTime = null
@@ -284,8 +345,6 @@ def processTestSteps(steps, accumulatedTime) {
 
         def stepType = step.get('@type')
         if (stepType == 'teststep') {
-            accumulatedTime += step.get('duration', 0)
-
             def verdict = step.get('verdict')
             if (verdict == 'FAILED' || verdict == 'ERROR') {
                 errorTime = accumulatedTime
@@ -303,41 +362,11 @@ def processTestSteps(steps, accumulatedTime) {
 }
 
 /**
- * ...
- * @param executionTestSteps
- * @return
- */
-def calculateErrorTime(executionTestSteps) {
-    def errorTime = null
-    def accumulatedTime = 0
-    def currentPhase = 'setup'
-
-    executionTestSteps.each { stage ->
-        if (stage == null) {
-            return
-        }
-
-        def stageName = stage.get('name')
-
-        // Update the current phase based on the stage name
-        currentPhase = getCurrentPhase(stageName, currentPhase)
-
-        // Only process stages in the execution phase
-        if (currentPhase == 'execution') {
-            def teststeps = stage.get('teststeps', [])
-            errorTime = processTestSteps(teststeps, accumulatedTime)
-            if (errorTime != null) {
-                return errorTime
-            }
-        }
-    }
-    return errorTime
-}
-
-/**
- * ...
+ * Determines the time from commit to start of the build
+ *
  * @param build
- * @return
+ *      the pipeline build
+ * @return the duration value in seconds
  */
 @NonCPS
 def getTimeFromCommitToStart(build) {
@@ -541,7 +570,6 @@ def getTestStepName(row) {
 @NonCPS
 def createTestStep(row, appendLogs, skipped = false) {
     def node = row.getNode()
-    def duration = row.getDurationMillis() / 1000
     Map testStep = [:]
     def name = getTestStepName(row)
     def status = FlowNodeUtil.getStatus(node).toString()
@@ -555,7 +583,6 @@ def createTestStep(row, appendLogs, skipped = false) {
     testStep.put("@type", "teststep")
     testStep.put("name", name)
     testStep.put("verdict", verdict)
-    testStep.put("duration", duration)
 
     if (appendLogs) {
         def description = getDescription(row)

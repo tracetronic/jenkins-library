@@ -20,6 +20,7 @@ import org.jenkinsci.plugins.workflow.graph.FlowNode
 import org.jenkinsci.plugins.workflow.support.actions.LogStorageAction
 import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper
 import org.jenkinsci.plugins.workflow.support.visualization.table.FlowGraphTable
+import net.sf.json.JSONArray
 
 class Pipeline2ATXTest extends PipelineSpockTestBase {
 
@@ -99,7 +100,87 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
                       ['key':'JENKINS_NODE_NAME', 'value':'Runner0815'],
                       ['key':'TOOL_NAME', 'value':'test.tool']]
     }
-    
+
+    def 'Calculate metric times - error free and non pushed based build'() {
+        given: 'pipeline stages'
+        def mockPipelineStages = [
+                ['name': 'stage (Declarative)', 'duration': 250],
+                ['name': 'execution phase', 'duration': 500],
+                ['name': 'stage (Declarative: Post', 'duration': 250]
+        ]
+        def build = GroovyMock(Run)
+        build.getStartTimeInMillis() >> 2000
+        build.getTimeInMillis() >> 1000
+
+        def currentBuild = GroovyMock(RunWrapper)
+        currentBuild.getBuildCauses('jenkins.branch.BranchEventCause') >> []
+
+        binding.setVariable('currentBuild', currentBuild)
+
+        when: 'calculate time values'
+        def timeValues = pipeline2ATX.calculateTime(mockPipelineStages, build)
+
+        then: 'verify calculated time values'
+        timeValues.setupDuration == 250
+        timeValues.setupPercentage == 24
+        timeValues.executionDuration == 500
+        timeValues.executionPercentage == 49
+        timeValues.teardownDuration == 250
+        timeValues.teardownPercentage == 24
+        timeValues.queueDuration == 1
+        timeValues.totalDuration == 1001
+        timeValues.fromCommitToStartTime == null
+        timeValues.errorTime == null
+    }
+
+    def 'Calculate metric times - Time from commit to start for pushed based builds'() {
+        given: 'a build and a mocked time from commit to start'
+        def mockPipelineStages = [
+                ['name': 'stage (Declarative)', 'duration': 250],
+                ['name': 'execution phase', 'duration': 500],
+                ['name': 'stage (Declarative: Post', 'duration': 250]
+        ]
+        def build = GroovyMock(Run)
+        def currentBuild = GroovyMock(RunWrapper)
+
+
+        currentBuild.getBuildCauses('jenkins.branch.BranchEventCause') >> JSONArray.fromObject(['push'])
+
+        def arbitraryCommitToStartTimeValue = 1234
+        pipeline2ATX.metaClass.getTimeFromCommitToStart = { building ->
+            return arbitraryCommitToStartTimeValue
+        }
+
+        binding.setVariable('currentBuild', currentBuild)
+
+        when: 'calculate time from commit to start of pipeline'
+        def result = pipeline2ATX.calculateTime(mockPipelineStages, build)
+
+        then: 'commit value included'
+        result.fromCommitToStartTime == arbitraryCommitToStartTimeValue
+    }
+
+    def 'Calculate metric times - Time until error'() {
+        given: 'execution phase stages with error'
+        def mockExecutionStages = [
+                ['@type': 'teststepfolder', 'name': 'stage (Build)', 'duration': 1, 'teststeps': [
+                        ['@type': 'teststep', 'name': 'echo (Build)', 'verdict': 'PASSED', 'duration': 1]
+                ]],
+                ['@type': 'teststepfolder', 'name': 'stage (Test)', 'duration': 3, 'teststeps': [
+                        ['@type': 'teststep', 'name': 'echo (Test)', 'verdict': 'PASSED', 'duration': 3]
+                ]],
+                ['@type': 'teststepfolder', 'name': 'stage (Deploy)', 'duration': 5, 'teststeps': [
+                        ['@type': 'teststep', 'name': 'echo (Deploy)', 'verdict': 'ERROR', 'duration': 5]
+                ]]
+        ]
+
+        when: 'calculate error time'
+        def errorTimeValue = pipeline2ATX.calculateErrorTime(mockExecutionStages)
+
+        then: 'verify calculated error time'
+        errorTimeValue == 9
+    }
+
     def 'Collect build constants - missing env vars'() {
         given: 'a build'
             def build = GroovyMock(Run)
@@ -126,13 +207,14 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
 
             def attributes = [[key: 'testAttr', value: 'testAttrValue']]
             def constants = [[key: 'testConst', value: 'testConstValue']]
+            def metrics = [[key: 'testMetric', value: 'testMetricValue']]
             def teststeps = [['@type':'teststep']]
 
             helper.registerAllowedMethod('getCurrentResult', [Object], {'SUCCESS'})
             pipeline2ATX = loadScript(scriptName)
 
         when: 'json string is generated'
-            String result = pipeline2ATX.generateJsonReport(build, attributes, constants, teststeps, logfile)
+            String result = pipeline2ATX.generateJsonReport(build, attributes, constants, teststeps, metrics, logfile)
 
         then: 'expect to find the values in the json string'
             result.contains('"name": "JenkinsPipeline"')
@@ -146,6 +228,8 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             result.contains('"key": "testConst"')  // test constants
             result.contains('"value": "testConstValue')
             result.contains('"@type": "teststep"') // test teststeps
+            result.contains('"key": "testMetric"') // test metrics
+            result.contains('"value": "testMetricValue')
             if (logfile) {  // test artifacts
                 result.contains('"artifacts":')
                 result.contains(logfile)
