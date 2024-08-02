@@ -235,10 +235,10 @@ def generateJsonReport(build, attributes, constants, executionTestSteps, metrics
  */
 def calculateTime(executionTestSteps, build) {
     def currentPhase = 'setup'
-    def setupDuration = 0
-    def executionDuration = 0
-    def teardownDuration = 0
-    def queueDuration = (int) ((build.getStartTimeInMillis() - build.getTimeInMillis()) / 1000)
+    int setupDuration = 0
+    int executionDuration = 0
+    int teardownDuration = 0
+    int queueDuration = (build.getStartTimeInMillis() - build.getTimeInMillis()) / 1000
     def errorTime = calculateErrorTime(executionTestSteps)
     def fromCommitToStartTime = currentBuild.getBuildCauses('jenkins.branch.BranchEventCause').isEmpty() ? null : getTimeFromCommitToStart(build)
 
@@ -256,21 +256,21 @@ def calculateTime(executionTestSteps, build) {
         }
     }
 
-    def totalDuration = queueDuration + setupDuration + executionDuration + teardownDuration
+    int totalDuration = queueDuration + setupDuration + executionDuration + teardownDuration
 
-    def setupPercentage = (setupDuration / totalDuration) * 100
-    def executionPercentage = (executionDuration / totalDuration) * 100
-    def teardownPercentage = (teardownDuration / totalDuration) * 100
+    int setupPercentage = (setupDuration / totalDuration) * 100
+    int executionPercentage = (executionDuration / totalDuration) * 100
+    int teardownPercentage = (teardownDuration / totalDuration) * 100
 
     return [
-            setupDuration: (int) setupDuration,
-            setupPercentage: (int) setupPercentage,
-            executionDuration: (int) executionDuration,
-            executionPercentage: (int) executionPercentage,
-            teardownDuration: (int) teardownDuration,
-            teardownPercentage: (int) teardownPercentage,
-            queueDuration: (int) queueDuration,
-            totalDuration: (int) totalDuration,
+            setupDuration: setupDuration,
+            setupPercentage: setupPercentage,
+            executionDuration: executionDuration,
+            executionPercentage: executionPercentage,
+            teardownDuration: teardownDuration,
+            teardownPercentage: teardownPercentage,
+            queueDuration: queueDuration,
+            totalDuration: totalDuration,
             fromCommitToStartTime: fromCommitToStartTime != null ? (int) fromCommitToStartTime : null,
             errorTime: errorTime != null ? (int) (setupDuration + queueDuration + errorTime) : null]
 }
