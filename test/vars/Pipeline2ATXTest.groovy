@@ -207,7 +207,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
 
             def attributes = [[key: 'testAttr', value: 'testAttrValue']]
             def constants = [[key: 'testConst', value: 'testConstValue']]
-            def metrics = [[key: 'testMetric', value: 'testMetricValue']]
+            def metrics = [[name: 'testMetric', direction: 'IN', value: 'testMetricValue']]
             def teststeps = [['@type':'teststep']]
 
             helper.registerAllowedMethod('getCurrentResult', [Object], {'SUCCESS'})
@@ -228,8 +228,9 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             result.contains('"key": "testConst"')  // test constants
             result.contains('"value": "testConstValue')
             result.contains('"@type": "teststep"') // test teststeps
-            result.contains('"key": "testMetric"') // test metrics
-            result.contains('"value": "testMetricValue')
+            result.contains('"name": "testMetric"') // test metrics
+            result.contains('"direction": "IN"') // test metrics
+            result.contains('"value": "testMetricValue') //test metrics
             if (logfile) {  // test artifacts
                 result.contains('"artifacts":')
                 result.contains(logfile)

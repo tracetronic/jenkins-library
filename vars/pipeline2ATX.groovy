@@ -163,21 +163,23 @@ def getBuildConstants(build, customConstants) {
  *      the pipeline raw build
  * @param executionTestSteps
  *      the stages of the pipeline build
- * @return the collected build information and parameters in ATX metrics format
+ * @return the collected build information and parameters in ATX parameters format
  */
 def getBuildMetrics(build, executionTestSteps) {
     def timeValues = calculateTime(executionTestSteps, build)
-    def metrics = [TOTAL_EXECUTION_TIME : timeValues.totalDuration,
-                       SETUP_TIME: timeValues.setupDuration,
-                       EXECUTION_TIME: timeValues.executionDuration,
-                       TEARDOWN_TIME: timeValues.teardownDuration,
-                       SETUP_PERCENTAGE: timeValues.setupPercentage,
-                       EXECUTION_PERCENTAGE: timeValues.executionPercentage,
-                       TEARDOWN_PERCENTAGE: timeValues.teardownPercentage,
-                       QUEUE_TIME: timeValues.queueDuration,
-                       COMMIT_TO_START_TIME: timeValues.fromCommitToStartTime,
-                       TIME_TO_ERROR: timeValues.errorTime]
-    return metrics.findAll{k,v -> v != null}.collect{k, v -> [key: k, value: v.toString()]}
+    def metrics = [
+            [name: "TOTAL_EXECUTION_TIME", direction: "IN", value: timeValues.totalDuration],
+            [name: "SETUP_TIME", direction: "IN", value: timeValues.setupDuration],
+            [name: "EXECUTION_TIME", direction: "IN", value: timeValues.executionDuration],
+            [name: "TEARDOWN_TIME", direction: "IN", value: timeValues.teardownDuration],
+            [name: "SETUP_PERCENTAGE", direction: "IN", value: timeValues.setupPercentage],
+            [name: "EXECUTION_PERCENTAGE", direction: "IN", value: timeValues.executionPercentage],
+            [name: "TEARDOWN_PERCENTAGE", direction: "IN", value: timeValues.teardownPercentage],
+            [name: "QUEUE_TIME", direction: "IN", value: timeValues.queueDuration],
+            [name: "COMMIT_TO_START_TIME", direction: "IN", value: timeValues.fromCommitToStartTime],
+            [name: "TIME_TO_ERROR", direction: "IN", value: timeValues.errorTime]
+    ]
+    return metrics.findAll { param -> param.value != null }
 }
 
 /**
@@ -212,7 +214,7 @@ def generateJsonReport(build, attributes, constants, executionTestSteps, metrics
     }
     testcase.put("constants", constants)
     testcase.put("executionTestSteps", executionTestSteps)
-    testcase.put("metrics", metrics)
+    testcase.put("parameters", metrics)
     def testCases = [testcase]
 
     JsonBuilder jsonBuilder = new JsonBuilder([name     : 'JenkinsPipeline',
