@@ -51,6 +51,10 @@ import org.jenkinsci.plugins.workflow.support.visualization.table.FlowGraphTable
  *      the name of the pipeline job (optional)
  * @param buildNumber
  *      the number of the pipeline build (optional)
+ * @param customAttributes
+ *      the custom attributes for the pipline build (optional)
+ * @param customConstants
+ *      the custom constants for the pipeline build (optional)
  */
 def call(log = false, jobName = '', int buildNumber = 0, def customAttributes = [:], def customConstants = [:]) {
     def build
@@ -100,13 +104,15 @@ def getRawBuild(String jobName, int buildNumber) {
 }
 
 /**
- * Collects all relevant build information and parameter as a key-value-map:
- * - PRODUCT_NAME (content of the env var PRODUCT_NAME, only added if present)
- * - GIT_URL (content of env var GIT_URL, only added if present)
- * - JENKINS_PIPELINE (name of the current Jenkins build job)
- * - JENKINS_URL (url to the current Jenkins build job)
- * - JENKINS_WORKSPACE (path to the Jenkins pipeline workspace)
- * - TEST_LEVEL (content of env var TEST_LEVEL, only added if present)
+ * Collects all relevant build information and parameters as a key-value map:
+ * <ul>
+ *   <li><code>PRODUCT_NAME</code>: Content of the env var PRODUCT_NAME, only added if present.</li>
+ *   <li><code>GIT_URL</code>: Content of env var GIT_URL, only added if present.</li>
+ *   <li><code>JENKINS_PIPELINE</code>: Name of the current Jenkins build job.</li>
+ *   <li><code>JENKINS_URL</code>: URL to the current Jenkins build job.</li>
+ *   <li><code>JENKINS_WORKSPACE</code>: Path to the Jenkins pipeline workspace.</li>
+ *   <li><code>TEST_LEVEL</code>: Content of env var TEST_LEVEL, only added if present.</li>
+ * </ul>
  *
  *  customAttributes overrides build attributes (when adding maps the second map will override values present in both)
  * @param build
@@ -124,12 +130,14 @@ def getBuildAttributes(build, customAttributes) {
 }
 
 /**
- * Collects all relevant build information and parameter as a key-value-map:
- * - PRODUCT_VERSION (content of env var PRODUCT_VERSION, only added if present)
- * - GIT_COMMIT (content of env var GIT_COMMIT, only added if present)
- * - JENKINS_BUILD_ID (number of current Jenkins build)
- * - JENKINS_EXECUTOR_NUMBER (number of currecnt Jenkins executor)
- * - JENKINS_NODE_NAME (name of current node the current build is running on)
+ * Collects all relevant build information and parameters as a key-value map:
+ * <ul>
+ *   <li><code>PRODUCT_VERSION</code>: Content of env var PRODUCT_VERSION, only added if present.</li>
+ *   <li><code>GIT_COMMIT</code>: Content of env var GIT_COMMIT, only added if present.</li>
+ *   <li><code>JENKINS_BUILD_ID</code>: Number of current Jenkins build.</li>
+ *   <li><code>JENKINS_EXECUTOR_NUMBER</code>: Number of current Jenkins executor.</li>
+ *   <li><code>JENKINS_NODE_NAME</code>: Name of current node the current build is running on.</li>
+ * </ul>
  *
  * customConstants overrides build constants (when adding maps the second map will override values present in both)
  * @param build
@@ -146,19 +154,21 @@ def getBuildConstants(build, customConstants) {
 }
 
 /**
- * Collects all relevant build metrics information and parameter as a key-value-map:
- * - TOTAL_EXECUTION_TIME (full run time of the build in seconds)
- * - SETUP_TIME (full run time of the setup phase of the build in seconds)
- * - EXECUTION_TIME (full run time of the execution phase of the build in seconds)
- * - TEARDOWN_TIME (full run time of the teardown phase of the build in seconds)
- * - SETUP_PERCENTAGE (percentage of the setup phase in relation to the TOTAL_EXECUTION_TIME)
- * - EXECUTION_PERCENTAGE (percentage of the execution phase in relation to the TOTAL_EXECUTION_TIME)
- * - TEARDOWN_PERCENTAGE ((percentage of the teardown phase in relation to the TOTAL_EXECUTION_TIME)
- * - QUEUE_TIME (time until the build starts in seconds)
- * - COMMIT_TO_START_TIME (time from commit to start of the build in seconds, only for push based executions)
- * - TIME_TO_ERROR (time until an error occurred in seconds, only for stages in the execution phase)
+ * Collects all relevant build metrics information and parameters as a key-value map:
+ * <ul>
+ *   <li><code>TOTAL_EXECUTION_TIME</code>: Full run time of the build in seconds.</li>
+ *   <li><code>SETUP_TIME</code>: Full run time of the setup phase of the build in seconds.</li>
+ *   <li><code>EXECUTION_TIME</code>: Full run time of the execution phase of the build in seconds.</li>
+ *   <li><code>TEARDOWN_TIME</code>: Full run time of the teardown phase of the build in seconds.</li>
+ *   <li><code>SETUP_PERCENTAGE</code>: Percentage of the setup phase in relation to the TOTAL_EXECUTION_TIME.</li>
+ *   <li><code>EXECUTION_PERCENTAGE</code>: Percentage of the execution phase in relation to the TOTAL_EXECUTION_TIME.</li>
+ *   <li><code>TEARDOWN_PERCENTAGE</code>: Percentage of the teardown phase in relation to the TOTAL_EXECUTION_TIME.</li>
+ *   <li><code>QUEUE_TIME</code>: Time until the build starts in seconds.</li>
+ *   <li><code>COMMIT_TO_START_TIME</code>: Time from commit to start of the build in seconds, only for push-based executions.</li>
+ *   <li><code>TIME_TO_ERROR</code>: Time until an error occurred in seconds, only for stages in the execution phase.</li>
+ * </ul>
  *
- * values that not always occur, such as TIME_TO_ERROR, will be filtered out before collection
+ * Values that not always occur, such as <code>TIME_TO_ERROR</code>, will be filtered out before collection
  * @param build
  *      the pipeline raw build
  * @param executionTestSteps
@@ -168,16 +178,16 @@ def getBuildConstants(build, customConstants) {
 def getBuildMetrics(build, executionTestSteps) {
     def timeValues = calculateTime(executionTestSteps, build)
     def metrics = [
-            [name: "TOTAL_EXECUTION_TIME", direction: "IN", value: timeValues.totalDuration],
-            [name: "SETUP_TIME", direction: "IN", value: timeValues.setupDuration],
-            [name: "EXECUTION_TIME", direction: "IN", value: timeValues.executionDuration],
-            [name: "TEARDOWN_TIME", direction: "IN", value: timeValues.teardownDuration],
-            [name: "SETUP_PERCENTAGE", direction: "IN", value: timeValues.setupPercentage],
-            [name: "EXECUTION_PERCENTAGE", direction: "IN", value: timeValues.executionPercentage],
-            [name: "TEARDOWN_PERCENTAGE", direction: "IN", value: timeValues.teardownPercentage],
-            [name: "QUEUE_TIME", direction: "IN", value: timeValues.queueDuration],
-            [name: "COMMIT_TO_START_TIME", direction: "IN", value: timeValues.fromCommitToStartTime],
-            [name: "TIME_TO_ERROR", direction: "IN", value: timeValues.errorTime]
+            [name: "TOTAL_EXECUTION_TIME", direction: "OUT", value: timeValues.totalDuration],
+            [name: "SETUP_TIME", direction: "OUT", value: timeValues.setupDuration],
+            [name: "EXECUTION_TIME", direction: "OUT", value: timeValues.executionDuration],
+            [name: "TEARDOWN_TIME", direction: "OUT", value: timeValues.teardownDuration],
+            [name: "SETUP_PERCENTAGE", direction: "OUT", value: timeValues.setupPercentage],
+            [name: "EXECUTION_PERCENTAGE", direction: "OUT", value: timeValues.executionPercentage],
+            [name: "TEARDOWN_PERCENTAGE", direction: "OUT", value: timeValues.teardownPercentage],
+            [name: "QUEUE_TIME", direction: "OUT", value: timeValues.queueDuration],
+            [name: "COMMIT_TO_START_TIME", direction: "OUT", value: timeValues.fromCommitToStartTime],
+            [name: "TIME_TO_ERROR", direction: "OUT", value: timeValues.errorTime]
     ]
     return metrics.findAll { param -> param.value != null }
 }
@@ -193,13 +203,13 @@ def getBuildMetrics(build, executionTestSteps) {
  *      the collected constants
  * @param executionTestSteps
  *      the stages of the pipeline build
- * @param metrics
- *      the collected metrics
+ * @param parameters
+ *      the collected parameters
  * @param logFile
  *      the log file name if per-step logging is enabled
  * @return the formatted JSON report
  */
-def generateJsonReport(build, attributes, constants, executionTestSteps, metrics, logFile) {
+def generateJsonReport(build, attributes, constants, executionTestSteps, parameters, logFile) {
     Map testcase = [:]
 
     testcase.put("@type", "testcase")
@@ -214,7 +224,7 @@ def generateJsonReport(build, attributes, constants, executionTestSteps, metrics
     }
     testcase.put("constants", constants)
     testcase.put("executionTestSteps", executionTestSteps)
-    testcase.put("parameters", metrics)
+    testcase.put("parameters", parameters)
     def testCases = [testcase]
 
     JsonBuilder jsonBuilder = new JsonBuilder([name     : 'JenkinsPipeline',
@@ -300,7 +310,7 @@ def calculateErrorTime(executionTestSteps) {
         // Only process stages in the execution phase
         if (currentPhase == 'execution') {
             def teststeps = stage.get('teststeps', [])
-            def stageErrorTime = processTestSteps(teststeps, stageDuration)
+            def stageErrorTime = findNonPassedVerdict(teststeps, stageDuration)
             if (stageErrorTime != null) {
                 errorTime = accumulatedTime + stageErrorTime
                 return errorTime
@@ -330,7 +340,7 @@ def getCurrentPhase(stageName, currentPhase) {
 }
 
 /**
- * Traverses the steps of the stage being examined.
+ * Scans the verdicts value while traversing the stages of the pipeline build
  *
  * @param steps
  *      the steps within a stage
@@ -338,7 +348,7 @@ def getCurrentPhase(stageName, currentPhase) {
  *      accumulated duration values until an error occurred
  * @return the duration value in seconds or null in case of a error free build
  */
-def processTestSteps(steps, accumulatedTime) {
+def findNonPassedVerdict(steps, accumulatedTime) {
     def errorTime = null
     steps.each { step ->
         if (step == null) {
@@ -354,7 +364,7 @@ def processTestSteps(steps, accumulatedTime) {
             }
         } else if (stepType == 'teststepfolder') {
             def nestedSteps = step.get('teststeps', [])
-            errorTime = processTestSteps(nestedSteps, accumulatedTime)
+            errorTime = findNonPassedVerdict(nestedSteps, accumulatedTime)
             if (errorTime != null) {
                 return errorTime
             }
