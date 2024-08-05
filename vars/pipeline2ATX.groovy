@@ -171,12 +171,12 @@ def getBuildConstants(build, customConstants) {
  * Values that not always occur, such as <code>TIME_TO_ERROR</code>, will be filtered out before collection
  * @param build
  *      the pipeline raw build
- * @param executionTestSteps
+ * @param testExecutionSteps
  *      the stages of the pipeline build
  * @return the collected build information and parameters in ATX parameters format
  */
-def getBuildMetrics(build, executionTestSteps) {
-    def timeValues = calculateTime(executionTestSteps, build)
+def getBuildMetrics(build, testExecutionSteps) {
+    def timeValues = calculateTime(testExecutionSteps, build)
     def metrics = [
             [name: "TOTAL_EXECUTION_TIME", direction: "OUT", value: timeValues.totalDuration],
             [name: "SETUP_TIME", direction: "OUT", value: timeValues.setupDuration],
