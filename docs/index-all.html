@@ -190,6 +190,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 <h2 class="title">F</h2>
 <dl>
 
+<dt><span class="strong"><a href="vars/pipeline2ATX.html#findNonPassedVerdict(def, def)" title="Method in pipeline2ATX">findNonPassedVerdict(def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
+</dt><dd> <div class="block">Scans the verdicts value while traversing the stages of the pipeline build</div></dd>
 </dl>
 
     
@@ -200,32 +202,17 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#generateJsonReport(def, def, def, def, def, def)" title="Method in pipeline2ATX">generateJsonReport(def, def, def, def, def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
 </dt><dd> <div class="block">Generates a test.guide compatible JSON report of the pipeline build.</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getBuildAttributes(def, def)" title="Method in pipeline2ATX">getBuildAttributes(def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">Collects all relevant build information and parameter as a key-value-map:
- - PRODUCT_NAME (content of the env var PRODUCT_NAME, only added if present)
- - GIT_URL (content of env var GIT_URL, only added if present)
- - JENKINS_PIPELINE (name of the current Jenkins build job)
- - JENKINS_URL (url to the current Jenkins build job)
- - JENKINS_WORKSPACE (path to the Jenkins pipeline workspace)
- - TEST_LEVEL (content of env var TEST_LEVEL, only added if present)</div></dd>
+</dt><dd> <div class="block">Collects all relevant build information and parameters as a key-value map:
+ <ul>
+   <li><code>PRODUCT_NAME</code>: Content of the env var PRODUCT_NAME, only added if present.</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getBuildConstants(def, def)" title="Method in pipeline2ATX">getBuildConstants(def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">Collects all relevant build information and parameter as a key-value-map:
- - PRODUCT_VERSION (content of env var PRODUCT_VERSION, only added if present)
- - GIT_COMMIT (content of env var GIT_COMMIT, only added if present)
- - JENKINS_BUILD_ID (number of current Jenkins build)
- - JENKINS_EXECUTOR_NUMBER (number of currecnt Jenkins executor)
- - JENKINS_NODE_NAME (name of current node the current build is running on)</div></dd>
+</dt><dd> <div class="block">Collects all relevant build information and parameters as a key-value map:
+ <ul>
+   <li><code>PRODUCT_VERSION</code>: Content of env var PRODUCT_VERSION, only added if present.</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getBuildMetrics(def, def)" title="Method in pipeline2ATX">getBuildMetrics(def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">Collects all relevant build metrics information and parameter as a key-value-map:
- - TOTAL_EXECUTION_TIME (full run time of the build in seconds)
- - SETUP_TIME (full run time of the setup phase of the build in seconds)
- - EXECUTION_TIME (full run time of the execution phase of the build in seconds)
- - TEARDOWN_TIME (full run time of the teardown phase of the build in seconds)
- - SETUP_PERCENTAGE (percentage of the setup phase in relation to the TOTAL_EXECUTION_TIME)
- - EXECUTION_PERCENTAGE (percentage of the execution phase in relation to the TOTAL_EXECUTION_TIME)
- - TEARDOWN_PERCENTAGE ((percentage of the teardown phase in relation to the TOTAL_EXECUTION_TIME)
- - QUEUE_TIME (time until the build starts in seconds)
- - COMMIT_TO_START_TIME (time from commit to start of the build in seconds, only for push based executions)
- - TIME_TO_ERROR (time until an error occurred in seconds, only for stages in the execution phase)</div></dd>
+</dt><dd> <div class="block">Collects all relevant build metrics information and parameters as a key-value map:
+ <ul>
+   <li><code>TOTAL_EXECUTION_TIME</code>: Full run time of the build in seconds.</div></dd>
 <dt><span class="strong"><a href="vars/log.html#getColorCode(java.lang.String)" title="Method in log">getColorCode(String)</a></span> - Method in <a href="vars/log.html">log</a>
 </dt><dd> <div class="block">Returns the ANSI code for a given color.</div></dd>
 <dt><span class="strong"><a href="vars/pipeline2ATX.html#getConsoleLog(def)" title="Method in pipeline2ATX">getConsoleLog(def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
@@ -340,8 +327,6 @@ if (location.href.indexOf('is-external=true') == -1) {
 
 <dt><span class="strong"><a href="vars/pipeline2ATX.html" title="Script in pipeline2ATX">pipeline2ATX</a></span> - Script in <a href="./pipeline2ATX/package-summary.html">pipeline2ATX</a>
 </dt><dd><div class="block"></div></dd>
-<dt><span class="strong"><a href="vars/pipeline2ATX.html#processTestSteps(def, def)" title="Method in pipeline2ATX">processTestSteps(def, def)</a></span> - Method in <a href="vars/pipeline2ATX.html">pipeline2ATX</a>
-</dt><dd> <div class="block">Traverses the steps of the stage being examined.</div></dd>
 </dl>
 
     
