@@ -146,7 +146,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
 
             currentBuild.getBuildCauses('jenkins.branch.BranchEventCause') >> JSONArray.fromObject(['push'])
 
-            def arbitraryCommitToStartTimeValue = 1234
+            def arbitraryCommitToStartTimeValue = 1234.2
             pipeline2ATX.metaClass.getTimeFromCommitToStart = { building ->
                 return arbitraryCommitToStartTimeValue
             }

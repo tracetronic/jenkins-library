@@ -298,9 +298,7 @@ def calculateTime(executionTestSteps, build) {
  * @return the time value converted as double
  */
 def convertTimeValueToDouble(def value) {
-    double doubleValue = value as double
-    String formatted = String.format("%.1f", doubleValue).replace(',', '.')
-    return Double.parseDouble(formatted)
+    return String.format("%.1f", value).replace(',', '.').toDouble()
 }
 
 /**
