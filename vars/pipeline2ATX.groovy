@@ -245,10 +245,10 @@ def generateJsonReport(build, attributes, constants, executionTestSteps, paramet
  */
 def calculateTime(executionTestSteps, build) {
     def currentPhase = 'setup'
-    int setupDuration = 0
-    int executionDuration = 0
-    int teardownDuration = 0
-    int queueDuration = (build.getStartTimeInMillis() - build.getTimeInMillis()) / 1000
+    def setupDuration = 0.0
+    def executionDuration = 0.0
+    def teardownDuration = 0.0
+    def queueDuration = (build.getStartTimeInMillis() - build.getTimeInMillis()) / 1000.0
     def errorTime = calculateErrorTime(executionTestSteps)
     def fromCommitToStartTime = currentBuild.getBuildCauses('jenkins.branch.BranchEventCause').isEmpty() ? null : getTimeFromCommitToStart(build)
 
@@ -266,11 +266,11 @@ def calculateTime(executionTestSteps, build) {
         }
     }
 
-    int totalDuration = queueDuration + setupDuration + executionDuration + teardownDuration
+    def totalDuration = queueDuration + setupDuration + executionDuration + teardownDuration
 
-    int setupPercentage = 0
-    int executionPercentage = 0
-    int teardownPercentage = 0
+    def setupPercentage = 0.0
+    def executionPercentage = 0.0
+    def teardownPercentage = 0.0
 
     if (totalDuration > 0) {
         setupPercentage = (setupDuration / totalDuration) * 100
@@ -279,16 +279,28 @@ def calculateTime(executionTestSteps, build) {
     }
 
     return [
-            setupDuration: setupDuration,
-            setupPercentage: setupPercentage,
-            executionDuration: executionDuration,
-            executionPercentage: executionPercentage,
-            teardownDuration: teardownDuration,
-            teardownPercentage: teardownPercentage,
-            queueDuration: queueDuration,
-            totalDuration: totalDuration,
-            fromCommitToStartTime: fromCommitToStartTime != null ? (int) fromCommitToStartTime : null,
-            errorTime: errorTime != null ? (int) (setupDuration + queueDuration + errorTime) : null]
+            setupDuration: convertTimeValueToDouble(setupDuration),
+            setupPercentage: convertTimeValueToDouble(setupPercentage),
+            executionDuration: convertTimeValueToDouble(executionDuration),
+            executionPercentage: convertTimeValueToDouble(executionPercentage),
+            teardownDuration: convertTimeValueToDouble(teardownDuration),
+            teardownPercentage: convertTimeValueToDouble(teardownPercentage),
+            queueDuration: convertTimeValueToDouble(queueDuration),
+            totalDuration: convertTimeValueToDouble(totalDuration),
+            fromCommitToStartTime: fromCommitToStartTime != null ? convertTimeValueToDouble(fromCommitToStartTime) : null,
+            errorTime: errorTime != null ? convertTimeValueToDouble(setupDuration + queueDuration + errorTime) : null]
+}
+
+/**
+ * Converts a none null time value to a double with one decimal place.
+ * @param value
+ *      the time value to be converted
+ * @return the time value converted as double
+ */
+def convertTimeValueToDouble(def value) {
+    double doubleValue = value as double
+    String formatted = String.format("%.1f", doubleValue).replace(',', '.')
+    return Double.parseDouble(formatted)
 }
 
 /**

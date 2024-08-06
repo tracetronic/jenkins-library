@@ -42,9 +42,9 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             addEnvVar('WORKSPACE', 'C:/ws/TestBuild/build42')
             addEnvVar('TEST_LEVEL', 'Unit Test')
 
-        when: 'collect the build attributes'       
+        when: 'collect the build attributes'
             List attributes = pipeline2ATX.getBuildAttributes(build,['GIT_URL':'https://mycustomgit/blub','TOOL_NAME':'test.tool'])
-                       
+
 
         then: 'expect a attributes list with build information'
             result == attributes
@@ -121,14 +121,14 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             def timeValues = pipeline2ATX.calculateTime(mockPipelineStages, build)
 
         then: 'verify calculated time values'
-            timeValues.setupDuration == 250
-            timeValues.setupPercentage == 24
-            timeValues.executionDuration == 500
-            timeValues.executionPercentage == 49
-            timeValues.teardownDuration == 250
-            timeValues.teardownPercentage == 24
-            timeValues.queueDuration == 1
-            timeValues.totalDuration == 1001
+            timeValues.setupDuration == 250.0
+            timeValues.setupPercentage == 25.0
+            timeValues.executionDuration == 500.0
+            timeValues.executionPercentage == 50.0
+            timeValues.teardownDuration == 250.0
+            timeValues.teardownPercentage == 25.0
+            timeValues.queueDuration == 1.0
+            timeValues.totalDuration == 1001.0
             timeValues.fromCommitToStartTime == null
             timeValues.errorTime == null
     }
