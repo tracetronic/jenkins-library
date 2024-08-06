@@ -268,9 +268,15 @@ def calculateTime(executionTestSteps, build) {
 
     int totalDuration = queueDuration + setupDuration + executionDuration + teardownDuration
 
-    int setupPercentage = (setupDuration / totalDuration) * 100
-    int executionPercentage = (executionDuration / totalDuration) * 100
-    int teardownPercentage = (teardownDuration / totalDuration) * 100
+    int setupPercentage = 0
+    int executionPercentage = 0
+    int teardownPercentage = 0
+
+    if (totalDuration > 0) {
+        setupPercentage = (setupDuration / totalDuration) * 100
+        executionPercentage = (executionDuration / totalDuration) * 100
+        teardownPercentage = (teardownDuration / totalDuration) * 100
+    }
 
     return [
             setupDuration: setupDuration,
