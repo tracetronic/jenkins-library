@@ -157,35 +157,41 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
+                            <td class="colLast"><code><strong><a href="#convertTimeValueToDouble(def)">convertTimeValueToDouble</a></strong>(java.lang.Object value)</code><br>Converts a none null time value to a double with one decimal place.</td>
+                        </tr>
+                        
+                        <tr class="altColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#crawlRows(def, def, def)">crawlRows</a></strong>(java.lang.Object row, java.lang.Object appendLogs, java.lang.Object insideStage = false)</code><br>Crawls the current table row for corresponding test execution step items.
  </td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#createTestStep(def, def, def)">createTestStep</a></strong>(java.lang.Object row, java.lang.Object appendLogs, java.lang.Object skipped = false)</code><br>Create a test step item from the current pipeline step.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#createTestStepFolder(def, def)">createTestStepFolder</a></strong>(java.lang.Object row, java.lang.Object appendLogs)</code><br>Create a test step folder item from the current pipeline step.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#findNonPassedVerdict(def, def)">findNonPassedVerdict</a></strong>(java.lang.Object steps, java.lang.Object accumulatedTime)</code><br>Scans the verdicts value while traversing the stages of the pipeline build</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#generateJsonReport(def, def, def, def, def, def)">generateJsonReport</a></strong>(java.lang.Object build, java.lang.Object attributes, java.lang.Object constants, java.lang.Object executionTestSteps, java.lang.Object parameters, java.lang.Object logFile)</code><br>Generates a test.guide compatible JSON report of the pipeline build.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getBuildAttributes(def, def)">getBuildAttributes</a></strong>(java.lang.Object build, java.lang.Object customAttributes)</code><br>Collects all relevant build information and parameters as a key-value map:
@@ -193,7 +199,7 @@ if (location.href.indexOf('is-external=true') == -1) {
    <li><code>PRODUCT_NAME</code>: Content of the env var PRODUCT_NAME, only added if present.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getBuildConstants(def, def)">getBuildConstants</a></strong>(java.lang.Object build, java.lang.Object customConstants)</code><br>Collects all relevant build information and parameters as a key-value map:
@@ -201,7 +207,7 @@ if (location.href.indexOf('is-external=true') == -1) {
    <li><code>PRODUCT_VERSION</code>: Content of env var PRODUCT_VERSION, only added if present.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getBuildMetrics(def, def)">getBuildMetrics</a></strong>(java.lang.Object build, java.lang.Object testExecutionSteps)</code><br>Collects all relevant build metrics information and parameters as a key-value map:
@@ -209,68 +215,68 @@ if (location.href.indexOf('is-external=true') == -1) {
    <li><code>TOTAL_EXECUTION_TIME</code>: Full run time of the build in seconds.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getConsoleLog(def)">getConsoleLog</a></strong>(java.lang.Object build)</code><br>Gets the console log.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getCurrentPhase(def, def)">getCurrentPhase</a></strong>(java.lang.Object stageName, java.lang.Object currentPhase)</code><br>Determines the respective phase of the stage being examined.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getCurrentResult(def)">getCurrentResult</a></strong>(java.lang.Object build)</code><br>Gets the current build result.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getDescription(def)">getDescription</a></strong>(java.lang.Object row)</code><br>Create a description from the current pipeline step.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getExecutionSteps(def, def)">getExecutionSteps</a></strong>(java.lang.Object build, java.lang.Object appendLogs)</code><br>Create test execution steps from the current pipeline build.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getLogText(def)">getLogText</a></strong>(java.lang.Object node)</code><br>Get the log of a node.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getRawBuild(java.lang.String, int)">getRawBuild</a></strong>(java.lang.String jobName, int buildNumber)</code><br>Gets the pipeline raw build by given job name and build number,.
  </td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getTestStepName(def)">getTestStepName</a></strong>(java.lang.Object row)</code><br>Creates the test step name by combining the row name with its arguments</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getTimeFromCommitToStart(def)">getTimeFromCommitToStart</a></strong>(java.lang.Object build)</code><br>Determines the time from commit to start of the build</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code>null</code></td>
                             <td class="colLast"><code>static&nbsp;void</code></td>
                             <td class="colLast"><code><strong><a href="#main(java.lang.String)">main</a></strong>(java.lang.String[] args)</code><br>Implicit main method for Groovy Scripts</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>static&nbsp;java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#resultToATXVerdict(def)">resultToATXVerdict</a></strong>(java.lang.Object result)</code><br>Maps the given build result to according test.guide verdict.</td>
@@ -292,11 +298,11 @@ if (location.href.indexOf('is-external=true') == -1) {
                         
                         <tr class="altColor">
                             <td class="colFirst"><code>class groovy.lang.Script</code></td>
-                            <td class="colLast"><code>groovy.lang.Script#getBinding(), groovy.lang.Script#setBinding(groovy.lang.Binding), groovy.lang.Script#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.Script#evaluate(java.lang.String), groovy.lang.Script#evaluate(java.io.File), groovy.lang.Script#println(), groovy.lang.Script#println(java.lang.Object), groovy.lang.Script#run(java.io.File, [Ljava.lang.String;), groovy.lang.Script#run(), groovy.lang.Script#getProperty(java.lang.String), groovy.lang.Script#setProperty(java.lang.String, java.lang.Object), groovy.lang.Script#print(java.lang.Object), groovy.lang.Script#printf(java.lang.String, java.lang.Object), groovy.lang.Script#printf(java.lang.String, [Ljava.lang.Object;), groovy.lang.Script#getMetaClass(), groovy.lang.Script#setMetaClass(groovy.lang.MetaClass), groovy.lang.Script#wait(long), groovy.lang.Script#wait(long, int), groovy.lang.Script#wait(), groovy.lang.Script#equals(java.lang.Object), groovy.lang.Script#toString(), groovy.lang.Script#hashCode(), groovy.lang.Script#getClass(), groovy.lang.Script#notify(), groovy.lang.Script#notifyAll()</code></td>
+                            <td class="colLast"><code>groovy.lang.Script#getBinding(), groovy.lang.Script#setBinding(groovy.lang.Binding), groovy.lang.Script#evaluate(java.io.File), groovy.lang.Script#evaluate(java.lang.String), groovy.lang.Script#println(java.lang.Object), groovy.lang.Script#println(), groovy.lang.Script#run(java.io.File, [Ljava.lang.String;), groovy.lang.Script#run(), groovy.lang.Script#getProperty(java.lang.String), groovy.lang.Script#setProperty(java.lang.String, java.lang.Object), groovy.lang.Script#print(java.lang.Object), groovy.lang.Script#printf(java.lang.String, java.lang.Object), groovy.lang.Script#printf(java.lang.String, [Ljava.lang.Object;), groovy.lang.Script#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.Script#getMetaClass(), groovy.lang.Script#setMetaClass(groovy.lang.MetaClass), groovy.lang.Script#wait(long), groovy.lang.Script#wait(long, int), groovy.lang.Script#wait(), groovy.lang.Script#equals(java.lang.Object), groovy.lang.Script#toString(), groovy.lang.Script#hashCode(), groovy.lang.Script#getClass(), groovy.lang.Script#notify(), groovy.lang.Script#notifyAll()</code></td>
                         </tr>
                         <tr class="altColor">
                             <td class="colFirst"><code>class groovy.lang.GroovyObjectSupport</code></td>
-                            <td class="colLast"><code>groovy.lang.GroovyObjectSupport#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.GroovyObjectSupport#getMetaClass(), groovy.lang.GroovyObjectSupport#setMetaClass(groovy.lang.MetaClass), groovy.lang.GroovyObjectSupport#getProperty(java.lang.String), groovy.lang.GroovyObjectSupport#setProperty(java.lang.String, java.lang.Object), groovy.lang.GroovyObjectSupport#wait(long), groovy.lang.GroovyObjectSupport#wait(long, int), groovy.lang.GroovyObjectSupport#wait(), groovy.lang.GroovyObjectSupport#equals(java.lang.Object), groovy.lang.GroovyObjectSupport#toString(), groovy.lang.GroovyObjectSupport#hashCode(), groovy.lang.GroovyObjectSupport#getClass(), groovy.lang.GroovyObjectSupport#notify(), groovy.lang.GroovyObjectSupport#notifyAll()</code></td>
+                            <td class="colLast"><code>groovy.lang.GroovyObjectSupport#getProperty(java.lang.String), groovy.lang.GroovyObjectSupport#setProperty(java.lang.String, java.lang.Object), groovy.lang.GroovyObjectSupport#invokeMethod(java.lang.String, java.lang.Object), groovy.lang.GroovyObjectSupport#getMetaClass(), groovy.lang.GroovyObjectSupport#setMetaClass(groovy.lang.MetaClass), groovy.lang.GroovyObjectSupport#wait(long), groovy.lang.GroovyObjectSupport#wait(long, int), groovy.lang.GroovyObjectSupport#wait(), groovy.lang.GroovyObjectSupport#equals(java.lang.Object), groovy.lang.GroovyObjectSupport#toString(), groovy.lang.GroovyObjectSupport#hashCode(), groovy.lang.GroovyObjectSupport#getClass(), groovy.lang.GroovyObjectSupport#notify(), groovy.lang.GroovyObjectSupport#notifyAll()</code></td>
                         </tr>
                     </table>
                    </ul>
@@ -387,6 +393,16 @@ if (location.href.indexOf('is-external=true') == -1) {
 </code> -       the number of the pipeline build (optional)</DD><DD><code>customAttributes
 </code> -       the custom attributes for the pipline build (optional)</DD><DD><code>customConstants
 </code> -       the custom constants for the pipeline build (optional)</DD></DL></p>
+                            </li>
+                        </ul>
+                    
+                        <a name="convertTimeValueToDouble(def)"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>java.lang.Object <strong>convertTimeValueToDouble</strong>(java.lang.Object value)</h4>
+                                <p> Converts a none null time value to a double with one decimal place.
+ <DL><DT><B>Parameters:</B></DT><DD><code>value
+</code> -       the time value to be converted</DD></DL><DL><DT><B>Returns:</B></DT><DD>the time value converted as double</DD></DL></p>
                             </li>
                         </ul>
                     
