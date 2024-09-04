@@ -330,7 +330,8 @@ def getTechnicalErrorRate(){
                         ]
                     }"""
     def json
-    withCredentials([string(credentialsId: env.authKey, variable: 'authKey')]) {
+    withCredentials([string(credentialsId: 'TG_authkey_test_report_upload', variable: 'authKey')]) {
+        println(authKey)
         def response = httpRequest url: "${TESTGUIDE_url}api/report/testCaseExecutions/filter?projectId=${TESTGUIDE_projectID}&authKey=${authKey}", httpMode: 'POST', requestBody: "$filter", contentType: 'APPLICATION_JSON', acceptType: 'APPLICATION_JSON'
         json = readJSON(text: response.content)
     }
