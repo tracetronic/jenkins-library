@@ -249,7 +249,7 @@ def calculateTime(executionTestSteps, build) {
     def setupDuration = 0.0
     def executionDuration = 0.0
     def teardownDuration = 0.0
-    def commitTimeStamp = currentBuild.getBuildCauses('jenkins.branch.BranchEventCause').isEmpty() ? null : getCommitTimestamp()
+    def commitTimeStamp = !env.GIT_COMMIT ? null : getCommitTimestamp()
     def startTimeMillis = build.getStartTimeInMillis()
     def queueDuration = (startTimeMillis - build.getTimeInMillis()) / 1000.0
     def errorTime = calculateErrorTime(executionTestSteps)
