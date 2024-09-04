@@ -309,48 +309,49 @@ def getSuccessfulRunsStreak() {
     return result
 }
 
-def getTechnicalErrorRate(){
+def getTechnicalErrorRate() {
     def rate = 0
-    if(!env.authKey){
-        println("test.guide authkey is not set. Technical Error Rate metric will not be set")
-        return rate
-    }
-    def filter = """{
-                        "attributes": [
-                            {"key":"PRODUCT_NAME", "values": ["${env.PRODUCT_NAME}"]},
-                            {"key":"GIT_URL", "values": ["${env.GIT_URL}"]},
-                            {"key":"JENKINS_PIPELINE", "values": ["${env.JENKINS_PIPELINE}"]},
-                            {"key":"JENKINS_URL", "values": ["${env.JENKINS_URL}"]},
-                            {"key":"TEST_LEVEL", "values": ["${env.TEST_LEVEL}"]}
-                            ],
-                        "verdicts": [
-                            "INCONCLUSIVE",
-                            "ERROR",
-                            "FAILED"
-                        ]
-                    }"""
     def json
     withCredentials([string(credentialsId: 'TG_authkey_test_report_upload', variable: 'authKey')]) {
+        if (!authKey) {
+            println("test.guide authkey is not set. Technical Error Rate metric will not be set")
+            return rate
+        }
+        def filter = """{
+                            "attributes": [
+                                {"key":"PRODUCT_NAME", "values": ["${env.PRODUCT_NAME}"]},
+                                {"key":"GIT_URL", "values": ["${env.GIT_URL}"]},
+                                {"key":"JENKINS_PIPELINE", "values": ["${env.JENKINS_PIPELINE}"]},
+                                {"key":"JENKINS_URL", "values": ["${env.JENKINS_URL}"]},
+                                {"key":"TEST_LEVEL", "values": ["${env.TEST_LEVEL}"]}
+                                ],
+                            "verdicts": [
+                                "INCONCLUSIVE",
+                                "ERROR",
+                                "FAILED"
+                            ]
+                        }"""
         println(authKey)
-        def response = httpRequest url: "${TESTGUIDE_url}api/report/testCaseExecutions/filter?projectId=${TESTGUIDE_projectID}&authKey=${authKey}", httpMode: 'POST', requestBody: "$filter", contentType: 'APPLICATION_JSON', acceptType: 'APPLICATION_JSON'
+        def response = httpRequest url: "${env.TESTGUIDE_url}api/report/testCaseExecutions/filter?projectId=${env.TESTGUIDE_projectID}&authKey=${authKey}", httpMode: 'POST', requestBody: "$filter", contentType: 'APPLICATION_JSON', acceptType: 'APPLICATION_JSON'
         json = readJSON(text: response.content)
     }
     def errorCounter = 0
     def failureCounter = 0
     json.each { tce ->
-        if (["FAILURE","INCONCLUSIVE"].contains(tce["verdict"])){
+        if (["FAILURE", "INCONCLUSIVE"].contains(tce["verdict"])) {
             failureCounter++
         }
-        if(tce["verdict"]=="ERROR"){
+        if (tce["verdict"] == "ERROR") {
             errorCounter++
         }
-    }
-    println(json)
-    if(!errorCounter){
+
+        println(json)
+        if (!errorCounter) {
+            return rate
+        }
+        rate = errorCounter / (failureCounter + errorCounter)
         return rate
     }
-    rate = errorCounter/(failureCounter+errorCounter)
-    return rate
 }
 
 /**
