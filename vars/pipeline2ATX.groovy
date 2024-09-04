@@ -187,7 +187,8 @@ def getBuildMetrics(build, testExecutionSteps) {
             [name: "TEARDOWN_PERCENTAGE", direction: "OUT", value: timeValues.teardownPercentage],
             [name: "QUEUE_TIME", direction: "OUT", value: timeValues.queueDuration],
             [name: "COMMIT_TO_START_TIME", direction: "OUT", value: timeValues.fromCommitToStartTime],
-            [name: "TIME_TO_ERROR", direction: "OUT", value: timeValues.errorTime]
+            [name: "TIME_TO_ERROR", direction: "OUT", value: timeValues.errorTime],
+            [name: "SUCCESSFUL_RUNS_STREAK", direction: "OUT", value: getSuccessfulRunsStreak(build)]
     ]
     return metrics.findAll { param -> param.value != null }
 }
@@ -289,6 +290,22 @@ def calculateTime(executionTestSteps, build) {
             totalDuration: convertTimeValueToDouble(totalDuration),
             fromCommitToStartTime: fromCommitToStartTime != null ? convertTimeValueToDouble(fromCommitToStartTime) : null,
             errorTime: errorTime != null ? convertTimeValueToDouble(setupDuration + queueDuration + errorTime) : null]
+}
+
+def getSuccessfulRunsStreak(build) {
+    if (build.resultIsWorseOrEqualTo("UNSTABLE")) {
+        return 0
+    }
+    def result = build.getNumber()
+
+    def b = build.getPreviousBuild()
+    while (b != null && b.getResult() == "SUCCESS") {
+        b = b.getPreviousBuild()
+    }
+    if (b != null) {
+        return result - b.getNumber()
+    }
+    return result
 }
 
 /**
