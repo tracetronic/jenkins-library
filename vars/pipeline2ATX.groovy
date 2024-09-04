@@ -249,11 +249,11 @@ def calculateTime(executionTestSteps, build) {
     def setupDuration = 0.0
     def executionDuration = 0.0
     def teardownDuration = 0.0
-    def commitTimeStamp = !env.GIT_COMMIT ? null : getCommitTimestamp()
+    def commitTimestamp = !env.GIT_COMMIT ? null : getCommitTimestamp()
     def startTimeMillis = build.getStartTimeInMillis()
     def queueDuration = (startTimeMillis - build.getTimeInMillis()) / 1000.0
     def errorTime = calculateErrorTime(executionTestSteps)
-    def fromCommitToStartTime = !commitTimeStamp ? null : (startTimeMillis/1000.0) - commitTimeStamp
+    def fromCommitToStartTime = !commitTimestamp ? null : (startTimeMillis/1000.0) - commitTimestamp
 
     executionTestSteps.each { stage ->
         def stageName = stage.name
@@ -292,7 +292,7 @@ def calculateTime(executionTestSteps, build) {
             totalDuration: convertTimeValueToDouble(totalDuration),
             fromCommitToStartTime: fromCommitToStartTime != null ? convertTimeValueToDouble(fromCommitToStartTime) : null,
             errorTime: errorTime != null ? convertTimeValueToDouble(setupDuration + queueDuration + errorTime) : null,
-            commitToError: !errorTime || !commitTimeStamp ? null : errorTime - commitTimeStamp
+            commitToError: !errorTime || !commitTimestamp ? null : errorTime - commitTimestamp
     ]
 }
 
@@ -403,9 +403,10 @@ def getCommitTimestamp() {
         def error = new StringBuffer()
         process.consumeProcessOutput(output, error)
         process.waitFor()
-
+        println(output.toString())
         if (process.exitValue() == 0) {
-            commitTimeStamp = output.toString().trim().toLong()
+            commitTimestamp = output.toString().trim().toLong()
+            println(commitTimestamp)
         }
     } catch (Exception e) {
         println("Exception occurred: ${e.message}")
