@@ -188,7 +188,7 @@ def getBuildMetrics(build, testExecutionSteps) {
             [name: "QUEUE_TIME", direction: "OUT", value: timeValues.queueDuration],
             [name: "COMMIT_TO_START_TIME", direction: "OUT", value: timeValues.fromCommitToStartTime],
             [name: "TIME_TO_ERROR", direction: "OUT", value: timeValues.errorTime],
-            [name: "SUCCESSFUL_RUNS_STREAK", direction: "OUT", value: getSuccessfulRunsStreak(build)]
+            [name: "SUCCESSFUL_RUNS_STREAK", direction: "OUT", value: getSuccessfulRunsStreak()]
     ]
     return metrics.findAll { param -> param.value != null }
 }
@@ -292,13 +292,13 @@ def calculateTime(executionTestSteps, build) {
             errorTime: errorTime != null ? convertTimeValueToDouble(setupDuration + queueDuration + errorTime) : null]
 }
 
-def getSuccessfulRunsStreak(build) {
-    if (build.resultIsWorseOrEqualTo("UNSTABLE")) {
+def getSuccessfulRunsStreak() {
+    if (currentBuild.resultIsWorseOrEqualTo("UNSTABLE")) {
         return 0
     }
-    def result = build.getNumber()
+    def result = currentBuild.getNumber()
 
-    def b = build.getPreviousBuild()
+    def b = currentBuild.getPreviousBuild()
     while (b != null && b.getResult() == "SUCCESS") {
         b = b.getPreviousBuild()
     }
