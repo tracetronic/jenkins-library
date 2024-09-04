@@ -187,7 +187,8 @@ def getBuildMetrics(build, testExecutionSteps) {
             [name: "TEARDOWN_PERCENTAGE", direction: "OUT", value: timeValues.teardownPercentage],
             [name: "QUEUE_TIME", direction: "OUT", value: timeValues.queueDuration],
             [name: "COMMIT_TO_START_TIME", direction: "OUT", value: timeValues.fromCommitToStartTime],
-            [name: "TIME_TO_ERROR", direction: "OUT", value: timeValues.errorTime]
+            [name: "TIME_TO_ERROR", direction: "OUT", value: timeValues.errorTime],
+            [name: "COMMIT_TIME_TO_ERROR", direction: "OUT", value: timeValues.commitToError],
     ]
     return metrics.findAll { param -> param.value != null }
 }
@@ -248,9 +249,11 @@ def calculateTime(executionTestSteps, build) {
     def setupDuration = 0.0
     def executionDuration = 0.0
     def teardownDuration = 0.0
-    def queueDuration = (build.getStartTimeInMillis() - build.getTimeInMillis()) / 1000.0
+    def commitTimeStamp = currentBuild.getBuildCauses('jenkins.branch.BranchEventCause').isEmpty() ? null : getCommitTimestamp()
+    def startTimeMillis = build.getStartTimeInMillis()
+    def queueDuration = (startTimeMillis - build.getTimeInMillis()) / 1000.0
     def errorTime = calculateErrorTime(executionTestSteps)
-    def fromCommitToStartTime = currentBuild.getBuildCauses('jenkins.branch.BranchEventCause').isEmpty() ? null : getTimeFromCommitToStart(build)
+    def fromCommitToStartTime = !commitTimeStamp ? null : (startTimeMillis/1000.0) - commitTimeStamp
 
     executionTestSteps.each { stage ->
         def stageName = stage.name
@@ -288,7 +291,9 @@ def calculateTime(executionTestSteps, build) {
             queueDuration: convertTimeValueToDouble(queueDuration),
             totalDuration: convertTimeValueToDouble(totalDuration),
             fromCommitToStartTime: fromCommitToStartTime != null ? convertTimeValueToDouble(fromCommitToStartTime) : null,
-            errorTime: errorTime != null ? convertTimeValueToDouble(setupDuration + queueDuration + errorTime) : null]
+            errorTime: errorTime != null ? convertTimeValueToDouble(setupDuration + queueDuration + errorTime) : null,
+            commitToError: !errorTime || !commitTimeStamp ? null : errorTime - commitTimeStamp
+    ]
 }
 
 /**
@@ -389,17 +394,9 @@ def findNonPassedVerdict(steps, accumulatedTime) {
     return errorTime
 }
 
-/**
- * Determines the time from commit to start of the build
- *
- * @param build
- *      the pipeline build
- * @return the duration value in seconds
- */
 @NonCPS
-def getTimeFromCommitToStart(build) {
-    def commitTime = null
-    def startTime = build.getStartTimeInMillis() / 1000
+def getCommitTimestamp() {
+    def commitTimestamp = 0.0
     try {
         def process = ["git", "-C", env.WORKSPACE, "show", "-s", "--format=%ct", env.GIT_COMMIT].execute()
         def output = new StringBuffer()
@@ -408,13 +405,12 @@ def getTimeFromCommitToStart(build) {
         process.waitFor()
 
         if (process.exitValue() == 0) {
-            def commitTimeStamp = output.toString().trim().toLong()
-            commitTime = startTime - commitTimeStamp
+            commitTimeStamp = output.toString().trim().toLong()
         }
     } catch (Exception e) {
         println("Exception occurred: ${e.message}")
     }
-    return commitTime
+    return commitTimestamp
 }
 
 /**
