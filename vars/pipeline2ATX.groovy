@@ -398,13 +398,8 @@ def findNonPassedVerdict(steps, accumulatedTime) {
 def getCommitTimestamp() {
     def commitTimestamp = 0.0
     try {
-        def process = ["git", "-C", env.WORKSPACE, "show", "-s", "--format=%ct", env.GIT_COMMIT].execute()
-        def output = new StringBuffer()
-        def error = new StringBuffer()
-        process.consumeProcessOutput(output, error)
-        process.waitFor()
-        println(output.toString())
-        if (process.exitValue() == 0) {
+        def process = ["git", "-C", env.WORKSPACE, "show", "-s", "--format=%ct", env.GIT_COMMIT].execute().text
+        if (process) {
             commitTimestamp = output.toString().trim().toLong()
             println(commitTimestamp)
         }
