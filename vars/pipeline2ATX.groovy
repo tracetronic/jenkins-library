@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 tracetronic GmbH
+ * Copyright (c) 2023-2024 TraceTronic GmbH
  *
  * SPDX-License-Identifier: MIT
  */
@@ -188,7 +188,8 @@ def getBuildMetrics(build, testExecutionSteps) {
             [name: "QUEUE_TIME", direction: "OUT", value: timeValues.queueDuration],
             [name: "COMMIT_TO_START_TIME", direction: "OUT", value: timeValues.fromCommitToStartTime],
             [name: "TIME_TO_ERROR", direction: "OUT", value: timeValues.errorTime],
-            [name: "SUCCESSFUL_RUNS_STREAK", direction: "OUT", value: getSuccessfulRunsStreak()]
+            [name: "SUCCESSFUL_RUNS_STREAK", direction: "OUT", value: getSuccessfulRunsStreak()],
+            [name: "TECHNICAL_ERROR_RATE", direction: "OUT", value: getTechnicalErrorRate()]
     ]
     return metrics.findAll { param -> param.value != null }
 }
@@ -306,6 +307,48 @@ def getSuccessfulRunsStreak() {
         return result - b.getNumber()
     }
     return result
+}
+
+def getTechnicalErrorRate(){
+    def rate = 0
+    if(!env.authKey){
+        println("test.guide authkey is not set. Technical Error Rate metric will not be set")
+        return rate
+    }
+    def filter = """{
+                        "attributes": [
+                            {"key":"PRODUCT_NAME", "values": ["${env.PRODUCT_NAME}"]},
+                            {"key":"GIT_URL", "values": ["${env.GIT_URL}"]},
+                            {"key":"JENKINS_PIPELINE", "values": ["${env.JENKINS_PIPELINE}"]},
+                            {"key":"JENKINS_URL", "values": ["${env.JENKINS_URL}"]},
+                            {"key":"TEST_LEVEL", "values": ["${env.TEST_LEVEL}"]}
+                            ],
+                        "verdicts": [
+                            "INCONCLUSIVE",
+                            "ERROR",
+                            "FAILED"
+                        ]
+                    }"""
+    def json
+    withCredentials([string(credentialsId: 'TG_authKey_release', variable: 'authKey')]) {
+        def response = httpRequest url: "${TESTGUIDE_url}api/report/testCaseExecutions/filter?projectId=${TESTGUIDE_projectID}&authKey=${authKey}", httpMode: 'POST', requestBody: "$filter", contentType: 'APPLICATION_JSON', acceptType: 'APPLICATION_JSON'
+        json = readJSON(text: response.content)
+    }
+    def errorCounter = 0
+    def failureCounter = 0
+    json.each { tce ->
+        if (["FAILURE","INCONCLUSIVE"].contains(tce["verdict"])){
+            failureCounter++
+        }
+        if(tce["verdict"]=="ERROR"){
+            errorCounter++
+        }
+    }
+    if(!errorCounter){
+        return rate
+    }
+    rate = errorCounter/(failureCounter+errorCounter)
+    return rate
 }
 
 /**
