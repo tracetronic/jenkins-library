@@ -17,7 +17,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Lint Code Base
-        uses: github/super-linter@v7.1.0 # https://github.com/github/super-linter/issues/2253#issuecomment-998982152
+        uses: super-linter/super-linter@v7.1.0
         env:
           DEFAULT_BRANCH: main
           VALIDATE_GROOVY: true
