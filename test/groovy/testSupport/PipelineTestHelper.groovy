@@ -246,7 +246,6 @@ class PipelineTestHelper extends BasePipelineTest {
                 case 'always':
                 case 'cleanup':
                     return c.call()
-                    break
                 case 'changed':
                     if (currentBuild.result != previousBuild.result) {
                         return c.call()
