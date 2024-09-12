@@ -21,6 +21,8 @@ jobs:
         env:
           DEFAULT_BRANCH: main
           VALIDATE_GROOVY: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
   test:
     runs-on: ubuntu-latest
     steps:
