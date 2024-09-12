@@ -1,6 +1,6 @@
-FROM maven:3.6.3-adoptopenjdk-8 as maven
+FROM maven:3.9-eclipse-temurin-11 as maven
 
-FROM jenkins/jenkinsfile-runner
+FROM jenkins/jenkinsfile-runner:adoptopenjdk-11-hotspot
 
 # Setup Maven
 COPY --from=maven /usr/share/maven/ /usr/share/maven/
@@ -20,6 +20,6 @@ COPY .git /opt/git/jenkins-library/.git
 ENV JAVA_OPTS="-Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true"
 
 # Pre-install plugins
-COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
+#COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 RUN cd /app/jenkins && jar -cvf jenkins.war *
-RUN java -jar /app/bin/jenkins-plugin-manager.jar --war /app/jenkins/jenkins.war --plugin-file /usr/share/jenkins/ref/plugins.txt && rm /app/jenkins/jenkins.war
+#RUN java -jar /app/bin/jenkins-plugin-manager.jar --war /app/jenkins/jenkins.war --plugin-file /usr/share/jenkins/ref/plugins.txt && rm /app/jenkins/jenkins.war

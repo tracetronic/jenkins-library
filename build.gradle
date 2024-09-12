@@ -51,7 +51,7 @@ dependencies {
     implementation 'com.cloudbees:groovy-cps:3659.v582dc37621d8@jar'
 
     testImplementation 'com.lesfurets:jenkins-pipeline-unit:1.22'
-    testImplementation('org.testcontainers:spock:1.20.1'){
+    testImplementation('org.testcontainers:spock:1.15.3'){
         exclude group: 'org.spockframework', module: 'spock-core'
     }
     testImplementation 'org.hamcrest:hamcrest-core:2.2@jar'
