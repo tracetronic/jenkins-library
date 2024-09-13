@@ -126,7 +126,12 @@ def getBuildAttributes(build, customAttributes) {
                           JENKINS_URL: build.getAbsoluteUrl(),
                           JENKINS_WORKSPACE: env.WORKSPACE,
                           TEST_LEVEL: env.TEST_LEVEL] + customAttributes
-    return attributes.findAll{k,v -> v}.collect{ k, v -> [key: k, value: v.toString()]}
+    return attributes.findAll{k,v -> v}.collect{ k, v -> 
+        if (v instanceof List) {
+            return [key: k, value: v.collect{it.toString()}]
+        }
+        return [key: k, value: v.toString()]
+    }
 }
 
 /**
@@ -150,7 +155,12 @@ def getBuildConstants(build, customConstants) {
                          JENKINS_BUILD_ID: build.id,
                          JENKINS_EXECUTOR_NUMBER: env.EXECUTOR_NUMBER,
                          JENKINS_NODE_NAME: env.NODE_NAME] + customConstants
-    return constants.findAll{k,v -> v}.collect{ k, v -> [key: k, value: v.toString()]}
+    return constants.findAll{k,v -> v}.collect{ k, v -> 
+        if (v instanceof List) {
+            return [key: k, value: v.collect{it.toString()}]
+        }
+        return [key: k, value: v.toString()]
+    }
 }
 
 /**

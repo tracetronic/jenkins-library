@@ -13,8 +13,8 @@ plugins {
 group 'de.tracetronic.jenkins'
 description 'This is a shared library to extend Jenkins pipelines and to keep code DRY.'
 
-sourceCompatibility = 11
-targetCompatibility = 11
+sourceCompatibility = 17
+targetCompatibility = 17
 
 sourceSets {
     main {
@@ -36,31 +36,44 @@ sourceSets {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
     maven {
-        url 'https://repo.jenkins-ci.org/releases/'
+        url 'https://repo.jenkins-ci.org/public/'
     }
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.5.6'
-    compile 'org.jenkins-ci.main:jenkins-core:2.361.4'
-    compile 'org.jenkins-ci.plugins.workflow:workflow-api:1208.v0cc7c6e0da_9e@jar'
-    compile 'org.jenkins-ci.plugins.workflow:workflow-support:839.v35e2736cfd5c@jar'
-    compile 'org.jenkins-ci.plugins.pipeline-stage-view:pipeline-rest-api:2.32@jar'
-    compile 'com.cloudbees:groovy-cps:3659.v582dc37621d8@jar'
+    implementation 'org.codehaus.groovy:groovy-all:2.5.23'
+    implementation 'org.jenkins-ci.main:jenkins-core:2.426.3'
+    implementation 'org.jenkins-ci.plugins.workflow:workflow-api:1291.v51fd2a_625da_7@jar'
+    implementation 'org.jenkins-ci.plugins.workflow:workflow-support:839.v35e2736cfd5c@jar'
+    implementation 'org.jenkins-ci.plugins.pipeline-stage-view:pipeline-rest-api:2.34@jar'
+    implementation 'com.cloudbees:groovy-cps:3659.v582dc37621d8@jar'
 
-    testCompile 'com.lesfurets:jenkins-pipeline-unit:1.16'
-    testCompile 'org.testcontainers:spock:1.15.3'
-    testCompile 'org.hamcrest:hamcrest-core:2.2@jar'
-    testCompile 'org.jenkins-ci.main:jenkins-war:2.361.4'
-    testCompile 'org.jenkins-ci.main:jenkins-test-harness:1954.v2e3fd5465b_a_6'
-    testCompile 'org.jenkins-ci.plugins:structs:324.va_f5d6774f3a_d@jar'
-    testCompile 'org.jenkins-ci.plugins.workflow:workflow-cps:3659.v582dc37621d8@jar'
-    testCompile 'org.jenkins-ci.plugins.workflow:workflow-job:1292.v27d8cc3e2602@jar'
-    testCompile 'org.jenkins-ci.plugins.workflow:workflow-step-api:639.v6eca_cd8c04a_a_@jar'
-    testCompile 'org.powermock:powermock-core:2.0.9'
-    testCompile 'org.spockframework:spock-core:1.3-groovy-2.5'
+    testImplementation 'com.lesfurets:jenkins-pipeline-unit:1.22'
+    testImplementation('org.testcontainers:spock:1.15.3'){
+        exclude group: 'org.spockframework', module: 'spock-core'
+    }
+    testImplementation 'org.hamcrest:hamcrest-core:2.2@jar'
+    testImplementation 'org.jenkins-ci.main:jenkins-war:2.426.3'
+    testImplementation 'org.jenkins-ci.main:jenkins-test-harness:2112.ve584e0edc63b_'
+    testImplementation 'org.jenkins-ci.plugins:structs:337.v1b_04ea_4df7c8@jar'
+    testImplementation 'org.jenkins-ci.plugins.workflow:workflow-cps:3894.3896.vca_2c931e7935@jar'
+    testImplementation 'org.jenkins-ci.plugins.workflow:workflow-job:1385.vb_58b_86ea_fff1@jar'
+    testImplementation 'org.jenkins-ci.plugins.workflow:workflow-step-api:657.v03b_e8115821b_@jar'
+    testImplementation 'org.powermock:powermock-core:2.0.9'
+    testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
+}
+
+configurations.configureEach {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group == 'com.google.guava' && details.requested.name == 'guava') {
+            /* org.jenkins-ci.main:jenkins-core:2.426.3 use com.google.guava:guava:32.1.1-jre
+             * which has dependency issues https://github.com/google/guava/issues/6657
+             */
+            details.useVersion '33.2.0-jre'
+        }
+    }
 }
 
 test {
@@ -99,6 +112,7 @@ task postGroovyDoc(type: Copy) {
     from "${project.docsDir}/groovydoc"
     into 'docs'
     filter { line -> line.replaceAll('DefaultPackage', 'vars') }
+    dependsOn groovydoc
 }
 
 task deleteOldDocs(type: Delete) {
@@ -113,17 +127,17 @@ task documentation(type: GradleBuild) {
 idea {
     project {
         vcs = 'Git'
-        jdkName = '11'
-        languageLevel = '11'
+        jdkName = '17'
+        languageLevel = '17'
     }
     module {
-        jdkName = '11'
-        languageLevel = new IdeaLanguageLevel('11')
+        jdkName = '17'
+        languageLevel = new IdeaLanguageLevel('17')
         downloadJavadoc = true
         downloadSources = true
     }
 }
 
 wrapper {
-    gradleVersion = '6.8'
+    gradleVersion = '8.9'
 }

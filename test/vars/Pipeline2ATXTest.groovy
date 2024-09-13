@@ -43,7 +43,8 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
             addEnvVar('TEST_LEVEL', 'Unit Test')
 
         when: 'collect the build attributes'
-            List attributes = pipeline2ATX.getBuildAttributes(build,['GIT_URL':'https://mycustomgit/blub','TOOL_NAME':'test.tool'])
+            List attributes = pipeline2ATX.getBuildAttributes(build,
+                    ['GIT_URL':'https://mycustomgit/blub','TOOL_NAME':['test.tool', 'test.tool2', 42]])
 
 
         then: 'expect a attributes list with build information'
@@ -56,7 +57,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
                       ['key':'JENKINS_URL', 'value':'https://testurl'],
                       ['key':'JENKINS_WORKSPACE', 'value':'C:/ws/TestBuild/build42'],
                       ['key':'TEST_LEVEL', 'value':'Unit Test'],
-                      ['key':'TOOL_NAME', 'value':'test.tool']]
+                      ['key':'TOOL_NAME', 'value': ['test.tool', 'test.tool2', '42']]]
     }
 
     def 'Collect build attributes - missing env vars'() {
@@ -87,7 +88,8 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
 
 
         when: 'collect the build constants'
-            List constants = pipeline2ATX.getBuildConstants(build,['GIT_COMMIT':'customGitCommit','TOOL_NAME':'test.tool'])
+            List constants = pipeline2ATX.getBuildConstants(build,
+                    ['GIT_COMMIT':'customGitCommit','TOOL_VERSION': ['1.2.3', 42]])
 
         then: 'expect a attributes list with build information'
             result == constants
@@ -98,7 +100,7 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
                       ['key':'JENKINS_BUILD_ID', 'value':'42'],
                       ['key':'JENKINS_EXECUTOR_NUMBER', 'value':'0815'],
                       ['key':'JENKINS_NODE_NAME', 'value':'Runner0815'],
-                      ['key':'TOOL_NAME', 'value':'test.tool']]
+                      ['key':'TOOL_VERSION', 'value': ['1.2.3','42']]]
     }
 
     def 'Calculate metric times - error free and non pushed based build'() {
