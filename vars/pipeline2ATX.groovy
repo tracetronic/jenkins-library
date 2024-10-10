@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 tracetronic GmbH
+ * Copyright (c) 2023 - 2024 tracetronic GmbH
  *
  * SPDX-License-Identifier: MIT
  */
@@ -319,7 +319,6 @@ def convertTimeValueToDouble(def value) {
 def calculateErrorTime(executionTestSteps) {
     def errorTime = null
     def accumulatedTime = 0
-    def currentPhase = 'setup'
 
     executionTestSteps.each { stage ->
         if (stage == null) {
@@ -342,9 +341,7 @@ def calculateErrorTime(executionTestSteps) {
  * Determines the respective phase of the stage being examined.
  *
  * @param stageName
- *      the name of the current stage
- * @param currentPhase
- *      the corresponding phase in which the current stage is located
+ *      the name of the stage
  * @return the current phase
  */
 def getStagePhase(stageName) {
