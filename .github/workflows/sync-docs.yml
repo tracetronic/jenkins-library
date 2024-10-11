@@ -25,8 +25,8 @@ jobs:
       - name: Commit and push documentation
         run: |
           if [[ `git status --porcelain docs` ]]; then
-            git config user.name "$GITHUB_ACTOR"
-            git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+            git config user.name "TT-CX-User"
+            git config user.email "90439695+TT-CX-User@users.noreply.github.com"
             git add docs
             git commit --signoff -m "Sync documentation"
             git push

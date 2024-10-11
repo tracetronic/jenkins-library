@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 tracetronic GmbH
+ * Copyright (c) 2023 - 2024 tracetronic GmbH
  *
  * SPDX-License-Identifier: MIT
  */
@@ -254,7 +254,6 @@ def generateJsonReport(build, attributes, constants, executionTestSteps, paramet
  * @return a map containing the calculated durations in seconds and percentages
  */
 def calculateTime(executionTestSteps, build) {
-    def currentPhase = 'setup'
     def setupDuration = 0.0
     def executionDuration = 0.0
     def teardownDuration = 0.0
@@ -263,15 +262,14 @@ def calculateTime(executionTestSteps, build) {
     def fromCommitToStartTime = currentBuild.getBuildCauses('jenkins.branch.BranchEventCause').isEmpty() ? null : getTimeFromCommitToStart(build)
 
     executionTestSteps.each { stage ->
-        def stageName = stage.name
         // Update the current phase based on the stage name
-        currentPhase = getCurrentPhase(stageName, currentPhase)
+        def stagePhase = getStagePhase(stage.name)
 
-        if (currentPhase == 'teardown') {
+        if (stagePhase == 'teardown') {
             teardownDuration += stage.duration
-        } else if (currentPhase == 'setup') {
+        } else if (stagePhase == 'setup') {
             setupDuration += stage.duration
-        } else if (currentPhase == 'execution') {
+        } else if (stagePhase == 'execution') {
             executionDuration += stage.duration
         }
     }
@@ -321,28 +319,20 @@ def convertTimeValueToDouble(def value) {
 def calculateErrorTime(executionTestSteps) {
     def errorTime = null
     def accumulatedTime = 0
-    def currentPhase = 'setup'
 
     executionTestSteps.each { stage ->
         if (stage == null) {
             return
         }
 
-        def stageName = stage.get('name')
         def stageDuration = stage.get('duration', 0)
-
-        currentPhase = getCurrentPhase(stageName, currentPhase)
-
-        // Only process stages in the execution phase
-        if (currentPhase == 'execution') {
-            def teststeps = stage.get('teststeps', [])
-            def stageErrorTime = findNonPassedVerdict(teststeps, stageDuration)
-            if (stageErrorTime != null) {
-                errorTime = accumulatedTime + stageErrorTime
-                return errorTime
-            }
-            accumulatedTime += stageDuration
+        def teststeps = stage.get('teststeps', [])
+        def stageErrorTime = findNonPassedVerdict(teststeps, stageDuration)
+        if (stageErrorTime != null) {
+            errorTime = accumulatedTime + stageErrorTime
+            return errorTime
         }
+        accumulatedTime += stageDuration
     }
     return errorTime
 }
@@ -351,18 +341,16 @@ def calculateErrorTime(executionTestSteps) {
  * Determines the respective phase of the stage being examined.
  *
  * @param stageName
- *      the name of the current stage
- * @param currentPhase
- *      the corresponding phase in which the current stage is located
+ *      the name of the stage
  * @return the current phase
  */
-def getCurrentPhase(stageName, currentPhase) {
-    if (stageName.contains("stage (Declarative: Post")) {
+def getStagePhase(stageName) {
+    if (stageName.contains("Post Actions") || stageName.contains("Post:")) {
         return 'teardown'
-    } else if (!stageName.contains("stage (Declarative") && currentPhase == 'setup') {
-        return 'execution'
+    } else if (stageName.contains("Declarative:") || stageName.contains("Pre:")) {
+        return 'setup'
     }
-    return currentPhase
+    return 'execution'
 }
 
 /**

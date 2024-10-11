@@ -224,38 +224,38 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
-                            <td class="colLast"><code><strong><a href="#getCurrentPhase(def, def)">getCurrentPhase</a></strong>(java.lang.Object stageName, java.lang.Object currentPhase)</code><br>Determines the respective phase of the stage being examined.</td>
-                        </tr>
-                        
-                        <tr class="altColor">
-                            <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getCurrentResult(def)">getCurrentResult</a></strong>(java.lang.Object build)</code><br>Gets the current build result.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getDescription(def)">getDescription</a></strong>(java.lang.Object row)</code><br>Create a description from the current pipeline step.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getExecutionSteps(def, def)">getExecutionSteps</a></strong>(java.lang.Object build, java.lang.Object appendLogs)</code><br>Create test execution steps from the current pipeline build.</td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getLogText(def)">getLogText</a></strong>(java.lang.Object node)</code><br>Get the log of a node.</td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.Object</code></td>
                             <td class="colLast"><code><strong><a href="#getRawBuild(java.lang.String, int)">getRawBuild</a></strong>(java.lang.String jobName, int buildNumber)</code><br>Gets the pipeline raw build by given job name and build number,.
  </td>
+                        </tr>
+                        
+                        <tr class="altColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>java.lang.Object</code></td>
+                            <td class="colLast"><code><strong><a href="#getStagePhase(def)">getStagePhase</a></strong>(java.lang.Object stageName)</code><br>Determines the respective phase of the stage being examined.</td>
                         </tr>
                         
                         <tr class="rowColor">
@@ -542,17 +542,6 @@ java.lang.Object <strong>createTestStepFolder</strong>(java.lang.Object row, jav
                             </li>
                         </ul>
                     
-                        <a name="getCurrentPhase(def, def)"><!-- --></a>
-                        <ul class="blockListLast">
-                            <li class="blockList">
-                                <h4>java.lang.Object <strong>getCurrentPhase</strong>(java.lang.Object stageName, java.lang.Object currentPhase)</h4>
-                                <p> Determines the respective phase of the stage being examined.
- <DL><DT><B>Parameters:</B></DT><DD><code>stageName
-</code> -       the name of the current stage</DD><DD><code>currentPhase
-</code> -       the corresponding phase in which the current stage is located</DD></DL><DL><DT><B>Returns:</B></DT><DD>the current phase</DD></DL></p>
-                            </li>
-                        </ul>
-                    
                         <a name="getCurrentResult(def)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
@@ -605,6 +594,16 @@ java.lang.Object <strong>getLogText</strong>(java.lang.Object node)</h4>
  If not specified the current build is used as reference.
  <DL><DT><B>Parameters:</B></DT><DD><code>jobName
 </code> -       the name of the pipeline job</DD></DL><DL><DT><B>Returns:</B></DT><DD>the number of the pipeline build</DD></DL></p>
+                            </li>
+                        </ul>
+                    
+                        <a name="getStagePhase(def)"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>java.lang.Object <strong>getStagePhase</strong>(java.lang.Object stageName)</h4>
+                                <p> Determines the respective phase of the stage being examined.
+ <DL><DT><B>Parameters:</B></DT><DD><code>stageName
+</code> -       the name of the stage</DD></DL><DL><DT><B>Returns:</B></DT><DD>the current phase</DD></DL></p>
                             </li>
                         </ul>
                     
