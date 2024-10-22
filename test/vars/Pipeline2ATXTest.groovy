@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2023 tracetronic GmbH
+ * Copyright (c) 2021 - 2024 tracetronic GmbH
  *
  * SPDX-License-Identifier: MIT
  */
@@ -103,12 +103,25 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
                       ['key':'TOOL_VERSION', 'value': ['1.2.3','42']]]
     }
 
+    def 'Get Stage Phase'() {
+        expect:
+            result == pipeline2ATX.getStagePhase(stageName)
+
+        where:
+            stageName | result
+            'stage (Pre: Test)' | 'setup'
+            'stage (Declarative: SCM Checkout)' | 'setup'
+            'stage (Run Tests)' | 'execution'
+            'stage (Declarative: Post Actions)' | 'teardown'
+            'stage (Post: export logs)' | 'teardown'
+    }
+
     def 'Calculate metric times - error free and non pushed based build'() {
         given: 'pipeline stages'
             def mockPipelineStages = [
-                    ['name': 'stage (Declarative)', 'duration': 250],
-                    ['name': 'execution phase', 'duration': 500],
-                    ['name': 'stage (Declarative: Post', 'duration': 250]
+                    ['name': 'stage (Pre: Start Environment)', 'duration': 250],
+                    ['name': 'Run tests', 'duration': 500],
+                    ['name': 'stage (Declarative: Post Actions)', 'duration': 250]
             ]
             def build = GroovyMock(Run)
             build.getStartTimeInMillis() >> 2000
@@ -138,9 +151,9 @@ class Pipeline2ATXTest extends PipelineSpockTestBase {
     def 'Calculate metric times - Time from commit to start for pushed based builds'() {
         given: 'a build and a mocked time from commit to start'
             def mockPipelineStages = [
-                    ['name': 'stage (Declarative)', 'duration': 250],
-                    ['name': 'execution phase', 'duration': 500],
-                    ['name': 'stage (Declarative: Post', 'duration': 250]
+                    ['name': 'stage (Pre: Start Environment)', 'duration': 250],
+                    ['name': 'Run tests', 'duration': 500],
+                    ['name': 'stage (Declarative: Post Actions)', 'duration': 250]
             ]
             def build = GroovyMock(Run)
             def currentBuild = GroovyMock(RunWrapper)
