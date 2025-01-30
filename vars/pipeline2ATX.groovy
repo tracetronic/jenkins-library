@@ -65,7 +65,7 @@ def call(log = false, jobName = '', int buildNumber = 0, def customAttributes = 
         error "Job ${jobName} with build number ${buildNumber} not found!"
     }
 
-    def filename = "${build.getParent().getDisplayName()}_${build.getNumber()}"
+    def filename = "${build.getParent().getName()}_${build.getNumber()}"
     def attributes = getBuildAttributes(build, customAttributes)
     def constants = getBuildConstants(build, customConstants)
     def executionSteps = getExecutionSteps(build, log)
